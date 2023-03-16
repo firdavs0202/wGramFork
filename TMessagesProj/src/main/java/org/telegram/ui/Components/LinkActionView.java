@@ -66,7 +66,6 @@ public class LinkActionView extends LinearLayout {
     private boolean revoked;
     private boolean permanent;
     boolean loadingImporters;
-    private QRCodeBottomSheet qrCodeBottomSheet;
     private boolean hideRevokeOption;
     private boolean canEdit = true;
     private boolean isChannel;
@@ -219,13 +218,6 @@ public class LinkActionView extends LinearLayout {
                 });
             }
 
-            subItem = new ActionBarMenuSubItem(context, true, false);
-            subItem.setTextAndIcon(LocaleController.getString("GetQRCode", R.string.GetQRCode), R.drawable.msg_qrcode);
-            layout.addView(subItem, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
-            subItem.setOnClickListener(view12 -> {
-                showQrCode();
-            });
-
             if (!hideRevokeOption) {
                 subItem = new ActionBarMenuSubItem(context, false, true);
                 subItem.setTextAndIcon(LocaleController.getString("RevokeLink", R.string.RevokeLink), R.drawable.msg_delete);
@@ -358,21 +350,6 @@ public class LinkActionView extends LinearLayout {
         point[1] = y;
     }
 
-    private void showQrCode() {
-        qrCodeBottomSheet = new QRCodeBottomSheet(getContext(), LocaleController.getString("InviteByQRCode", R.string.InviteByQRCode), link, isChannel ? LocaleController.getString("QRCodeLinkHelpChannel", R.string.QRCodeLinkHelpChannel) : LocaleController.getString("QRCodeLinkHelpGroup", R.string.QRCodeLinkHelpGroup), false) {
-            @Override
-            public void dismiss() {
-                super.dismiss();
-                qrCodeBottomSheet = null;
-            }
-        };
-        qrCodeBottomSheet.setCenterAnimation(R.raw.qr_code_logo);
-        qrCodeBottomSheet.show();
-        if (actionBarPopupWindow != null) {
-            actionBarPopupWindow.dismiss();
-        }
-    }
-
     public void updateColors() {
         copyView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
         shareView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
@@ -386,10 +363,6 @@ public class LinkActionView extends LinearLayout {
         //optionsView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1));
         avatarsContainer.countTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
         avatarsContainer.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), 0, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText), (int) (255 * 0.3f))));
-
-        if (qrCodeBottomSheet != null) {
-            qrCodeBottomSheet.updateColors();
-        }
     }
 
 

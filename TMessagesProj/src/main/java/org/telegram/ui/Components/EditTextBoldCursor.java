@@ -49,7 +49,6 @@ import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
-import org.telegram.messenger.XiaomiUtilities;
 import org.telegram.ui.ActionBar.FloatingActionMode;
 import org.telegram.ui.ActionBar.FloatingToolbar;
 import org.telegram.ui.ActionBar.Theme;
@@ -1068,7 +1067,7 @@ public class EditTextBoldCursor extends EditTextEffects {
     }
 
     public void setHandlesColor(int color) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || XiaomiUtilities.isMIUI()) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             return;
         }
         try {

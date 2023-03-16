@@ -48,7 +48,6 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.TranslateController;
 import org.telegram.messenger.Utilities;
-import org.telegram.messenger.XiaomiUtilities;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
@@ -143,17 +142,6 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         textView.setTextIsSelectable(true);
         textView.setHighlightColor(getThemedColor(Theme.key_chat_inTextSelectionHighlight));
         int handleColor = getThemedColor(Theme.key_chat_TextSelectionCursor);
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !XiaomiUtilities.isMIUI()) {
-                Drawable left = textView.getTextSelectHandleLeft();
-                left.setColorFilter(handleColor, PorterDuff.Mode.SRC_IN);
-                textView.setTextSelectHandleLeft(left);
-
-                Drawable right = textView.getTextSelectHandleRight();
-                right.setColorFilter(handleColor, PorterDuff.Mode.SRC_IN);
-                textView.setTextSelectHandleRight(right);
-            }
-        } catch (Exception e) {}
         textViewContainer.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         listView = new RecyclerListView(context) {

@@ -493,9 +493,6 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
     }
 
     private int fixIntentFlags(int flags) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && XiaomiUtilities.isMIUI()) {
-            return flags & ~(PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_MUTABLE);
-        }
         return flags;
     }
 
