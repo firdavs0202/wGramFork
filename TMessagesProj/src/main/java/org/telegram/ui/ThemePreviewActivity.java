@@ -3815,7 +3815,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage1", R.string.ThemePreviewDialogMessage1);
             customDialog.id = 0;
             customDialog.unread_count = 0;
-            customDialog.pinned = true;
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date;
@@ -3829,7 +3828,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage2", R.string.ThemePreviewDialogMessage2);
             customDialog.id = 1;
             customDialog.unread_count = 2;
-            customDialog.pinned = false;
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60;
@@ -3843,7 +3841,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage3", R.string.ThemePreviewDialogMessage3);
             customDialog.id = 2;
             customDialog.unread_count = 3;
-            customDialog.pinned = false;
             customDialog.muted = true;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 2;
@@ -3857,7 +3854,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage4", R.string.ThemePreviewDialogMessage4);
             customDialog.id = 3;
             customDialog.unread_count = 0;
-            customDialog.pinned = false;
             customDialog.muted = false;
             customDialog.type = 2;
             customDialog.date = date - 60 * 60 * 3;
@@ -3871,7 +3867,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage5", R.string.ThemePreviewDialogMessage5);
             customDialog.id = 4;
             customDialog.unread_count = 0;
-            customDialog.pinned = false;
             customDialog.muted = false;
             customDialog.type = 1;
             customDialog.date = date - 60 * 60 * 4;
@@ -3885,7 +3880,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage6", R.string.ThemePreviewDialogMessage6);
             customDialog.id = 5;
             customDialog.unread_count = 0;
-            customDialog.pinned = false;
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 5;
@@ -3899,7 +3893,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage7", R.string.ThemePreviewDialogMessage7);
             customDialog.id = 6;
             customDialog.unread_count = 0;
-            customDialog.pinned = false;
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 6;
@@ -3913,7 +3906,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.message = LocaleController.getString("ThemePreviewDialogMessage8", R.string.ThemePreviewDialogMessage8);
             customDialog.id = 0;
             customDialog.unread_count = 0;
-            customDialog.pinned = false;
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 7;

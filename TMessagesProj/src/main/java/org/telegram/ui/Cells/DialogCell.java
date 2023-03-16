@@ -247,7 +247,6 @@ public class DialogCell extends BaseCell {
         public String message;
         public int id;
         public int unread_count;
-        public boolean pinned;
         public boolean muted;
         public int type;
         public int date;
@@ -406,9 +405,6 @@ public class DialogCell extends BaseCell {
 
     private float reorderIconProgress;
     private boolean drawReorder;
-    private boolean drawPinBackground;
-    private boolean drawPin;
-    private boolean drawPinForced;
     private int pinTop;
     private int pinLeft;
     protected int translateY;
@@ -771,11 +767,10 @@ public class DialogCell extends BaseCell {
     }
 
     public boolean getIsPinned() {
-        return drawPin || drawPinForced;
+        return false;
     }
 
     public void setPinForced(boolean value) {
-        drawPinForced = value;
         if (getMeasuredWidth() > 0 && getMeasuredHeight() > 0) {
             buildLayout();
         }
@@ -883,7 +878,6 @@ public class DialogCell extends BaseCell {
         drawVerified = false;
         drawPremium = false;
         drawScam = 0;
-        drawPinBackground = false;
         thumbsCount = 0;
         hasVideoThumb = false;
         nameLayoutEllipsizeByGradient = false;
@@ -1563,7 +1557,6 @@ public class DialogCell extends BaseCell {
             promoDialog = false;
             MessagesController messagesController = MessagesController.getInstance(currentAccount);
             if (dialogsType == DialogsActivity.DIALOGS_TYPE_DEFAULT && messagesController.isPromoDialog(currentDialogId, true)) {
-                drawPinBackground = true;
                 promoDialog = true;
                 if (messagesController.promoDialogType == MessagesController.PROMO_TYPE_PROXY) {
                     timeString = LocaleController.getString("UseProxySponsor", R.string.UseProxySponsor);
@@ -1599,9 +1592,6 @@ public class DialogCell extends BaseCell {
                         if (useMeForMyMessages) {
                             nameString = LocaleController.getString("FromYou", R.string.FromYou);
                         } else {
-                            if (dialogsType == DialogsActivity.DIALOGS_TYPE_FORWARD) {
-                                drawPinBackground = true;
-                            }
                             nameString = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                         }
                     } else {
@@ -2408,7 +2398,6 @@ public class DialogCell extends BaseCell {
             lastMessageDate = customDialog.date;
             lastUnreadState = customDialog.unread_count != 0;
             unreadCount = customDialog.unread_count;
-            drawPin = customDialog.pinned;
             dialogMuted = customDialog.muted;
             hasUnmutedTopics = false;
             for (int i = 0; i < thumbImage.length; ++i) {
@@ -2453,9 +2442,6 @@ public class DialogCell extends BaseCell {
                         lastMessageDate = dialog.last_message_date;
                         if (dialogsType == 7 || dialogsType == 8) {
                             MessagesController.DialogFilter filter = MessagesController.getInstance(currentAccount).selectedDialogFilter[dialogsType == 8 ? 1 : 0];
-                            drawPin = filter != null && filter.pinnedDialogs.indexOfKey(dialog.id) >= 0;
-                        } else {
-                            drawPin = currentDialogFolderId == 0 && dialog.pinned;
                         }
                         if (message != null) {
                             lastSendState = message.messageOwner.send_state;
@@ -2469,18 +2455,12 @@ public class DialogCell extends BaseCell {
                     lastMessageDate = 0;
                     clearingDialog = false;
                 }
-            } else {
-                drawPin = false;
             }
             if (forumTopic != null) {
                 unreadCount = forumTopic.unread_count;
                 mentionCount = forumTopic.unread_mentions_count;
                 reactionMentionCount = forumTopic.unread_reactions_count;
             }
-            if (dialogsType == DialogsActivity.DIALOGS_TYPE_ADD_USERS_TO) {
-                drawPin = false;
-            }
-
             if (mask != 0) {
                 boolean continueUpdate = false;
                 if (user != null && (mask & MessagesController.UPDATE_MASK_STATUS) != 0) {
@@ -3015,7 +2995,7 @@ public class DialogCell extends BaseCell {
             Theme.dialogs_pinnedPaint.setColor(AndroidUtilities.getOffsetColor(0, Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider), archiveBackgroundProgress, 1.0f));
             Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
             canvas.drawRect(-xOffset, 0, getMeasuredWidth(), getMeasuredHeight() - translateY, Theme.dialogs_pinnedPaint);
-        } else if (getIsPinned() || drawPinBackground) {
+        } else if (getIsPinned() ) {
             Theme.dialogs_pinnedPaint.setColor(Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider));
             Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
             canvas.drawRect(-xOffset, 0, getMeasuredWidth(), getMeasuredHeight() - translateY, Theme.dialogs_pinnedPaint);
@@ -3057,7 +3037,7 @@ public class DialogCell extends BaseCell {
                     Theme.dialogs_pinnedPaint.setColor(AndroidUtilities.getOffsetColor(0, Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider), archiveBackgroundProgress, 1.0f));
                     Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
                     canvas.drawRoundRect(rect, cornersRadius, cornersRadius, Theme.dialogs_pinnedPaint);
-                } else if (getIsPinned() || drawPinBackground) {
+                } else if (getIsPinned() ) {
                     Theme.dialogs_pinnedPaint.setColor(Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider));
                     Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
                     canvas.drawRoundRect(rect, cornersRadius, cornersRadius, Theme.dialogs_pinnedPaint);
@@ -4629,7 +4609,6 @@ public class DialogCell extends BaseCell {
                     Objects.equals(lastDrawnPrintingType, printingType) &&
                     lastTopicsCount == topicCount &&
                     draftHash == lastDrawnDraftHash &&
-                    lastDrawnPinned == drawPin &&
                     lastDrawnHasCall == hasCall) {
                 return false;
             }
@@ -4663,7 +4642,6 @@ public class DialogCell extends BaseCell {
             lastDrawnSizeHash = sizeHash;
             lastDrawnDraftHash = draftHash;
             lastTopicsCount = topicCount;
-            lastDrawnPinned = drawPin;
             lastDrawnHasCall = hasCall;
 
             return true;
