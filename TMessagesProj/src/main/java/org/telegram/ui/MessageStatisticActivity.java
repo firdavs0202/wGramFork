@@ -223,7 +223,6 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
             if (chat == null &&  chatFull.id == chatId) {
                 TLRPC.Chat chatLocal = getMessagesController().getChat(chatId);
                 if (chatLocal != null) {
-                    avatarContainer.setChatAvatar(chatLocal);
                     avatarContainer.setTitle(chatLocal.title);
                 }
                 chat = chatFull;
@@ -365,7 +364,6 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
 
         TLRPC.Chat chatLocal = getMessagesController().getChat(chatId);
         if (chatLocal != null) {
-            avatarContainer.setChatAvatar(chatLocal);
             avatarContainer.setTitle(chatLocal.title);
         }
 

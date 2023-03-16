@@ -3000,7 +3000,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         avatarContainer.allowShorterStatus = true;
         avatarContainer.premiumIconHiddable = true;
         AndroidUtilities.updateViewVisibilityAnimated(avatarContainer, true, 1f, false);
-        updateTopicTitleIcon();
         if (inPreviewMode || inBubbleMode) {
             avatarContainer.setOccupyStatusBar(false);
         }
@@ -12154,14 +12153,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             pressedOnPageDownButtons = true;
                         }
                     }
-                    if (avatarContainer != null && avatarContainer.getAvatarImageView() != null) {
-                        BackupImageView avatar = avatarContainer.getAvatarImageView();
-                        avatar.getLocationInWindow(pos);
-                        AndroidUtilities.rectTmp2.set(pos[0] - off[0], pos[1] - off[1], pos[0] - off[0] + avatar.getMeasuredWidth(), pos[1] - off[1] + avatar.getMeasuredHeight());
-                        if (AndroidUtilities.rectTmp2.contains((int) ev.getX(), (int) ev.getY())) {
-                            pressedOnAvatar = true;
-                        }
-                    }
                     if (!pressedOnPageDownButtons && mentiondownButton != null) {
                         mentiondownButton.getLocationInWindow(pos);
                         AndroidUtilities.rectTmp2.set(pos[0] - off[0], pos[1] - off[1], pos[0] - off[0] + mentiondownButton.getMeasuredWidth(), pos[1] - off[1] + mentiondownButton.getMeasuredHeight());
@@ -13877,12 +13868,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         setParentActivityTitle(avatarContainer.getTitleTextView().getText());
     }
 
-    private void updateTopicTitleIcon() {
-        if (forumTopic != null && avatarContainer != null) {
-            avatarContainer.getAvatarImageView().setVisibility(View.VISIBLE);
-            ForumUtilities.setTopicIcon(avatarContainer.getAvatarImageView(), forumTopic, true, true, themeDelegate);
-        }
-    }
 
 
     private void updateTopicButtons() {
@@ -13979,9 +13964,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 return;
             }
             currentChat = chat;
-        }
-        if (avatarContainer != null) {
-            avatarContainer.checkAndUpdateAvatar();
         }
     }
 
@@ -17124,8 +17106,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (getParentActivity() == null) {
                     return;
                 }
-                updateTopicTitleIcon();
-                updateTopicHeader();
                 updateBottomOverlay();
                 updateTopPanel(true);
                 if (avatarContainer != null) {
@@ -19669,7 +19649,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (avatarContainer != null && forumTopic != null) {
             avatarContainer.setTitle(forumTopic.title);
         }
-        updateTopicTitleIcon();
     }
 
     private void createAlertView() {
@@ -28451,8 +28430,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 fragmentView.setAlpha(0);
                 contentView.setSkipBackgroundDrawing(true);
                 avatarContainer.setTranslationY(AndroidUtilities.dp(8));
-                avatarContainer.getAvatarImageView().setAlpha(0);
-                avatarContainer.getAvatarImageView().setTranslationY(-AndroidUtilities.dp(8));
                 toPullingDownTransition = true;
                 ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1f);
 
@@ -28473,16 +28450,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     previousChat.setTransitionToChatProgress(progress);
                     float y = AndroidUtilities.dp(8) * (1f - progress);
                     avatarContainer.setTranslationY(y);
-                    avatarContainer.getAvatarImageView().setTranslationY(-y);
                     y = -AndroidUtilities.dp(8) * progress;
                     previousChat.avatarContainer.setTranslationY(y);
-                    previousChat.avatarContainer.getAvatarImageView().setTranslationY(-y);
-                    avatarContainer.getAvatarImageView().setScaleX(0.8f + 0.2f * progress);
-                    avatarContainer.getAvatarImageView().setScaleY(0.8f + 0.2f * progress);
-                    avatarContainer.getAvatarImageView().setAlpha(progress);
-                    previousChat.avatarContainer.getAvatarImageView().setScaleX(0.8f + 0.2f * (1f - progress));
-                    previousChat.avatarContainer.getAvatarImageView().setScaleY(0.8f + 0.2f * (1f - progress));
-                    previousChat.avatarContainer.getAvatarImageView().setAlpha(1f - progress);
                     if (previousChat.chatActivityEnterView != null) {
                         previousChat.chatActivityEnterView.setTranslationY(-pullingBottomOffset * progress);
                     }
@@ -28529,13 +28498,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         callback.run();
                         avatarContainer.setTranslationY(0);
                         previousChat.avatarContainer.setTranslationY(0);
-                        previousChat.avatarContainer.getAvatarImageView().setTranslationY(0);
-                        avatarContainer.getAvatarImageView().setScaleX(1f);
-                        avatarContainer.getAvatarImageView().setScaleY(1f);
-                        avatarContainer.getAvatarImageView().setAlpha(1f);
-                        previousChat.avatarContainer.getAvatarImageView().setScaleX(1f);
-                        previousChat.avatarContainer.getAvatarImageView().setScaleY(1f);
-                        previousChat.avatarContainer.getAvatarImageView().setAlpha(1f);
 
                         if (previousChat.topChatPanelView != null) {
                             previousChat.topChatPanelView.setAlpha(1f);

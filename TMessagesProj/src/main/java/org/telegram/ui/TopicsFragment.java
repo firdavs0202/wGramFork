@@ -677,16 +677,8 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         deleteChatSubmenu = other.addSubItem(delete_chat_id, R.drawable.msg_leave, LocaleController.getString("LeaveMegaMenu", R.string.LeaveMegaMenu), themeDelegate);
 
         avatarContainer = new ChatAvatarContainer(context, this, false);
-        avatarContainer.getAvatarImageView().setRoundRadius(AndroidUtilities.dp(16));
         avatarContainer.setOccupyStatusBar(!AndroidUtilities.isTablet() && !inPreviewMode);
         actionBar.addView(avatarContainer, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 56, 0, 86, 0));
-
-        avatarContainer.getAvatarImageView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openProfile(true);
-            }
-        });
         recyclerListView = new TopicsRecyclerView(context) {
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -1342,7 +1334,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         args.putLong("chat_id", chatId);
         ProfileActivity fragment = new ProfileActivity(args, avatarContainer.getSharedMediaPreloader());
         fragment.setChatInfo(chatFull);
-        fragment.setPlayProfileAnimation(fragmentView.getMeasuredHeight() > fragmentView.getMeasuredWidth() && avatarContainer.getAvatarImageView().getImageReceiver().hasImageLoaded() && byAvatar ? 2 : 1);
         presentFragment(fragment);
     }
 
@@ -2322,8 +2313,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             return;
         }
         TLRPC.Chat chatLocal = getMessagesController().getChat(chatId);
-
-        avatarContainer.setChatAvatar(chatLocal);
 
         long dialog_id = -chatId;
         SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);

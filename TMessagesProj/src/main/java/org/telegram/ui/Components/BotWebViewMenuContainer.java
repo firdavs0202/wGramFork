@@ -490,7 +490,6 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
                 ChatActivity chatActivity = parentEnterView.getParentFragment();
                 ChatAvatarContainer chatAvatarContainer = chatActivity.getAvatarContainer();
                 chatAvatarContainer.setClickable(value == 0);
-                chatAvatarContainer.getAvatarImageView().setClickable(value == 0);
 
                 ActionBar actionBar = chatActivity.getActionBar();
                 if (value == 100 && parentEnterView.hasBotWebView()) {

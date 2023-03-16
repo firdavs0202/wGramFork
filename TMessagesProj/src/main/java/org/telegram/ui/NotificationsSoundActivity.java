@@ -298,17 +298,14 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
             if (dialogId < 0) {
                 if (topicId != 0) {
                     TLRPC.TL_forumTopic forumTopic = getMessagesController().getTopicsController().findTopic(-dialogId, topicId);
-                    ForumUtilities.setTopicIcon(avatarContainer.getAvatarImageView(), forumTopic, false, true, resourcesProvider);
                     avatarContainer.setTitle(forumTopic.title);
                 } else {
                     TLRPC.Chat chatLocal = getMessagesController().getChat(-dialogId);
-                    avatarContainer.setChatAvatar(chatLocal);
                     avatarContainer.setTitle(chatLocal.title);
                 }
             } else {
                 TLRPC.User user = getMessagesController().getUser(dialogId);
                 if (user != null) {
-                    avatarContainer.setUserAvatar(user);
                     avatarContainer.setTitle(ContactsController.formatName(user.first_name, user.last_name));
                 }
             }

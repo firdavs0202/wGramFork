@@ -541,7 +541,6 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
 
         TLRPC.Chat chatLocal = getMessagesController().getChat(chat.id);
 
-        avatarContainer.setChatAvatar(chatLocal);
         avatarContainer.setTitle(chatLocal.title);
         avatarContainer.setSubtitle(LocaleController.getString("Statistics", R.string.Statistics));
 

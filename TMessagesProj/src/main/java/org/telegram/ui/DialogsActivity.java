@@ -4286,7 +4286,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             avatarContainer = new ChatAvatarContainer(actionBar.getContext(), null, false);
             avatarContainer.setTitle(UserObject.getUserName(currentUser));
             avatarContainer.setSubtitle(LocaleController.formatUserStatus(currentAccount, currentUser));
-            avatarContainer.setUserAvatar(currentUser, true);
             avatarContainer.setOccupyStatusBar(false);
             avatarContainer.setLeftPadding(AndroidUtilities.dp(10));
             actionBar.addView(avatarContainer, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 0, 40, 0));
@@ -6741,9 +6740,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 presentFragmentAsPreviewWithMenu(chatActivity[0] = new ChatActivity(args), previewMenu[0]);
                 if (chatActivity[0] != null) {
                     chatActivity[0].allowExpandPreviewByClick = true;
-                    try {
-                        chatActivity[0].getAvatarContainer().getAvatarImageView().performAccessibilityAction(AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null);
-                    } catch (Exception ignore) {}
                 }
             }
             return true;

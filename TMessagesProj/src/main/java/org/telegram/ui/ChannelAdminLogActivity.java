@@ -591,7 +591,6 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
 
         avatarContainer.setTitle(currentChat.title);
         avatarContainer.setSubtitle(LocaleController.getString("EventLogAllEvents", R.string.EventLogAllEvents));
-        avatarContainer.setChatAvatar(currentChat);
 
         fragmentView = new SizeNotifierFrameLayout(context) {
 
