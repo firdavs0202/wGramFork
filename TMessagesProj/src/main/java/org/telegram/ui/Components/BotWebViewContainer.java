@@ -67,9 +67,7 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
 import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.CameraScanActivity;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
 
 import java.io.File;
@@ -134,9 +132,6 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
     private long lastDialogClosed;
     private long lastDialogCooldownTime;
 
-    private BottomSheet cameraBottomSheet;
-    private boolean hasQRPending;
-    private String lastQrText;
 
     public BotWebViewContainer(@NonNull Context context, Theme.ResourcesProvider resourcesProvider, int backgroundColor) {
         super(context);
@@ -972,53 +967,6 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
                 }
                 break;
             }
-            case "web_app_close_scan_qr_popup": {
-                if (hasQRPending) {
-                    cameraBottomSheet.dismiss();
-                }
-                break;
-            }
-            case "web_app_open_scan_qr_popup": {
-                try {
-                    if (hasQRPending || parentActivity == null) {
-                        break;
-                    }
-
-                    JSONObject jsonObject = new JSONObject(eventData);
-                    lastQrText = jsonObject.optString("text");
-                    hasQRPending = true;
-
-                    if (Build.VERSION.SDK_INT >= 23 && parentActivity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        NotificationCenter.getGlobalInstance().addObserver(new NotificationCenter.NotificationCenterDelegate() {
-                            @Override
-                            public void didReceivedNotification(int id, int account, Object... args) {
-                                if (id == NotificationCenter.onRequestPermissionResultReceived) {
-                                    int requestCode = (int) args[0];
-                                    // String[] permissions = (String[]) args[1];
-                                    int[] grantResults = (int[]) args[2];
-
-                                    if (requestCode == REQUEST_CODE_QR_CAMERA_PERMISSION) {
-                                        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onRequestPermissionResultReceived);
-
-                                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                                            openQrScanActivity();
-                                        } else {
-                                            notifyEvent("scan_qr_popup_closed", new JSONObject());
-                                        }
-                                    }
-                                }
-                            }
-                        }, NotificationCenter.onRequestPermissionResultReceived);
-                        parentActivity.requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_QR_CAMERA_PERMISSION);
-                        return;
-                    }
-
-                    openQrScanActivity();
-                } catch (JSONException e) {
-                    FileLog.e(e);
-                }
-                break;
-            }
             case "web_app_request_phone": {
                 if (currentDialog != null || !ENABLE_REQUEST_PHONE) {
                     break;
@@ -1379,34 +1327,6 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
                 break;
             }
         }
-    }
-
-    private void openQrScanActivity() {
-        if (parentActivity == null) {
-            return;
-        }
-
-        cameraBottomSheet = CameraScanActivity.showAsSheet(parentActivity, false, CameraScanActivity.TYPE_QR_WEB_BOT, new CameraScanActivity.CameraScanActivityDelegate() {
-            @Override
-            public void didFindQr(String text) {
-                try {
-                    notifyEvent("qr_text_received", new JSONObject().put("data", text));
-                } catch (JSONException e) {
-                    FileLog.e(e);
-                }
-            }
-
-            @Override
-            public String getSubtitleText() {
-                return lastQrText;
-            }
-
-            @Override
-            public void onDismiss() {
-                notifyEvent("scan_qr_popup_closed", null);
-                hasQRPending = false;
-            }
-        });
     }
 
     private JSONObject buildThemeParams() {

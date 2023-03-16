@@ -56,7 +56,6 @@ import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugProvider;
-import org.telegram.ui.Components.GroupCallPip;
 import org.telegram.ui.Components.LayoutHelper;
 
 import java.util.ArrayList;
@@ -931,9 +930,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     @Override
     public void onBackPressed() {
         if (transitionAnimationPreviewMode || startedTracking || checkTransitionAnimation() || fragmentsStack.isEmpty()) {
-            return;
-        }
-        if (GroupCallPip.onBackPressed()) {
             return;
         }
         if (currentActionBar != null && !currentActionBar.isActionModeShowed() && currentActionBar.isSearchFieldVisible) {

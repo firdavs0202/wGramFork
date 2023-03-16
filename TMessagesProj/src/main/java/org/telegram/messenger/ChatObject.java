@@ -21,7 +21,6 @@ import com.google.android.exoplayer2.util.Log;
 import org.telegram.messenger.voip.Instance;
 import org.telegram.messenger.voip.VoIPService;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.ui.GroupCallActivity;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -1388,11 +1387,6 @@ public class ChatObject {
                     visibleParticipants.add(participant);
                 }
             }
-
-            if (!GroupCallActivity.isLandscapeMode && visibleVideoParticipants.size() % 2 == 1) {
-                VideoParticipant videoParticipant = visibleVideoParticipants.remove(wideVideoIndex);
-                visibleVideoParticipants.add(videoParticipant);
-            }
         }
 
         public boolean canRecordVideo() {
@@ -2066,9 +2060,6 @@ public class ChatObject {
         private void setAspectRatio(float aspectRatio, Call call) {
             if (this.aspectRatio != aspectRatio) {
                 this.aspectRatio = aspectRatio;
-                if (!GroupCallActivity.isLandscapeMode && call.visibleVideoParticipants.size() % 2 == 1) {
-                    call.updateVisibleParticipants();
-                }
             }
         }
     }

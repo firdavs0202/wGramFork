@@ -3973,10 +3973,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 }
 
-                @Override
-                public void needStartRecordVideo(int state, boolean notify, int scheduleDate) {
-
-                }
 
                 @Override
                 public void needChangeVideoPreviewState(int state, float seekProgress) {

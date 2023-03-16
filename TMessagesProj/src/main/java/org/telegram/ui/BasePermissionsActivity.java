@@ -17,7 +17,6 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.camera.CameraController;
 import org.telegram.ui.ActionBar.AlertDialog;
 
 public class BasePermissionsActivity extends Activity {
@@ -44,11 +43,7 @@ public class BasePermissionsActivity extends Activity {
         boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
         if (requestCode == 104) {
-            if (granted) {
-                if (GroupCallActivity.groupCallInstance != null) {
-                    GroupCallActivity.groupCallInstance.enableCamera();
-                }
-            } else {
+            if (!granted) {
                 showPermissionErrorAlert(R.raw.permission_request_camera, LocaleController.getString("VoipNeedCameraPermission", R.string.VoipNeedCameraPermission));
             }
         } else if (requestCode == REQUEST_CODE_EXTERNAL_STORAGE || requestCode == REQUEST_CODE_EXTERNAL_STORAGE_FOR_AVATAR) {
@@ -82,9 +77,6 @@ public class BasePermissionsActivity extends Activity {
             } else if (!cameraGranted) {
                 showPermissionErrorAlert(R.raw.permission_request_camera, LocaleController.getString("PermissionNoCameraWithHint", R.string.PermissionNoCameraWithHint));
             } else {
-                if (SharedConfig.inappCamera) {
-                    CameraController.getInstance().initCamera(null);
-                }
                 return false;
             }
         } else if (requestCode == 18 || requestCode == 19 || requestCode == REQUEST_CODE_OPEN_CAMERA || requestCode == 22) {

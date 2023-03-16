@@ -155,7 +155,6 @@ import org.telegram.ui.Components.EmojiPacksAlert;
 import org.telegram.ui.Components.FireworksOverlay;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
 import org.telegram.ui.Components.Forum.ForumUtilities;
-import org.telegram.ui.Components.GroupCallPip;
 import org.telegram.ui.Components.JoinGroupAlert;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.MediaActionDrawable;
@@ -515,7 +514,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 }
             } else {
                 int id = drawerLayoutAdapter.getId(position);
-                 if (id == 3) {
+                if (id == 3) {
                     Bundle args = new Bundle();
                     args.putBoolean("onlyUsers", true);
                     args.putBoolean("destroyAfterSelect", true);
@@ -526,10 +525,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     drawerLayoutContainer.closeDrawer(false);
                 } else if (id == 4) {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                     if (BuildVars.DEBUG_VERSION || !preferences.getBoolean("channel_intro", false)) {
-                         preferences.edit().putBoolean("channel_intro", true).commit();
-                     }
-                     drawerLayoutContainer.closeDrawer(false);
+                    if (BuildVars.DEBUG_VERSION || !preferences.getBoolean("channel_intro", false)) {
+                        preferences.edit().putBoolean("channel_intro", true).commit();
+                    }
+                    drawerLayoutContainer.closeDrawer(false);
                 } else if (id == 6) {
                     presentFragment(new ContactsActivity(null));
                     drawerLayoutContainer.closeDrawer(false);
@@ -2824,12 +2823,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     drawerLayoutContainer.setAllowOpenDrawer(true, false);
                 }
                 pushOpened = true;
-            } else if (showGroupVoip) {
-                GroupCallActivity.create(this, AccountInstance.getInstance(currentAccount), null, null, false, null);
-                if (GroupCallActivity.groupCallInstance != null) {
-                    GroupCallActivity.groupCallUiVisible = true;
-                }
-            } else if (newContactAlert) {
+            }  else if (newContactAlert) {
                 final BaseFragment lastFragment = actionBarLayout.getLastFragment();
                 if (lastFragment != null && lastFragment.getParentActivity() != null) {
                     final String finalNewContactName = newContactName;
@@ -2906,9 +2900,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         if (isVoipIntent) {
             VoIPFragment.show(this, intentAccount[0]);
-        }
-        if (!showGroupVoip && (intent == null || !Intent.ACTION_MAIN.equals(intent.getAction())) && GroupCallActivity.groupCallInstance != null) {
-            GroupCallActivity.groupCallInstance.dismiss();
         }
 
         intent.setAction(null);
@@ -2995,9 +2986,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             PhotoViewer.getInstance().closePhoto(false, true);
         } else if (ArticleViewer.hasInstance() && ArticleViewer.getInstance().isVisible()) {
             ArticleViewer.getInstance().close(false, true);
-        }
-        if (GroupCallActivity.groupCallInstance != null) {
-            GroupCallActivity.groupCallInstance.dismiss();
         }
 
         if (!animated) {
@@ -3192,9 +3180,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         PhotoViewer.getInstance().closePhoto(false, true);
                     } else if (ArticleViewer.hasInstance() && ArticleViewer.getInstance().isVisible()) {
                         ArticleViewer.getInstance().close(false, true);
-                    }
-                    if (GroupCallActivity.groupCallInstance != null) {
-                        GroupCallActivity.groupCallInstance.dismiss();
                     }
 
                     drawerLayoutContainer.setAllowOpenDrawer(false, false);
@@ -3646,9 +3631,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                             } else if (ArticleViewer.hasInstance() && ArticleViewer.getInstance().isVisible()) {
                                 ArticleViewer.getInstance().close(false, true);
                             }
-                            if (GroupCallActivity.groupCallInstance != null) {
-                                GroupCallActivity.groupCallInstance.dismiss();
-                            }
+
                             drawerLayoutContainer.setAllowOpenDrawer(false, false);
                             if (AndroidUtilities.isTablet()) {
                                 actionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
@@ -5066,11 +5049,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         actionBarLayout.presentFragment(fragment, dialogsFragment != null, withoutAnimation, true, false);
                         presentedFragmentWithRemoveLast = dialogsFragment != null;
                         if (videoPath != null) {
-                            fragment.openVideoEditor(videoPath, sendingText);
                             videoEditorOpened = true;
                             sendingText = null;
                         } else if (photoPathsArray != null && photoPathsArray.size() > 0) {
-                            photosEditorOpened = fragment.openPhotosEditor(photoPathsArray, message == null || message.length() == 0 ? sendingText : message);
                             if (photosEditorOpened) {
                                 sendingText = null;
                             }
@@ -5231,17 +5212,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             UserConfig.getInstance(currentAccount).saveConfig(false);
         }
         if (requestCode == 105) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (ApplicationLoader.canDrawOverlays = Settings.canDrawOverlays(this)) {
-                    if (GroupCallActivity.groupCallInstance != null) {
-                        GroupCallActivity.groupCallInstance.dismissInternal();
-                    }
-                    AndroidUtilities.runOnUIThread(() -> {
-                        GroupCallPip.clearForce();
-                        GroupCallPip.updateVisibility(LaunchActivity.this);
-                    }, 200);
-                }
-            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -5368,10 +5338,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         super.onStart();
         Browser.bindCustomTabsService(this);
         ApplicationLoader.mainInterfaceStopped = false;
-        GroupCallPip.updateVisibility(this);
-        if (GroupCallActivity.groupCallInstance != null) {
-            GroupCallActivity.groupCallInstance.onResume();
-        }
     }
 
     @Override
@@ -5379,10 +5345,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         super.onStop();
         Browser.unbindCustomTabsService(this);
         ApplicationLoader.mainInterfaceStopped = true;
-        GroupCallPip.updateVisibility(this);
-        if (GroupCallActivity.groupCallInstance != null) {
-            GroupCallActivity.groupCallInstance.onPause();
-        }
     }
 
     @Override
@@ -5401,9 +5363,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         if (ContentPreviewViewer.hasInstance()) {
             ContentPreviewViewer.getInstance().destroy();
-        }
-        if (GroupCallActivity.groupCallInstance != null) {
-            GroupCallActivity.groupCallInstance.dismissInternal();
         }
         PipRoundVideoView pipRoundVideoView = PipRoundVideoView.getInstance();
         MediaController.getInstance().setBaseActivity(this, false);
@@ -6051,9 +6010,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
                 FrameLayout container = null;
                 BaseFragment fragment = null;
-                if (GroupCallActivity.groupCallUiVisible && GroupCallActivity.groupCallInstance != null) {
-                    container = GroupCallActivity.groupCallInstance.getContainer();
-                }
 
                 if (container == null) {
                     fragment = mainFragmentsStack.get(mainFragmentsStack.size() - 1);
@@ -6206,9 +6162,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             boolean mutedByAdmin = participant != null && !participant.can_self_unmute && participant.muted;
             wasMutedByAdminRaisedHand = mutedByAdmin && participant.raise_hand_rating != 0;
 
-            if (!checkOnly && wasMuted && !wasMutedByAdminRaisedHand && !mutedByAdmin && GroupCallActivity.groupCallInstance == null) {
-                showVoiceChatTooltip(UndoView.ACTION_VOIP_CAN_NOW_SPEAK);
-            }
         } else {
             wasMutedByAdminRaisedHand = false;
         }

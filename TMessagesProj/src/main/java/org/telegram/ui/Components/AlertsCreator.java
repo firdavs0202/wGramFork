@@ -4379,14 +4379,10 @@ public class AlertsCreator {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         String svg = RLottieDrawable.readRes(null, R.raw.pip_voice_request);
 
-        GroupCallPipButton button = new GroupCallPipButton(context, 0, true);
-        button.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         FrameLayout frameLayout = new FrameLayout(context) {
             @Override
             protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
                 super.onLayout(changed, left, top, right, bottom);
-                button.setTranslationY(getMeasuredHeight() * 0.28f - button.getMeasuredWidth() / 2f);
-                button.setTranslationX(getMeasuredWidth() * 0.82f - button.getMeasuredWidth() / 2f);
             }
         };
         frameLayout.setBackground(new GradientDrawable(GradientDrawable.Orientation.BL_TR, new int[]{0xFF192A3D, 0xFF19514E}));
@@ -4403,8 +4399,6 @@ public class AlertsCreator {
         View background = new View(context);
         background.setBackground(new BitmapDrawable(SvgHelper.getBitmap(svg, AndroidUtilities.dp(320), AndroidUtilities.dp(320 * aspectRatio), false)));
         frameLayout.addView(background, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, 0, -1, -1, -1, -1));
-
-        frameLayout.addView(button, LayoutHelper.createFrame(117, 117));
 
         builder.setTopView(frameLayout);
         builder.setTitle(LocaleController.getString("PermissionDrawAboveOtherAppsGroupCallTitle", R.string.PermissionDrawAboveOtherAppsGroupCallTitle));

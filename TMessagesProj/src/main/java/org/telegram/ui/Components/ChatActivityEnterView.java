@@ -127,7 +127,6 @@ import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.messenger.browser.Browser;
-import org.telegram.messenger.camera.CameraController;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
@@ -201,8 +200,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         void onMessageEditEnd(boolean loading);
 
         void didPressAttachButton();
-
-        void needStartRecordVideo(int state, boolean notify, int scheduleDate);
 
         void needChangeVideoPreviewState(int state, float seekProgress);
 
@@ -665,9 +662,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     private Runnable onFinishInitCameraRunnable = new Runnable() {
         @Override
         public void run() {
-            if (delegate != null) {
-                delegate.needStartRecordVideo(0, true, 0);
-            }
         }
     };
 
@@ -705,11 +699,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         parentActivity.requestPermissions(permissions, BasePermissionsActivity.REQUEST_CODE_VIDEO_MESSAGE);
                         return;
                     }
-                }
-                if (!CameraController.getInstance().isCameraInitied()) {
-                    CameraController.getInstance().initCamera(onFinishInitCameraRunnable);
-                } else {
-                    onFinishInitCameraRunnable.run();
                 }
                 if (!recordingAudioVideo) {
                     recordingAudioVideo = true;
@@ -1101,9 +1090,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 } else if (pressed) {
                     if (event.getAction() == MotionEvent.ACTION_UP) {
                         if (pauseRect.contains(x, y)) {
-                            if (isInVideoMode()) {
-                                delegate.needStartRecordVideo(3, true, 0);
-                            } else {
+                            if (!isInVideoMode()) {
                                 MediaController.getInstance().stopRecording(2, true, 0);
                                 delegate.needStartRecordAudio(0);
                             }
@@ -2019,9 +2006,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 if (recordCircle.isSendButtonVisible()) {
                     if (!hasRecordVideo || calledRecordRunnable) {
                         startedDraggingX = -1;
-                        if (hasRecordVideo && isInVideoMode()) {
-                            delegate.needStartRecordVideo(1, true, 0);
-                        } else {
+                        if (!hasRecordVideo || !isInVideoMode()) {
                             if (recordingAudioVideo && isInScheduleMode()) {
                                 AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate), () -> MediaController.getInstance().stopRecording(0, false, 0), resourcesProvider);
                             }
@@ -2057,10 +2042,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_CANCEL && recordingAudioVideo) {
                     if (recordCircle.slideToCancelProgress < 0.7f) {
-                        if (hasRecordVideo && isInVideoMode()) {
-                            CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-                            delegate.needStartRecordVideo(2, true, 0);
-                        } else {
+                        if (!hasRecordVideo || !isInVideoMode()) {
                             delegate.needStartRecordAudio(0);
                             MediaController.getInstance().stopRecording(0, false, 0);
                         }
@@ -2083,10 +2065,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 float dist = (x - startedDraggingX);
                 float alpha = 1.0f + dist / distCanMove;
                 if (alpha < 0.45) {
-                    if (hasRecordVideo && isInVideoMode()) {
-                        CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-                        delegate.needStartRecordVideo(2, true, 0);
-                    } else {
+                    if (!hasRecordVideo || !isInVideoMode()) {
                         delegate.needStartRecordAudio(0);
                         MediaController.getInstance().stopRecording(0, false, 0);
                     }
@@ -2105,17 +2084,16 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
                     } else if (!hasRecordVideo || calledRecordRunnable) {
                         startedDraggingX = -1;
-                        if (hasRecordVideo && isInVideoMode()) {
-                            CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-                            delegate.needStartRecordVideo(1, true, 0);
-                        } else if (!sendVoiceEnabled) {
-                            delegate.needShowMediaBanHint();
-                        } else {
-                            if (recordingAudioVideo && isInScheduleMode()) {
-                                AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate), () -> MediaController.getInstance().stopRecording(0, false, 0), resourcesProvider);
+                        if (!hasRecordVideo || !isInVideoMode()) {
+                            if (!sendVoiceEnabled) {
+                                delegate.needShowMediaBanHint();
+                            } else {
+                                if (recordingAudioVideo && isInScheduleMode()) {
+                                    AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate), () -> MediaController.getInstance().stopRecording(0, false, 0), resourcesProvider);
+                                }
+                                delegate.needStartRecordAudio(0);
+                                MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0);
                             }
-                            delegate.needStartRecordAudio(0);
-                            MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0);
                         }
                         recordingAudioVideo = false;
                         messageTransitionIsRunning = false;
@@ -2165,10 +2143,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
 
                 if (alpha == 0) {
-                    if (hasRecordVideo && isInVideoMode()) {
-                        CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-                        delegate.needStartRecordVideo(2, true, 0);
-                    } else {
+                    if (!hasRecordVideo || !isInVideoMode()) {
                         delegate.needStartRecordAudio(0);
                         MediaController.getInstance().stopRecording(0, false, 0);
                     }
@@ -2583,10 +2558,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             if (runningAnimationAudio != null && runningAnimationAudio.isRunning()) {
                 return;
             }
-            if (videoToSendMessageObject != null) {
-                CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-                delegate.needStartRecordVideo(2, true, 0);
-            } else {
+            if (videoToSendMessageObject == null) {
                 MessageObject playing = MediaController.getInstance().getPlayingMessageObject();
                 if (playing != null && playing == audioToSendMessageObject) {
                     MediaController.getInstance().cleanupPlayer(true, true);
@@ -4067,10 +4039,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     }
 
     public void cancelRecordingAudioVideo() {
-        if (hasRecordVideo && isInVideoMode()) {
-            CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-            delegate.needStartRecordVideo(5, true, 0);
-        } else {
+        if (!hasRecordVideo || !isInVideoMode()) {
             delegate.needStartRecordAudio(0);
             MediaController.getInstance().stopRecording(0, false, 0);
         }
@@ -5019,7 +4988,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             }
         }
         if (videoToSendMessageObject != null) {
-            delegate.needStartRecordVideo(4, notify, scheduleDate);
             hideRecordedAudioPanel(true);
             checkSendButton(true);
             return;
@@ -9497,10 +9465,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
 
         public void onCancelButtonPressed() {
-            if (hasRecordVideo && isInVideoMode()) {
-                CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-                delegate.needStartRecordVideo(5, true, 0);
-            } else {
+            if (!hasRecordVideo || !isInVideoMode()) {
                 delegate.needStartRecordAudio(0);
                 MediaController.getInstance().stopRecording(0, false, 0);
             }
@@ -9761,7 +9726,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             if (isInVideoMode()) {
                 if (t >= 59500 && !stoppedInternal) {
                     startedDraggingX = -1;
-                    delegate.needStartRecordVideo(3, true, 0);
                     stoppedInternal = true;
                 }
             }

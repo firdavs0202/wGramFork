@@ -50,7 +50,6 @@ import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.JoinCallAlert;
 import org.telegram.ui.Components.JoinCallByUrlAlert;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.GroupCallActivity;
 import org.telegram.ui.LaunchActivity;
 
 import java.io.File;
@@ -222,7 +221,6 @@ public class VoIPHelper {
 					if (!TextUtils.isEmpty(hash)) {
 						voIPService.setGroupCallHash(hash);
 					}
-					GroupCallActivity.create((LaunchActivity) activity, AccountInstance.getInstance(UserConfig.selectedAccount), null, null, false, null);
 				}
 			}
 		} else if (VoIPService.callIShouldHavePutIntoIntent == null) {
@@ -262,20 +260,20 @@ public class VoIPHelper {
 		}
 		if (checkJoiner && chat != null) {
 			JoinCallAlert.open(activity, -chat.id, accountInstance, fragment, createCall ? JoinCallAlert.TYPE_CREATE : JoinCallAlert.TYPE_JOIN, null, (selectedPeer, hasFew, schedule) -> {
-				if (createCall && schedule) {
-					GroupCallActivity.create((LaunchActivity) activity, accountInstance, chat, selectedPeer, hasFew, hash);
-				} else if (!hasFew && hash != null) {
-					JoinCallByUrlAlert alert = new JoinCallByUrlAlert(activity, chat) {
-						@Override
-						protected void onJoin() {
-							doInitiateCall(user, chat, hash, selectedPeer, false, videoCall, canVideoCall, createCall, activity, fragment, accountInstance, false, true);
+				if (!createCall || !schedule) {
+					if (!hasFew && hash != null) {
+						JoinCallByUrlAlert alert = new JoinCallByUrlAlert(activity, chat) {
+							@Override
+							protected void onJoin() {
+								doInitiateCall(user, chat, hash, selectedPeer, false, videoCall, canVideoCall, createCall, activity, fragment, accountInstance, false, true);
+							}
+						};
+						if (fragment != null) {
+							fragment.showDialog(alert);
 						}
-					};
-					if (fragment != null) {
-						fragment.showDialog(alert);
+					} else {
+						doInitiateCall(user, chat, hash, selectedPeer, hasFew, videoCall, canVideoCall, createCall, activity, fragment, accountInstance, false, true);
 					}
-				} else {
-					doInitiateCall(user, chat, hash, selectedPeer, hasFew, videoCall, canVideoCall, createCall, activity, fragment, accountInstance, false, true);
 				}
 			});
 			return;
@@ -312,7 +310,6 @@ public class VoIPHelper {
 		if (chat != null && !createCall) {
 			ChatObject.Call call = accountInstance.getMessagesController().getGroupCall(chat.id, false);
 			if (call != null && call.isScheduled()) {
-				GroupCallActivity.create((LaunchActivity) activity, accountInstance, chat, peer, hasFewPeers, hash);
 				return;
 			}
 		}

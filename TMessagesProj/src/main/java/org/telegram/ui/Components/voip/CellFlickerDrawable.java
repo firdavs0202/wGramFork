@@ -130,7 +130,7 @@ public class CellFlickerDrawable {
         gradientShader2.setLocalMatrix(matrix);
     }
 
-    public void draw(Canvas canvas, GroupCallMiniTextureView view) {
+    public void draw(Canvas canvas) {
         long currentTime = System.currentTimeMillis();
         if (lastUpdateTime != 0) {
             long dt = currentTime - lastUpdateTime;
@@ -152,18 +152,18 @@ public class CellFlickerDrawable {
             return;
         }
 
-        float x = (parentWidth + size * 2) * progress - size - view.getX();
+        float x = (parentWidth + size * 2) * progress - size;
         matrix.setTranslate(x, 0);
         gradientShader.setLocalMatrix(matrix);
         gradientShader2.setLocalMatrix(matrix);
 
-        AndroidUtilities.rectTmp.set(view.textureView.currentClipHorizontal, view.textureView.currentClipVertical, view.textureView.getMeasuredWidth() - view.textureView.currentClipHorizontal, view.textureView.getMeasuredHeight() - view.textureView.currentClipVertical);
+        AndroidUtilities.rectTmp.set(0, 0, 0, 0);
         canvas.drawRect(AndroidUtilities.rectTmp, paint);
         if (drawFrame) {
             if (frameInside) {
                 AndroidUtilities.rectTmp.inset(paintOutline.getStrokeWidth() / 2f, paintOutline.getStrokeWidth() / 2f);
             }
-            canvas.drawRoundRect(AndroidUtilities.rectTmp, view.textureView.roundRadius, view.textureView.roundRadius, paintOutline);
+            canvas.drawRoundRect(AndroidUtilities.rectTmp, 0, 0, paintOutline);
         }
     }
 

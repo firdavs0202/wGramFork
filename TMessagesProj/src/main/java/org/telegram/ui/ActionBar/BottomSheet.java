@@ -57,7 +57,6 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
-import org.telegram.messenger.camera.CameraView;
 import org.telegram.ui.Components.AnimationProperties;
 import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -644,12 +643,6 @@ public class BottomSheet extends Dialog {
 
         @Override
         protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-            if (child instanceof CameraView) {
-                if (shouldOverlayCameraViewOverNavBar()) {
-                    drawNavigationBar(canvas, 1f);
-                }
-                return super.drawChild(canvas, child, drawingTime);
-            }
             return super.drawChild(canvas, child, drawingTime);
         }
 

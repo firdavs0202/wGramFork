@@ -19,7 +19,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -610,17 +609,6 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                 return;
             }
             switch (currentType) {
-                case ACTION_TYPE_QR_LOGIN: {
-                    if (getParentActivity() == null) {
-                        return;
-                    }
-                    if (Build.VERSION.SDK_INT >= 23 && getParentActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-                        return;
-                    }
-                    processOpenQrReader();
-                    break;
-                }
                 case ACTION_TYPE_SET_PASSCODE: {
                     presentFragment(new PasscodeActivity(PasscodeActivity.TYPE_SETUP_CODE), true);
                     break;
@@ -825,14 +813,12 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                 }
             }
         } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                processOpenQrReader();
-            } else {
+            if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 new AlertDialog.Builder(getParentActivity())
                         .setMessage(AndroidUtilities.replaceTags(LocaleController.getString("QRCodePermissionNoCameraWithHint", R.string.QRCodePermissionNoCameraWithHint)))
                         .setPositiveButton(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), (dialogInterface, i) -> {
                             try {
-                                Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                                 intent.setData(Uri.parse("package:" + ApplicationLoader.applicationContext.getPackageName()));
                                 getParentActivity().startActivity(intent);
                             } catch (Exception e) {
@@ -845,26 +831,9 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
         }
     }
 
-    public void setQrLoginDelegate(ActionIntroQRLoginDelegate actionIntroQRLoginDelegate) {
-        qrLoginDelegate = actionIntroQRLoginDelegate;
-    }
-
-    private void processOpenQrReader() {
-        CameraScanActivity.showAsSheet(this, false, CameraScanActivity.TYPE_QR, new CameraScanActivity.CameraScanActivityDelegate() {
-            @Override
-            public void didFindQr(String text) {
-                finishFragment(false);
-                qrLoginDelegate.didFindQRCode(text);
-            }
-        });
-    }
 
     public int getType() {
         return currentType;
-    }
-
-    public void setShowingAsBottomSheet(boolean showingAsBottomSheet) {
-        this.showingAsBottomSheet = showingAsBottomSheet;
     }
 
     @Override

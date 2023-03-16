@@ -103,7 +103,6 @@ import androidx.core.graphics.ColorUtils;
 import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManagerFixed;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -242,7 +241,6 @@ import org.telegram.ui.Components.HideViewAfterAnimation;
 import org.telegram.ui.Components.HintView;
 import org.telegram.ui.Components.ImageUpdater;
 import org.telegram.ui.Components.ImportingAlert;
-import org.telegram.ui.Components.InstantCameraView;
 import org.telegram.ui.Components.InviteMembersBottomSheet;
 import org.telegram.ui.Components.JoinGroupAlert;
 import org.telegram.ui.Components.LayoutHelper;
@@ -296,9 +294,7 @@ import org.telegram.ui.Delegates.ChatActivityMemberRequestsDelegate;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -492,7 +488,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private ChatActionCell floatingDateView;
     private ChatActionCell infoTopView;
     private int hideDateDelay = 500;
-    private InstantCameraView instantCameraView;
     private View overlayView;
     private boolean currentFloatingDateOnScreen;
     private boolean currentFloatingTopIsNotMessage;
@@ -1833,26 +1828,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         @Override
-        public void needStartRecordVideo(int state, boolean notify, int scheduleDate) {
-            checkInstantCameraView();
-            if (instantCameraView != null) {
-                if (state == 0) {
-                    instantCameraView.showCamera();
-                    chatListView.stopScroll();
-                    chatAdapter.updateRowsSafe();
-                } else if (state == 1 || state == 3 || state == 4) {
-                    instantCameraView.send(state, notify, scheduleDate);
-                } else if (state == 2 || state == 5) {
-                    instantCameraView.cancel(state == 2);
-                }
-            }
-        }
-
-        @Override
         public void needChangeVideoPreviewState(int state, float seekProgress) {
-            if (instantCameraView != null) {
-                instantCameraView.changeVideoPreviewState(state, seekProgress);
-            }
         }
 
         @Override
@@ -6119,9 +6095,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         contentView.addView(overlayView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
         overlayView.setVisibility(View.GONE);
         contentView.setClipChildren(false);
-
-        instantCameraView = null;
-
         bottomMessagesActionContainer = new BlurredFrameLayout(context, contentView) {
             @Override
             public void onDraw(Canvas canvas) {
@@ -6517,9 +6490,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (editingMessageObject == null || !editingMessageObject.canEditMedia() || editingMessageObjectReqId != 0) {
                     return;
                 }
-                if (button.isEditButton()) {
-                    openEditingMessageInPhotoEditor();
-                } else {
+                if (!button.isEditButton()) {
                     replyLayout.callOnClick();
                 }
             });
@@ -7508,14 +7479,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     public void dimBehindView(boolean enable) {
         dimBehindView(enable ? 0.2f : 0, true);
-    }
-
-    private void checkInstantCameraView() {
-        if (instantCameraView != null || getContext() == null) {
-            return;
-        }
-        instantCameraView = new InstantCameraView(getContext(), this, themeDelegate);
-        contentView.addView(instantCameraView, 21, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
     }
 
     private void dimBehindView(float value, boolean hidePagedownButtons) {
@@ -11982,9 +11945,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         }
                         progressView.setTranslationY(y / 2);
                         contentView.setBackgroundTranslation((int) y);
-                        if (instantCameraView != null) {
-                            instantCameraView.onPanTranslationUpdate(y);
-                        }
                         if (blurredView != null) {
                             blurredView.drawable.onPanTranslationUpdate(y);
                         }
@@ -12239,9 +12199,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (getTag(BlurBehindDrawable.TAG_DRAWING_AS_BACKGROUND) != null) {
                 return;
             }
-            if (getTag(BlurBehindDrawable.TAG_DRAWING_AS_BACKGROUND) == null && (instantCameraView != null && instantCameraView.blurFullyDrawing() || (blurredView != null && blurredView.fullyDrawing() && blurredView.getTag() != null))) {
-                return;
-            }
             super.onDraw(canvas);
         }
 
@@ -12272,7 +12229,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (!needBlur) {
                     return false;
                 }
-            } else if (getTag(BlurBehindDrawable.TAG_DRAWING_AS_BACKGROUND) == null && (instantCameraView != null && instantCameraView.blurFullyDrawing() || (blurredView != null && blurredView.fullyDrawing() && blurredView.getTag() != null))) {
+            } else if (blurredView != null && blurredView.fullyDrawing() && blurredView.getTag() != null) {
                 boolean needBlur = child == actionBar || child == chatListView || child == fragmentContextView;
                 if (needBlur) {
                     return false;
@@ -12876,7 +12833,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     int contentWidthSpec = View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY);
                     int contentHeightSpec = View.MeasureSpec.makeMeasureSpec(Math.max(AndroidUtilities.dp(10), heightSize - inputFieldHeight - (inPreviewMode && Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0) + AndroidUtilities.dp(2 + (chatActivityEnterView.isTopViewVisible() ? 48 : 0))), View.MeasureSpec.EXACTLY);
                     child.measure(contentWidthSpec, contentHeightSpec);
-                } else if (child == instantCameraView || child == overlayView) {
+                } else if (child == overlayView) {
                     int contentWidthSpec = View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY);
                     int contentHeightSpec = View.MeasureSpec.makeMeasureSpec(allHeight - inputFieldHeight - chatEmojiViewPadding + AndroidUtilities.dp(3), View.MeasureSpec.EXACTLY);
                     child.measure(contentWidthSpec, contentHeightSpec);
@@ -13099,7 +13056,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     if (keyboardSize > AndroidUtilities.dp(20) && getLayoutParams().height < 0) {
                         childTop -= keyboardSize;
                     }
-                } else if (child == instantCameraView || child == overlayView || child == animatingImageView) {
+                } else if (child == overlayView || child == animatingImageView) {
                     childTop = 0;
                 } else if (child == textSelectionHelper.getOverlayView(getContext())) {
                     childTop -= paddingBottom;
@@ -13132,9 +13089,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             progressView.setTranslationY(0);
             contentPanTranslation = 0;
             contentView.setBackgroundTranslation(0);
-            if (instantCameraView != null) {
-                instantCameraView.onPanTranslationUpdate(0);
-            }
             if (blurredView != null) {
                 blurredView.drawable.onPanTranslationUpdate(0);
             }
@@ -14034,253 +13988,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
     }
 
-    public void openVideoEditor(String videoPath, String caption) {
-        if (getParentActivity() != null) {
-            final Bitmap thumb = SendMessagesHelper.createVideoThumbnail(videoPath, MediaStore.Video.Thumbnails.MINI_KIND);
-            PhotoViewer.getInstance().setParentActivity(this, themeDelegate);
-            final ArrayList<Object> cameraPhoto = new ArrayList<>();
-            MediaController.PhotoEntry entry = new MediaController.PhotoEntry(0, 0, 0, videoPath, 0, true, 0, 0, 0);
-            entry.caption = caption;
-            cameraPhoto.add(entry);
-            PhotoViewer.getInstance().openPhotoForSelect(cameraPhoto, 0, 0, false, new PhotoViewer.EmptyPhotoViewerProvider() {
-                @Override
-                public ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index) {
-                    return new ImageReceiver.BitmapHolder(thumb, null, 0);
-                }
-
-                @Override
-                public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, boolean forceDocument) {
-                    sendMedia((MediaController.PhotoEntry) cameraPhoto.get(0), videoEditedInfo, notify, scheduleDate, forceDocument);
-                }
-
-                @Override
-                public boolean canScrollAway() {
-                    return false;
-                }
-            }, this);
-        } else {
-            fillEditingMediaWithCaption(caption, null);
-            SendMessagesHelper.prepareSendingVideo(getAccountInstance(), videoPath, null, dialog_id, replyingMessageObject, getThreadMessage(), null, null, 0, editingMessageObject, true, 0, false, false);
-            afterMessageSend();
-        }
-    }
-
-    public boolean openPhotosEditor(ArrayList<SendMessagesHelper.SendingMediaInfo> photoPathes, CharSequence caption) {
-        final ArrayList<MediaController.PhotoEntry> entries = new ArrayList<>();
-        for (int a = 0; a < photoPathes.size(); ++a) {
-            SendMessagesHelper.SendingMediaInfo photoInfo = photoPathes.get(a);
-            String path = null;
-            if (photoInfo.path != null) {
-                path = photoInfo.path;
-            } else if (photoInfo.uri != null) {
-//                path = AndroidUtilities.getPath(photoInfo.uri);
-                if (path == null) {
-                    try {
-                        final File file = AndroidUtilities.generatePicturePath(isSecretChat(), "");
-                        InputStream in = ApplicationLoader.applicationContext.getContentResolver().openInputStream(photoInfo.uri);
-                        FileOutputStream fos = new FileOutputStream(file);
-                        byte[] buffer = new byte[8 * 1024];
-                        int lengthRead;
-                        while ((lengthRead = in.read(buffer)) > 0) {
-                            fos.write(buffer, 0, lengthRead);
-                            fos.flush();
-                        }
-                        in.close();
-                        fos.close();
-                        path = file.getAbsolutePath();
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        continue;
-                    }
-                }
-            }
-            if (path == null) {
-                continue;
-            }
-            int orientation = 0;
-            try {
-                ExifInterface ei = new ExifInterface(path);
-                int exif = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                switch (exif) {
-                    case ExifInterface.ORIENTATION_ROTATE_90:
-                        orientation = 90;
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_180:
-                        orientation = 180;
-                        break;
-                    case ExifInterface.ORIENTATION_ROTATE_270:
-                        orientation = 270;
-                        break;
-                }
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
-            MediaController.PhotoEntry entry = new MediaController.PhotoEntry(0, 0, 0, path, orientation, photoInfo.isVideo, 0, 0, 0);
-            if (a == photoPathes.size() - 1 && caption != null) {
-                entry.caption = caption;
-            }
-            entries.add(entry);
-        }
-        if (entries.isEmpty()) {
-            return false;
-        }
-        if (getParentActivity() != null) {
-            final boolean[] checked = new boolean[entries.size()];
-            Arrays.fill(checked, true);
-            PhotoViewer.getInstance().setParentActivity(this, themeDelegate);
-            PhotoViewer.getInstance().openPhotoForSelect(new ArrayList<>(entries), entries.size() - 1, 0, false, new PhotoViewer.EmptyPhotoViewerProvider() {
-                @Override
-                public ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index) {
-                    return null;
-                }
-
-                @Override
-                public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, boolean forceDocument) {
-                    for (int i = entries.size() - 1; i >= 0; --i) {
-                        if (!checked[i]) {
-                            entries.remove(i);
-                        }
-                    }
-                    sendPhotosGroup(entries, notify, scheduleDate, forceDocument);
-                }
-
-                @Override
-                public int setPhotoChecked(int index, VideoEditedInfo videoEditedInfo) {
-                    return index;
-                }
-
-                @Override
-                public boolean isPhotoChecked(int index) {
-                    return checked[index];
-                }
-
-                @Override
-                public boolean canScrollAway() {
-                    return false;
-                }
-            }, this);
-        } else {
-            fillEditingMediaWithCaption(caption, null);
-            sendPhotosGroup(entries, false, 0, false);
-            afterMessageSend();
-        }
-        return true;
-    }
-
-    private void sendPhotosGroup(ArrayList<MediaController.PhotoEntry> entries, boolean notify, int scheduleDate, boolean forceDocument) {
-        if (!entries.isEmpty()) {
-            ArrayList<SendMessagesHelper.SendingMediaInfo> photos = new ArrayList<>();
-            for (MediaController.PhotoEntry entry : entries) {
-                SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
-                if (!entry.isVideo && entry.imagePath != null) {
-                    info.path = entry.imagePath;
-                } else if (entry.path != null) {
-                    info.path = entry.path;
-                }
-                info.thumbPath = entry.thumbPath;
-                info.isVideo = entry.isVideo;
-                info.caption = entry.caption != null ? entry.caption.toString() : null;
-                info.entities = entry.entities;
-                info.masks = entry.stickers;
-                info.ttl = entry.ttl;
-                info.videoEditedInfo = entry.editedInfo;
-                info.canDeleteAfter = entry.canDeleteAfter;
-                photos.add(info);
-                entry.reset();
-            }
-            fillEditingMediaWithCaption(photos.get(0).caption, photos.get(0).entities);
-            SendMessagesHelper.prepareSendingMedia(getAccountInstance(), photos, dialog_id, replyingMessageObject, getThreadMessage(), null, forceDocument, true, null, notify, scheduleDate, photos.get(0).updateStickersOrder);
-            afterMessageSend();
-            if (chatActivityEnterView != null) {
-                chatActivityEnterView.setFieldText("");
-            }
-        }
-        if (scheduleDate != 0) {
-            if (scheduledMessagesCount == -1) {
-                scheduledMessagesCount = 0;
-            }
-            scheduledMessagesCount += entries.size();
-            updateScheduledInterface(true);
-        }
-    }
-
-    private void openEditingMessageInPhotoEditor() {
-        if (editingMessageObject == null || !editingMessageObject.canEditMedia() || editingMessageObjectReqId != 0) {
-            return;
-        }
-        if (!editingMessageObject.isPhoto() && !editingMessageObject.isVideo()) {
-            return;
-        }
-        final MessageObject object = editingMessageObject;
-        File file = null;
-        if (!TextUtils.isEmpty(object.messageOwner.attachPath)) {
-            file = new File(object.messageOwner.attachPath);
-            if (!file.exists()) {
-                file = null;
-            }
-        }
-        if (file == null) {
-            file = FileLoader.getInstance(currentAccount).getPathToMessage(object.messageOwner);
-        }
-        if (!file.exists()) {
-            return;
-        }
-        PhotoViewer.getInstance().setParentActivity(this, themeDelegate);
-        final ArrayList<Object> photos = new ArrayList<>();
-        final MediaController.PhotoEntry entry = new MediaController.PhotoEntry(0, 0, 0, file.getAbsolutePath(), 0, object.isVideo(), 0, 0, 0);
-        entry.caption = chatActivityEnterView.getFieldText();
-        photos.add(entry);
-        PhotoViewer.getInstance().openPhotoForSelect(photos, 0, 2, false, new PhotoViewer.EmptyPhotoViewerProvider() {
-            @Override
-            public PhotoViewer.PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview) {
-                return ChatActivity.this.getPlaceForPhoto(object, null, needPreview, true);
-            }
-
-            @Override
-            public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, boolean forceDocument) {
-                if (editingMessageObject != object) {
-                    return;
-                }
-                if (entry.isCropped || entry.isPainted || entry.isFiltered || videoEditedInfo != null) {
-                    sendMedia(entry, videoEditedInfo, notify, scheduleDate, forceDocument);
-                } else {
-                    chatActivityEnterView.doneEditingMessage();
-                }
-            }
-
-            @Override
-            public boolean canCaptureMorePhotos() {
-                return false;
-            }
-
-            @Override
-            public boolean allowSendingSubmenu() {
-                return false;
-            }
-
-            @Override
-            public MessageObject getEditingMessageObject() {
-                return editingMessageObject == object ? object : null;
-            }
-
-            @Override
-            public void onCaptionChanged(CharSequence caption) {
-                if (editingMessageObject == object) {
-                    chatActivityEnterView.setFieldText(caption, true);
-                }
-            }
-
-            @Override
-            public boolean closeKeyboard() {
-                if (chatActivityEnterView != null && isKeyboardVisible()) {
-                    chatActivityEnterView.closeKeyboard();
-                    return true;
-                }
-                return false;
-            }
-        }, this);
-    }
-
     private PhotoViewer.PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, boolean needPreview, boolean onlyIfVisible) {
         int count = chatListView.getChildCount();
 
@@ -14435,8 +14142,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                     if (paused) {
                         startVideoEdit = videoPath;
-                    } else {
-                        openVideoEditor(videoPath, null);
                     }
                 } else {
                     if (editingMessageObject == null && chatMode == MODE_SCHEDULED) {
@@ -16114,9 +15819,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             Long chatId = (Long) args[0];
             if (dialog_id == -chatId) {
                 groupCall = getMessagesController().getGroupCall(currentChat.id, false);
-                if (fragmentContextView != null) {
-                    fragmentContextView.checkCall(openAnimationStartTime == 0 || SystemClock.elapsedRealtime() < openAnimationStartTime + 150);
-                }
                 checkGroupCallJoin(false);
             }
         } else if (id == NotificationCenter.didLoadChatInviter) {
@@ -16151,9 +15853,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 long prevLinkedChatId = chatInfo != null ? chatInfo.linked_chat_id : 0;
                 chatInfo = chatFull;
                 groupCall = getMessagesController().getGroupCall(currentChat.id, true);
-                if (ChatObject.isChannel(currentChat) && currentChat.megagroup && fragmentContextView != null) {
-                    fragmentContextView.checkCall(openAnimationStartTime == 0 || SystemClock.elapsedRealtime() < openAnimationStartTime + 150);
-                }
                 loadSendAsPeers(fragmentBeginToShow);
                 if (chatActivityEnterView != null) {
                     chatActivityEnterView.updateSendAsButton(fragmentBeginToShow);
@@ -20776,10 +20475,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         if (startVideoEdit != null) {
-            AndroidUtilities.runOnUIThread(() -> {
-                openVideoEditor(startVideoEdit, null);
-                startVideoEdit = null;
-            });
         }
 
         if (chatListView != null && (chatActivityEnterView == null || !chatActivityEnterView.isEditingMessage())) {
@@ -21417,9 +21112,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 VoIPService sharedInstance = VoIPService.getSharedInstance();
                 if (sharedInstance != null) {
                     if (sharedInstance.groupCall != null && message.messageOwner.action.call.id == sharedInstance.groupCall.call.id) {
-                        if (getParentActivity() instanceof LaunchActivity) {
-                            GroupCallActivity.create((LaunchActivity) getParentActivity(), AccountInstance.getInstance(currentAccount), null, null, false, null);
-                        } else {
+                        if (!(getParentActivity() instanceof LaunchActivity)) {
                             Intent intent = new Intent(getParentActivity(), LaunchActivity.class).setAction("voip_chat");
                             intent.putExtra("currentAccount", VoIPService.getSharedInstance().getAccount());
                             getParentActivity().startActivity(intent);
@@ -21430,9 +21123,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                     return true;
                 } else if (fragmentContextView != null && getGroupCall() != null) {
-                    if (VoIPService.getSharedInstance() != null) {
-                        GroupCallActivity.create((LaunchActivity) getParentActivity(), AccountInstance.getInstance(VoIPService.getSharedInstance().getAccount()), null, null, false, null);
-                    } else {
+                    if (VoIPService.getSharedInstance() == null) {
                         ChatObject.Call call = getGroupCall();
                         if (call == null) {
                             return false;
@@ -26129,100 +25820,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     int index;
                     if ((index = animatingMessageObjects.indexOf(message)) != -1) {
                         boolean applyAnimation = false;
-                        if (message.type == MessageObject.TYPE_ROUND_VIDEO && instantCameraView != null && instantCameraView.getTextureView() != null) {
-                            applyAnimation = true;
-                            messageCell.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                                @Override
-                                public boolean onPreDraw() {
-
-                                    PipRoundVideoView pipRoundVideoView = PipRoundVideoView.getInstance();
-                                    if (pipRoundVideoView != null) {
-                                        pipRoundVideoView.showTemporary(true);
-                                    }
-
-                                    messageCell.getViewTreeObserver().removeOnPreDrawListener(this);
-                                    ImageReceiver imageReceiver = messageCell.getPhotoImage();
-                                    float w = imageReceiver.getImageWidth();
-                                    org.telegram.ui.Components.Rect rect = instantCameraView.getCameraRect();
-                                    float scale = w / rect.width;
-                                    int[] position = new int[2];
-                                    messageCell.getTransitionParams().ignoreAlpha = true;
-                                    messageCell.setAlpha(0.0f);
-                                    messageCell.setTimeAlpha(0.0f);
-                                    messageCell.getLocationOnScreen(position);
-                                    position[0] += imageReceiver.getImageX() - messageCell.getAnimationOffsetX();
-                                    position[1] += imageReceiver.getImageY() - messageCell.getTranslationY();
-                                    final InstantCameraView.InstantViewCameraContainer cameraContainer = instantCameraView.getCameraContainer();
-                                    cameraContainer.setPivotX(0.0f);
-                                    cameraContainer.setPivotY(0.0f);
-                                    AnimatorSet animatorSet = new AnimatorSet();
-
-                                    cameraContainer.setImageReceiver(imageReceiver);
-
-                                    instantCameraView.cancelBlur();
-
-                                    AnimatorSet allAnimators = new AnimatorSet();
-                                    animatorSet.playTogether(
-                                            ObjectAnimator.ofFloat(cameraContainer, View.SCALE_X, scale),
-                                            ObjectAnimator.ofFloat(cameraContainer, View.SCALE_Y, scale),
-                                            ObjectAnimator.ofFloat(cameraContainer, View.TRANSLATION_Y, position[1] - rect.y),
-                                            ObjectAnimator.ofFloat(instantCameraView.getSwitchButtonView(), View.ALPHA, 0.0f),
-                                            ObjectAnimator.ofInt(instantCameraView.getPaint(), AnimationProperties.PAINT_ALPHA, 0),
-                                            ObjectAnimator.ofFloat(instantCameraView.getMuteImageView(), View.ALPHA, 0.0f)
-                                    );
-                                    animatorSet.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
-                                    ObjectAnimator o = ObjectAnimator.ofFloat(cameraContainer, View.TRANSLATION_X, position[0] - rect.x);
-                                    o.setInterpolator(CubicBezierInterpolator.DEFAULT);
-
-                                    allAnimators.playTogether(o, animatorSet);
-                                    allAnimators.setStartDelay(120);
-                                    allAnimators.setDuration(180);
-
-                                    if (instantCameraView != null) {
-                                        instantCameraView.setIsMessageTransition(true);
-                                    }
-                                    allAnimators.addListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            messageCell.setAlpha(1.0f);
-                                            messageCell.getTransitionParams().ignoreAlpha = false;
-                                            Property<ChatMessageCell, Float> ALPHA = new AnimationProperties.FloatProperty<ChatMessageCell>("alpha") {
-                                                @Override
-                                                public void setValue(ChatMessageCell object, float value) {
-                                                    object.setTimeAlpha(value);
-                                                }
-
-                                                @Override
-                                                public Float get(ChatMessageCell object) {
-                                                    return object.getTimeAlpha();
-                                                }
-                                            };
-
-                                            AnimatorSet animatorSet = new AnimatorSet();
-                                            animatorSet.playTogether(
-                                                    ObjectAnimator.ofFloat(cameraContainer, View.ALPHA, 0.0f),
-                                                    ObjectAnimator.ofFloat(messageCell, ALPHA, 1.0f)
-                                            );
-                                            animatorSet.setDuration(100);
-                                            animatorSet.setInterpolator(new DecelerateInterpolator());
-                                            animatorSet.addListener(new AnimatorListenerAdapter() {
-                                                @Override
-                                                public void onAnimationEnd(Animator animation) {
-                                                    if (instantCameraView != null) {
-                                                        instantCameraView.setIsMessageTransition(false);
-                                                        instantCameraView.hideCamera(true);
-                                                        instantCameraView.setVisibility(View.INVISIBLE);
-                                                    }
-                                                }
-                                            });
-                                            animatorSet.start();
-                                        }
-                                    });
-                                    allAnimators.start();
-                                    return true;
-                                }
-                            });
-                        } else if (message.isAnyKindOfSticker() && !message.isAnimatedEmojiStickers()) {
+                        if (message.isAnyKindOfSticker() && !message.isAnimatedEmojiStickers()) {
                             applyAnimation = true;
                             messageCell.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                                 @Override
@@ -28266,10 +27864,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 final View contentView = scrimPopupWindow.getContentView();
                 contentView.setBackgroundColor(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground));
                 contentView.invalidate();
-            }
-
-            if (instantCameraView != null) {
-                instantCameraView.invalidateBlur();
             }
 
             if (chatActivityEnterTopView != null && chatActivityEnterTopView.getEditView() != null) {

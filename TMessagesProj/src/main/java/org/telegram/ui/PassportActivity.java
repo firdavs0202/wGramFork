@@ -4007,51 +4007,6 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
                     getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 22);
                     return;
                 }
-                CameraScanActivity fragment = new CameraScanActivity(org.telegram.ui.CameraScanActivity.TYPE_MRZ);
-                fragment.setDelegate(new CameraScanActivity.CameraScanActivityDelegate() {
-                    @Override
-                    public void didFindMrzInfo(MrzRecognizer.Result result) {
-                        if (!TextUtils.isEmpty(result.firstName)) {
-                            inputFields[FIELD_NAME].setText(result.firstName);
-                        }
-                        if (!TextUtils.isEmpty(result.middleName)) {
-                            inputFields[FIELD_MIDNAME].setText(result.middleName);
-                        }
-                        if (!TextUtils.isEmpty(result.lastName)) {
-                            inputFields[FIELD_SURNAME].setText(result.lastName);
-                        }
-                        if (result.gender != MrzRecognizer.Result.GENDER_UNKNOWN) {
-                            switch (result.gender) {
-                                case MrzRecognizer.Result.GENDER_MALE:
-                                    currentGender = "male";
-                                    inputFields[FIELD_GENDER].setText(LocaleController.getString("PassportMale", R.string.PassportMale));
-                                    break;
-                                case MrzRecognizer.Result.GENDER_FEMALE:
-                                    currentGender = "female";
-                                    inputFields[FIELD_GENDER].setText(LocaleController.getString("PassportFemale", R.string.PassportFemale));
-                                    break;
-                            }
-                        }
-                        if (!TextUtils.isEmpty(result.nationality)) {
-                            currentCitizeship = result.nationality;
-                            String country = languageMap.get(currentCitizeship);
-                            if (country != null) {
-                                inputFields[FIELD_CITIZENSHIP].setText(country);
-                            }
-                        }
-                        if (!TextUtils.isEmpty(result.issuingCountry)) {
-                            currentResidence = result.issuingCountry;
-                            String country = languageMap.get(currentResidence);
-                            if (country != null) {
-                                inputFields[FIELD_RESIDENCE].setText(country);
-                            }
-                        }
-                        if (result.birthDay > 0 && result.birthMonth > 0 && result.birthYear > 0) {
-                            inputFields[FIELD_BIRTHDAY].setText(String.format(Locale.US, "%02d.%02d.%d", result.birthDay, result.birthMonth, result.birthYear));
-                        }
-                    }
-                });
-                presentFragment(fragment);
             });
 
             bottomCell = new TextInfoPrivacyCell(context);

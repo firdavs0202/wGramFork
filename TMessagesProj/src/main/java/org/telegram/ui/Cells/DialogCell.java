@@ -4343,7 +4343,6 @@ public class DialogCell extends BaseCell {
         public Integer lastDrawnPrintingType;
         public int lastDrawnSizeHash;
         public int lastTopicsCount;
-        public boolean lastDrawnPinned;
         public boolean lastDrawnHasCall;
 
 

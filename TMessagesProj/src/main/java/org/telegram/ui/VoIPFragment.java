@@ -1,7 +1,5 @@
 package org.telegram.ui;
 
-import static org.telegram.ui.GroupCallActivity.TRANSITION_DURATION;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -548,13 +546,6 @@ public class VoIPFragment implements VoIPService.StateListener, NotificationCent
                     if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
                         AndroidUtilities.rectTmp.set(currentTextureView.getX(), currentTextureView.getY(), currentTextureView.getX() + currentTextureView.getMeasuredWidth(), currentTextureView.getY() + currentTextureView.getMeasuredHeight());
                         AndroidUtilities.rectTmp.inset((currentTextureView.getMeasuredHeight() * currentTextureView.scaleTextureToFill - currentTextureView.getMeasuredHeight()) / 2, (currentTextureView.getMeasuredWidth() * currentTextureView.scaleTextureToFill - currentTextureView.getMeasuredWidth()) / 2);
-                        if (!GroupCallActivity.isLandscapeMode) {
-                            AndroidUtilities.rectTmp.top = Math.max(AndroidUtilities.rectTmp.top, ActionBar.getCurrentActionBarHeight());
-                            AndroidUtilities.rectTmp.bottom = Math.min(AndroidUtilities.rectTmp.bottom, currentTextureView.getMeasuredHeight() - AndroidUtilities.dp(90));
-                        } else {
-                            AndroidUtilities.rectTmp.top = Math.max(AndroidUtilities.rectTmp.top, ActionBar.getCurrentActionBarHeight());
-                            AndroidUtilities.rectTmp.right = Math.min(AndroidUtilities.rectTmp.right, currentTextureView.getMeasuredWidth() - AndroidUtilities.dp(90));
-                        }
                         canZoomGesture = AndroidUtilities.rectTmp.contains(ev.getX(), ev.getY());
                         if (!canZoomGesture) {
                             finishZoom();
@@ -1035,7 +1026,7 @@ public class VoIPFragment implements VoIPService.StateListener, NotificationCent
                     fragmentView.invalidate();
                 }
             });
-            zoomBackAnimator.setDuration(TRANSITION_DURATION);
+            zoomBackAnimator.setDuration(0);
             zoomBackAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
             zoomBackAnimator.start();
         }

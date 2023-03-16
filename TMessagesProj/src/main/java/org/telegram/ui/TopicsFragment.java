@@ -2611,9 +2611,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             Long chatId = (Long) args[0];
             if (this.chatId == chatId) {
                 groupCall = getMessagesController().getGroupCall(chatId, false);
-                if (fragmentContextView != null) {
-                    fragmentContextView.checkCall(!fragmentBeginToShow);
-                }
             }
         } else if (id == NotificationCenter.notificationsSettingsUpdated) {
             updateTopicsList(false, false);

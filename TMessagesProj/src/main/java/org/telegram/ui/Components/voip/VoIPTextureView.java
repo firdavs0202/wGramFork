@@ -32,7 +32,6 @@ import org.telegram.messenger.Utilities;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
-import org.telegram.ui.GroupCallActivity;
 import org.webrtc.RendererCommon;
 import org.webrtc.TextureViewRenderer;
 
@@ -505,8 +504,6 @@ public class VoIPTextureView extends FrameLayout {
             });
             if (animateNextDuration != 0) {
                 currentAnimation.setDuration(animateNextDuration);
-            } else {
-                currentAnimation.setDuration(GroupCallActivity.TRANSITION_DURATION);
             }
             currentAnimation.setInterpolator(CubicBezierInterpolator.DEFAULT);
             currentAnimation.addListener(new AnimatorListenerAdapter() {
