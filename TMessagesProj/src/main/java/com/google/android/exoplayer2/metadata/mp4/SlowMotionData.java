@@ -19,11 +19,14 @@ import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

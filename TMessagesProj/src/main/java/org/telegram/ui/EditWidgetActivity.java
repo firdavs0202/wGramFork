@@ -854,7 +854,7 @@ public class EditWidgetActivity extends BaseFragment {
                     if (widgetPreviewCell != null) {
                         widgetPreviewCell.updateDialogs();
                     }
-                }, selectedDialogs);
+                });
                 bottomSheet.setSelectedContacts(selectedDialogs);
                 showDialog(bottomSheet);
             }
@@ -993,7 +993,6 @@ public class EditWidgetActivity extends BaseFragment {
                     drawable2.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_checkboxCheck), PorterDuff.Mode.MULTIPLY));
                     CombinedDrawable combinedDrawable = new CombinedDrawable(drawable1, drawable2);
                     cell.setTextAndIcon(LocaleController.getString("SelectChats", R.string.SelectChats), combinedDrawable, chatsStartRow != -1);
-                    cell.getImageView().setPadding(0, AndroidUtilities.dp(7), 0, 0);
                     break;
                 }
                 case 3: {

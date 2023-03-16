@@ -17,7 +17,9 @@ package com.google.android.exoplayer2.upstream;
 
 import android.content.Context;
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.BandwidthMeter.EventListener.EventDispatcher;
 import com.google.android.exoplayer2.util.Assertions;
@@ -28,6 +30,7 @@ import com.google.common.base.Ascii;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.HashMap;
 import java.util.Map;
 

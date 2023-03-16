@@ -16,8 +16,10 @@
 package com.google.android.exoplayer2.source.hls.playlist;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.drm.DrmInitData;
+
 import java.util.List;
 import java.util.Map;
 

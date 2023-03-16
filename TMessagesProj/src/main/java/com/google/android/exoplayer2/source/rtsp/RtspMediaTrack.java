@@ -26,8 +26,10 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;

@@ -51,17 +51,14 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AdjustPanLayoutHelper;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.FloatingToolbar;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PhotoViewer;
-import org.telegram.ui.PremiumPreviewFragment;
 
 public class PhotoViewerCaptionEnterView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayoutPhoto.SizeNotifierFrameLayoutPhotoDelegate {
 
@@ -637,50 +634,6 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
 
             @Override
             public void onAnimatedEmojiUnlockClick() {
-                new PremiumFeatureBottomSheet(new BaseFragment() {
-                    @Override
-                    public int getCurrentAccount() {
-                        return currentAccount;
-                    }
-
-                    @Override
-                    public Context getContext() {
-                        return PhotoViewerCaptionEnterView.this.getContext();
-                    }
-
-                    @Override
-                    public Activity getParentActivity() {
-                        Context context = getContext();
-                        while (context instanceof ContextWrapper) {
-                            if (context instanceof Activity) {
-                                return (Activity) context;
-                            }
-                            context = ((ContextWrapper) context).getBaseContext();
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    public Dialog getVisibleDialog() {
-                        return new Dialog(PhotoViewerCaptionEnterView.this.getContext()) {
-                            @Override
-                            public void dismiss() {
-                                if (getParentActivity() instanceof LaunchActivity && ((LaunchActivity) getParentActivity()).getActionBarLayout() != null) {
-                                    parentLayout = ((LaunchActivity) getParentActivity()).getActionBarLayout();
-                                    if (parentLayout != null && parentLayout.getLastFragment() != null && parentLayout.getLastFragment().getVisibleDialog() != null) {
-                                        Dialog dialog = parentLayout.getLastFragment().getVisibleDialog();
-                                        if (dialog instanceof ChatAttachAlert) {
-                                            ((ChatAttachAlert) dialog).dismiss(true);
-                                        } else {
-                                            dialog.dismiss();
-                                        }
-                                    }
-                                }
-                                PhotoViewer.getInstance().closePhoto(false, false);
-                            }
-                        };
-                    }
-                }, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false).show();
             }
 
             @Override

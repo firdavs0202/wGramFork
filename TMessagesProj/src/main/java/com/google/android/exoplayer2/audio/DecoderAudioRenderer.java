@@ -26,11 +26,13 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import android.media.AudioDeviceInfo;
 import android.os.Handler;
 import android.os.SystemClock;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.DoNotInline;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -60,6 +62,7 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.errorprone.annotations.ForOverride;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

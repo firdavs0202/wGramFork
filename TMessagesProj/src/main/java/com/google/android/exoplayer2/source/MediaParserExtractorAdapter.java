@@ -24,7 +24,9 @@ import android.media.MediaParser;
 import android.media.MediaParser.SeekPoint;
 import android.net.Uri;
 import android.util.Pair;
+
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -35,6 +37,7 @@ import com.google.android.exoplayer2.source.mediaparser.MediaParserUtil;
 import com.google.android.exoplayer2.source.mediaparser.OutputConsumerAdapterV30;
 import com.google.android.exoplayer2.upstream.DataReader;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

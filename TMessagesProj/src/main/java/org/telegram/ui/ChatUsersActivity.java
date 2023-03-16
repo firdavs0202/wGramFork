@@ -849,51 +849,6 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                         Bundle args = new Bundle();
                         args.putBoolean("addToGroup", true);
                         args.putLong(isChannel ? "channelId" : "chatId", currentChat.id);
-                        GroupCreateActivity fragment = new GroupCreateActivity(args);
-                        fragment.setInfo(info);
-                        fragment.setIgnoreUsers(contactsMap != null && contactsMap.size() != 0 ? contactsMap : participantsMap);
-                        fragment.setDelegate(new GroupCreateActivity.ContactsAddActivityDelegate() {
-                            @Override
-                            public void didSelectUsers(ArrayList<TLRPC.User> users, int fwdCount) {
-                                if (fragment.getParentActivity() == null) {
-                                    return;
-                                }
-                                getMessagesController().addUsersToChat(currentChat, ChatUsersActivity.this, users, fwdCount, user -> {
-                                    ChatUsersActivity.DiffCallback savedState = saveState();
-                                    ArrayList<TLObject> array = contactsMap != null && contactsMap.size() != 0 ? contacts : participants;
-                                    LongSparseArray<TLObject> map = contactsMap != null && contactsMap.size() != 0 ? contactsMap : participantsMap;
-                                    if (map.get(user.id) == null) {
-                                        if (ChatObject.isChannel(currentChat)) {
-                                            TLRPC.TL_channelParticipant channelParticipant1 = new TLRPC.TL_channelParticipant();
-                                            channelParticipant1.inviter_id = getUserConfig().getClientUserId();
-                                            channelParticipant1.peer = new TLRPC.TL_peerUser();
-                                            channelParticipant1.peer.user_id = user.id;
-                                            channelParticipant1.date = getConnectionsManager().getCurrentTime();
-                                            array.add(0, channelParticipant1);
-                                            map.put(user.id, channelParticipant1);
-                                        } else {
-                                            TLRPC.ChatParticipant participant = new TLRPC.TL_chatParticipant();
-                                            participant.user_id = user.id;
-                                            participant.inviter_id = getUserConfig().getClientUserId();
-                                            array.add(0, participant);
-                                            map.put(user.id, participant);
-                                        }
-                                    }
-                                    if (array == participants) {
-                                        sortAdmins(participants);
-                                    }
-                                    updateListAnimated(savedState);
-                                }, user -> {
-
-                                }, null);
-                            }
-
-                            @Override
-                            public void needAddBot(TLRPC.User user) {
-                                openRightsEdit(user.id, null, null, null, "", true, ChatRightsEditActivity.TYPE_ADMIN, false);
-                            }
-                        });
-                        presentFragment(fragment);
                     }
                     return;
                 } else if (position == recentActionsRow) {

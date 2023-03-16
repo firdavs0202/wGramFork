@@ -19,10 +19,13 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.graphics.Typeface;
 import android.text.Layout;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.text.span.TextAnnotation;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

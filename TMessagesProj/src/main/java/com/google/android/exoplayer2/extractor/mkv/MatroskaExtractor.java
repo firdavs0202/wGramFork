@@ -25,9 +25,11 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.util.Pair;
 import android.util.SparseArray;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -55,6 +57,12 @@ import com.google.android.exoplayer2.video.ColorInfo;
 import com.google.android.exoplayer2.video.DolbyVisionConfig;
 import com.google.android.exoplayer2.video.HevcConfig;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -70,10 +78,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /** Extracts data from the Matroska and WebM container formats. */
 public class MatroskaExtractor implements Extractor {

@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.source;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Timeline;

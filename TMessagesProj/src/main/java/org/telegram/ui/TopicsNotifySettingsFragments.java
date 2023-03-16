@@ -218,7 +218,7 @@ public class TopicsNotifySettingsFragments extends BaseFragment {
                     break;
                 case VIEW_TYPE_ADD_EXCEPTION:
                     TextCell textCell = new TextCell(parent.getContext());
-                    textCell.setTextAndIcon(LocaleController.getString("NotificationsAddAnException", R.string.NotificationsAddAnException), R.drawable.msg_contact_add, true);
+                    textCell.setTextAndIcon(LocaleController.getString("NotificationsAddAnException", R.string.NotificationsAddAnException), true);
                     textCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
                     view = textCell;
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));

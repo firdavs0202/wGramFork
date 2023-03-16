@@ -19,8 +19,6 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.camera.CameraController;
 import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.AlertsCreator;
 
 public class BasePermissionsActivity extends Activity {
     public final static int REQUEST_CODE_GEOLOCATION = 2,
@@ -101,7 +99,6 @@ public class BasePermissionsActivity extends Activity {
 
     protected AlertDialog createPermissionErrorAlert(@RawRes int animationId, String message) {
         return new AlertDialog.Builder(this)
-                .setTopAnimation(animationId, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground))
                 .setMessage(AndroidUtilities.replaceTags(message))
                 .setPositiveButton(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), (dialogInterface, i) -> {
                     try {

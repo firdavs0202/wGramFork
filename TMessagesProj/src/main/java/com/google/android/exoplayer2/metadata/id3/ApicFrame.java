@@ -19,9 +19,12 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 
 /** APIC (Attached Picture) ID3 frame. */

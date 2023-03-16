@@ -20,7 +20,9 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -37,6 +39,7 @@ import com.google.android.exoplayer2.util.FileTypes;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.common.primitives.Ints;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;

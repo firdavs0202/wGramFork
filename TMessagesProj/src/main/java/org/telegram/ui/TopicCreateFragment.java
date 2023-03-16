@@ -50,7 +50,6 @@ import org.telegram.ui.Components.Forum.ForumBubbleDrawable;
 import org.telegram.ui.Components.Forum.ForumUtilities;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LetterDrawable;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.ReplaceableIconDrawable;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 
@@ -510,21 +509,6 @@ public class TopicCreateFragment extends BaseFragment {
             return;
         }
 
-        if (!free && docId != 0 && !getUserConfig().isPremium()) {
-            TLRPC.Document emoji = AnimatedEmojiDrawable.findDocument(currentAccount, documentId);
-            if (emoji != null) {
-                BulletinFactory.of(this)
-                        .createEmojiBulletin(
-                                emoji,
-                                AndroidUtilities.replaceTags(LocaleController.getString("UnlockPremiumEmojiHint", R.string.UnlockPremiumEmojiHint)),
-                                LocaleController.getString("PremiumMore", R.string.PremiumMore),
-                                () -> {
-                                    new PremiumFeatureBottomSheet(this, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false).show();
-                                }
-                        ).show();
-            }
-            return;
-        }
 
         selectedEmojiDocumentId = docId;
 

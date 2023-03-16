@@ -45,22 +45,16 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Keep;
-import androidx.core.graphics.ColorUtils;
-import androidx.core.math.MathUtils;
-
-import com.google.android.gms.vision.Frame;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
-import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.LocationController;
 import org.telegram.messenger.MediaController;
@@ -855,8 +849,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     }
 
     private void showSpeedHint() {
-        if (fragment != null && getParent() instanceof ViewGroup) {
-            speedHintView = new HintView(getContext(), 6, true) {
+        if (fragment != null && fragment.getFragmentView() instanceof ViewGroup) {
+            speedHintView = new HintView(getContext(), 5, true) {
                 @Override
                 public void setVisibility(int visibility) {
                     super.setVisibility(visibility);
@@ -867,11 +861,11 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                     }
                 }
             };
-            speedHintView.setExtraTranslationY(AndroidUtilities.dp(-12));
+            speedHintView.setExtraTranslationY(AndroidUtilities.dp(64 + 8));
             speedHintView.setText(LocaleController.getString("SpeedHint"));
             MarginLayoutParams params = new MarginLayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.rightMargin = AndroidUtilities.dp(3);
-            ((ViewGroup) getParent()).addView(speedHintView, params);
+            ((ViewGroup) fragment.getFragmentView()).addView(speedHintView, params);
             speedHintView.showForView(playbackSpeedButton, true);
         }
     }

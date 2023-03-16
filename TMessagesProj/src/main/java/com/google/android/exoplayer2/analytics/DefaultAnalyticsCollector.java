@@ -21,8 +21,10 @@ import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
 
 import android.os.Looper;
 import android.util.SparseArray;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DeviceInfo;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -59,10 +61,12 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import java.io.IOException;
-import java.util.List;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Data collector that forwards analytics events to {@link AnalyticsListener AnalyticsListeners}.

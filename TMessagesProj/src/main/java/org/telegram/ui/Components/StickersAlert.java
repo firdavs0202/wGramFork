@@ -80,11 +80,7 @@ import org.telegram.ui.Cells.EmptyCell;
 import org.telegram.ui.Cells.FeaturedStickerSetInfoCell;
 import org.telegram.ui.Cells.StickerEmojiCell;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.Components.Premium.PremiumButtonView;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.ContentPreviewViewer;
-import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.ProfileActivity;
 
 import java.io.File;
@@ -98,20 +94,27 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
 
     public interface StickersAlertDelegate {
         void onStickerSelected(TLRPC.Document sticker, String query, Object parent, MessageObject.SendAnimationData sendAnimationData, boolean clearsInputField, boolean notify, int scheduleDate);
+
         boolean canSchedule();
+
         boolean isInScheduleMode();
     }
 
     public interface StickersAlertInstallDelegate {
         void onStickerSetInstalled();
+
         void onStickerSetUninstalled();
     }
 
     public interface StickersAlertCustomButtonDelegate {
         String getCustomButtonTextColorKey();
+
         String getCustomButtonRippleColorKey();
+
         String getCustomButtonColorKey();
+
         String getCustomButtonText();
+
         boolean onCustomButtonPressed();
     }
 
@@ -124,7 +127,6 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
     private TextView descriptionTextView;
     private ActionBarMenuItem optionsButton;
     private TextView pickerBottomLayout;
-    private PremiumButtonView premiumButtonView;
     private FrameLayout pickerBottomFrameLayout;
     private FrameLayout stickerPreviewLayout;
     private TextView previewSendButton;
@@ -223,7 +225,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
             return 0;
         }
     };
-    
+
     public StickersAlert(Context context, Object parentObject, TLObject object, Theme.ResourcesProvider resourcesProvider) {
         super(context, false, resourcesProvider);
         fixNavigationBar();
@@ -591,6 +593,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
             }
 
             private Boolean statusBarOpen;
+
             private void updateLightStatusBar(boolean open) {
                 if (statusBarOpen != null && statusBarOpen == open) {
                     return;
@@ -841,11 +844,6 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
         pickerBottomFrameLayout.addView(pickerBottomLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48));
         containerView.addView(pickerBottomFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM));
 
-        premiumButtonView = new PremiumButtonView(context, false);
-        premiumButtonView.setIcon(R.raw.unlock_icon);
-        premiumButtonView.setVisibility(View.INVISIBLE);
-        containerView.addView(premiumButtonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 8, 0, 8, 8));
-
         stickerPreviewLayout = new FrameLayout(context);
         stickerPreviewLayout.setVisibility(View.GONE);
         stickerPreviewLayout.setSoundEffectsEnabled(false);
@@ -1091,22 +1089,12 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
                 }
 
                 if (hasPremiumEmoji) {
-                    premiumButtonView.setVisibility(View.VISIBLE);
                     pickerBottomLayout.setBackground(null);
 
                     setButton(null, null, null);
-                    premiumButtonView.setButton(LocaleController.getString("UnlockPremiumEmoji", R.string.UnlockPremiumEmoji), e -> {
-                        if (parentFragment != null) {
-                            new PremiumFeatureBottomSheet(parentFragment, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false).show();
-                        } else if (getContext() instanceof LaunchActivity) {
-                            ((LaunchActivity) getContext()).presentFragment(new PremiumPreviewFragment(null));
-                        }
-                    });
 
                     return;
                 }
-            } else {
-                premiumButtonView.setVisibility(View.INVISIBLE);
             }
 
             boolean notInstalled;
@@ -1155,7 +1143,8 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
                             type = MediaDataController.TYPE_MASK;
                         } else if (stickerSet.set.emojis) {
                             type = MediaDataController.TYPE_EMOJIPACKS;
-                        };
+                        }
+                        ;
                         try {
                             if (error == null) {
                                 if (showTooltipWhenToggle) {
@@ -1357,6 +1346,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
     private int checkReqId;
     private boolean lastNameAvailable;
     private String setTitle;
+
     private void checkUrlAvailable(TextView message, String text, boolean forceAvailable) {
         if (forceAvailable) {
             message.setText(LocaleController.getString("ImportStickersLinkAvailable", R.string.ImportStickersLinkAvailable));
@@ -1536,6 +1526,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
     }
 
     private Runnable onDismissListener;
+
     public void setOnDismissListener(Runnable onDismissListener) {
         this.onDismissListener = onDismissListener;
     }

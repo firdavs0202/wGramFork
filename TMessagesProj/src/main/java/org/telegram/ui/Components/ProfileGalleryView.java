@@ -41,7 +41,8 @@ import org.telegram.ui.ProfileActivity;
 
 import java.util.ArrayList;
 
-public class ProfileGalleryView extends CircularViewPager implements NotificationCenter.NotificationCenterDelegate {
+public class
+ProfileGalleryView extends CircularViewPager implements NotificationCenter.NotificationCenterDelegate {
 
     private final PointF downPoint = new PointF();
     private final int touchSlop;

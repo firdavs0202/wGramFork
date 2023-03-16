@@ -19,8 +19,10 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.media.MediaCodec;
 import android.view.Surface;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AuxEffectInfo;
@@ -30,6 +32,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoDecoderOutputBufferRenderer;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
 import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

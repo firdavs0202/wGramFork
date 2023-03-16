@@ -8,18 +8,11 @@
 
 package org.telegram.ui;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.net.Uri;
-import android.os.Build;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.util.Base64;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,24 +20,18 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.SvgHelper;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
@@ -62,19 +49,13 @@ import org.telegram.ui.Cells.SessionCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
-import org.telegram.ui.Components.AlertsCreator;
-import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.BulletinFactory;
-import org.telegram.ui.Components.ColoredImageSpan;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EmptyTextProgressView;
 import org.telegram.ui.Components.FlickerLoadingView;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.LinkSpanDrawable;
 import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.Components.URLSpanNoUnderline;
 import org.telegram.ui.Components.UndoView;
-import org.telegram.ui.Components.voip.CellFlickerDrawable;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -91,7 +72,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
     private TLRPC.TL_authorization currentSession;
     private boolean loading;
     private UndoView undoView;
-//    private RecyclerItemsEnterAnimator itemsEnterAnimator;
     private int ttlDays;
 
     private int currentType;
@@ -109,27 +89,18 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
     private int otherSessionsEndRow;
     private int otherSessionsTerminateDetail;
     private int noOtherSessionsRow;
-    private int qrCodeRow;
-    private int qrCodeDividerRow;
     private int rowCount;
     private int ttlHeaderRow;
     private int ttlRow;
     private int ttlDivideRow;
 
     private int repeatLoad = 0;
-
-    private boolean highlightLinkDesktopDevice;
-    private boolean fragmentOpened;
     private Delegate delegate;
 
     public SessionsActivity(int type) {
         currentType = type;
     }
 
-    public SessionsActivity setHighlightLinkDesktopDevice() {
-        this.highlightLinkDesktopDevice = true;
-        return this;
-    }
 
     @Override
     public boolean onFragmentCreate() {
@@ -151,12 +122,8 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
         super.onTransitionAnimationEnd(isOpen, backward);
 
         if (isOpen && !backward) {
-            fragmentOpened = true;
             for (int i = 0; i < listView.getChildCount(); i++) {
                 View ch = listView.getChildAt(i);
-                if (ch instanceof ScanQRCodeView) {
-                    ((ScanQRCodeView) ch).buttonTextView.invalidate();
-                }
             }
         }
     }
@@ -483,21 +450,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
             frameLayout.addView(undoView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 8, 0, 8, 8));
         }
 
-//        itemsEnterAnimator = new RecyclerItemsEnterAnimator(listView, true) {
-//            @Override
-//            public View getProgressView() {
-//                View progressView = null;
-//                for (int i = 0; i < listView.getChildCount(); i++) {
-//                    View child = listView.getChildAt(i);
-//                    if (listView.getChildAdapterPosition(child) >= 0 && child instanceof SessionCell && ((SessionCell) child).isStub()) {
-//                        progressView = child;
-//                    }
-//                }
-//                return progressView;
-//            }
-//        };
-//        itemsEnterAnimator.animateAlphaProgressView = false;
-
         updateRows();
         return fragmentView;
     }
@@ -644,16 +596,11 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
         otherSessionsEndRow = -1;
         otherSessionsTerminateDetail = -1;
         noOtherSessionsRow = -1;
-        qrCodeRow = -1;
-        qrCodeDividerRow = -1;
         ttlHeaderRow = -1;
         ttlRow = -1;
         ttlDivideRow = -1;
 
-        if (currentType == 0 && getMessagesController().qrLoginCamera) {
-            qrCodeRow = rowCount++;
-            qrCodeDividerRow = rowCount++;
-        }
+
         if (loading) {
             if (currentType == 0) {
                 currentSessionSectionRow = rowCount++;
@@ -706,7 +653,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
     private final int VIEW_TYPE_INFO = 1;
     private final int VIEW_TYPE_HEADER = 2;
     private final int VIEW_TYPE_SESSION = 4;
-    private final int VIEW_TYPE_SCANQR = 5;
     private final int VIEW_TYPE_SETTINGS = 6;
 
     private class ListAdapter extends RecyclerListView.SelectionAdapter {
@@ -744,9 +690,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                     view = new HeaderCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
-                case VIEW_TYPE_SCANQR:
-                    view = new ScanQRCodeView(mContext);
-                    break;
                 case VIEW_TYPE_SETTINGS:
                     view = new TextSettingsCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
@@ -769,14 +712,10 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                         textCell.setColors(Theme.key_windowBackgroundWhiteRedText2, Theme.key_windowBackgroundWhiteRedText2);
                         textCell.setTag(Theme.key_windowBackgroundWhiteRedText2);
                         if (currentType == 0) {
-                            textCell.setTextAndIcon(LocaleController.getString("TerminateAllSessions", R.string.TerminateAllSessions), R.drawable.msg_block2, false);
+                            textCell.setTextAndIcon(LocaleController.getString("TerminateAllSessions", R.string.TerminateAllSessions), false);
                         } else {
-                            textCell.setTextAndIcon(LocaleController.getString("TerminateAllWebSessions", R.string.TerminateAllWebSessions), R.drawable.msg_block2, false);
+                            textCell.setTextAndIcon(LocaleController.getString("TerminateAllWebSessions", R.string.TerminateAllWebSessions), false);
                         }
-                    } else if (position == qrCodeRow) {
-                        textCell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
-                        textCell.setTag(Theme.key_windowBackgroundWhiteBlueText4);
-                        textCell.setTextAndIcon(LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), R.drawable.msg_qrcode, !sessions.isEmpty());
                     }
                     break;
                 case VIEW_TYPE_INFO:
@@ -807,7 +746,7 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                         } else {
                             privacyCell.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                         }
-                    } else if (position == qrCodeDividerRow || position == ttlDivideRow || position == noOtherSessionsRow) {
+                    } else if (position == ttlDivideRow || position == noOtherSessionsRow) {
                         privacyCell.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                         privacyCell.setText("");
                         privacyCell.setFixedSize(12);
@@ -829,8 +768,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                         headerCell.setText(LocaleController.getString("TerminateOldSessionHeader", R.string.TerminateOldSessionHeader));
                     }
                     break;
-                case VIEW_TYPE_SCANQR:
-                    break;
                 case VIEW_TYPE_SETTINGS:
                     TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
                     String value;
@@ -850,7 +787,7 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                         if (currentSession == null) {
                             sessionCell.showStub(globalFlickerLoadingView);
                         } else {
-                            sessionCell.setSession(currentSession, !sessions.isEmpty() || !passwordSessions.isEmpty() || qrCodeRow != -1);
+                            sessionCell.setSession(currentSession, !sessions.isEmpty() || !passwordSessions.isEmpty());
                         }
                     } else if (position >= otherSessionsStartRow && position < otherSessionsEndRow) {
                         sessionCell.setSession(sessions.get(position - otherSessionsStartRow), position != otherSessionsEndRow - 1);
@@ -871,8 +808,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                 return Objects.hash(0, 2);
             } else if (position == passwordSessionsDetailRow) {
                 return Objects.hash(0, 3);
-            } else if (position == qrCodeDividerRow) {
-                return Objects.hash(0, 4);
             } else if (position == ttlDivideRow) {
                 return Objects.hash(0, 5);
             } else if (position == noOtherSessionsRow) {
@@ -901,8 +836,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                 } else if (session instanceof TLRPC.TL_webAuthorization) {
                     return Objects.hash(2, ((TLRPC.TL_webAuthorization) session).hash);
                 }
-            } else if (position == qrCodeRow) {
-                return Objects.hash(0, 12);
             } else if (position == ttlRow) {
                 return Objects.hash(0, 13);
             }
@@ -913,254 +846,17 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
         public int getItemViewType(int position) {
             if (position == terminateAllSessionsRow) {
                 return VIEW_TYPE_TEXT;
-            } else if (position == terminateAllSessionsDetailRow || position == otherSessionsTerminateDetail || position == passwordSessionsDetailRow || position == qrCodeDividerRow || position == ttlDivideRow || position == noOtherSessionsRow) {
+            } else if (position == terminateAllSessionsDetailRow || position == otherSessionsTerminateDetail || position == passwordSessionsDetailRow || position == ttlDivideRow || position == noOtherSessionsRow) {
                 return VIEW_TYPE_INFO;
             } else if (position == currentSessionSectionRow || position == otherSessionsSectionRow || position == passwordSessionsSectionRow || position == ttlHeaderRow) {
                 return VIEW_TYPE_HEADER;
             } else if (position == currentSessionRow || position >= otherSessionsStartRow && position < otherSessionsEndRow || position >= passwordSessionsStartRow && position < passwordSessionsEndRow) {
                 return VIEW_TYPE_SESSION;
-            } else if (position == qrCodeRow) {
-                return VIEW_TYPE_SCANQR;
             } else if (position == ttlRow) {
                 return VIEW_TYPE_SETTINGS;
             }
             return VIEW_TYPE_TEXT;
         }
-    }
-
-    private class ScanQRCodeView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
-
-        BackupImageView imageView;
-        TextView textView;
-        TextView buttonTextView;
-        CellFlickerDrawable flickerDrawable = new CellFlickerDrawable();
-
-        public ScanQRCodeView(@NonNull Context context) {
-            super(context);
-            imageView = new BackupImageView(context);
-            addView(imageView, LayoutHelper.createFrame(120, 120, Gravity.CENTER_HORIZONTAL, 0, 16, 0, 0));
-
-            flickerDrawable.repeatEnabled = false;
-            flickerDrawable.animationSpeedScale = 1.2f;
-
-            imageView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (imageView.getImageReceiver().getLottieAnimation() != null && !imageView.getImageReceiver().getLottieAnimation().isRunning()) {
-                        imageView.getImageReceiver().getLottieAnimation().setCurrentFrame(0, false);
-                        imageView.getImageReceiver().getLottieAnimation().restart();
-                    }
-                }
-            });
-            int[] colors = new int[8];
-            colors[0] = 0x333333;
-            colors[1] = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText);
-
-            colors[2] = 0xffffff;
-            colors[3] = Theme.getColor(Theme.key_windowBackgroundWhite);
-
-            colors[4] = 0x50a7ea;
-            colors[5] = Theme.getColor(Theme.key_featuredStickers_addButton);
-
-            colors[6] = 0x212020;
-            colors[7] = Theme.getColor(Theme.key_windowBackgroundWhite);
-
-            textView = new LinkSpanDrawable.LinksTextView(context);
-            addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 36, 152, 36, 0));
-            textView.setGravity(Gravity.CENTER_HORIZONTAL);
-            textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-            textView.setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteLinkText));
-            textView.setHighlightColor(Theme.getColor(Theme.key_windowBackgroundWhiteLinkSelection));
-            setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-
-            String text = LocaleController.getString("AuthAnotherClientInfo4", R.string.AuthAnotherClientInfo4);
-            SpannableStringBuilder spanned = new SpannableStringBuilder(text);
-            int index1 = text.indexOf('*');
-            int index2 = text.indexOf('*', index1 + 1);
-
-            if (index1 != -1 && index2 != -1 && index1 != index2) {
-                textView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
-                spanned.replace(index2, index2 + 1, "");
-                spanned.replace(index1, index1 + 1, "");
-                spanned.setSpan(new URLSpanNoUnderline(LocaleController.getString("AuthAnotherClientDownloadClientUrl", R.string.AuthAnotherClientDownloadClientUrl)), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            text = spanned.toString();
-            index1 = text.indexOf('*');
-            index2 = text.indexOf('*', index1 + 1);
-
-            if (index1 != -1 && index2 != -1 && index1 != index2) {
-                textView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
-                spanned.replace(index2, index2 + 1, "");
-                spanned.replace(index1, index1 + 1, "");
-                spanned.setSpan(new URLSpanNoUnderline(LocaleController.getString("AuthAnotherWebClientUrl", R.string.AuthAnotherWebClientUrl)), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-            textView.setText(spanned);
-
-            buttonTextView = new TextView(context) {
-                @Override
-                public void draw(Canvas canvas) {
-                    super.draw(canvas);
-
-                    if (flickerDrawable.progress <= 1f && highlightLinkDesktopDevice && fragmentOpened) {
-                        AndroidUtilities.rectTmp.set(0, 0, getWidth(), getHeight());
-                        flickerDrawable.setParentWidth(getMeasuredWidth());
-                        flickerDrawable.draw(canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(8), null);
-                        invalidate();
-                    }
-                }
-            };
-            buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-            buttonTextView.setGravity(Gravity.CENTER);
-            buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(".  ").append(LocaleController.getString("LinkDesktopDevice", R.string.LinkDesktopDevice));
-            spannableStringBuilder.setSpan(new ColoredImageSpan(ContextCompat.getDrawable(getContext(), R.drawable.msg_mini_qr)), 0, 1, 0);
-            buttonTextView.setText(spannableStringBuilder);
-
-            buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-            buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
-
-            buttonTextView.setOnClickListener(view -> {
-                if (getParentActivity() == null) {
-                    return;
-                }
-                if (Build.VERSION.SDK_INT >= 23 && getParentActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, ActionIntroActivity.CAMERA_PERMISSION_REQUEST_CODE);
-                    return;
-                }
-                openCameraScanActivity();
-            });
-            addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM, 16, 15, 16, 16));
-
-            setSticker();
-        }
-
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(276), MeasureSpec.EXACTLY));
-        }
-
-        @Override
-        protected void onAttachedToWindow() {
-            super.onAttachedToWindow();
-            setSticker();
-            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.diceStickersDidLoad);
-        }
-
-        @Override
-        protected void onDetachedFromWindow() {
-            super.onDetachedFromWindow();
-            NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.diceStickersDidLoad);
-        }
-
-        @Override
-        public void didReceivedNotification(int id, int account, Object... args) {
-            if (id == NotificationCenter.diceStickersDidLoad) {
-                String name = (String) args[0];
-                if (AndroidUtilities.STICKERS_PLACEHOLDER_PACK_NAME.equals(name)) {
-                    setSticker();
-                }
-            }
-        }
-
-        private void setSticker() {
-            String imageFilter = null;
-            TLRPC.Document document = null;
-            TLRPC.TL_messages_stickerSet set = null;
-
-            set = MediaDataController.getInstance(currentAccount).getStickerSetByName(AndroidUtilities.STICKERS_PLACEHOLDER_PACK_NAME);
-            if (set == null) {
-                set = MediaDataController.getInstance(currentAccount).getStickerSetByEmojiOrName(AndroidUtilities.STICKERS_PLACEHOLDER_PACK_NAME);
-            }
-            if (set != null && set.documents.size() > 6) {
-                document = set.documents.get(6);
-            }
-            imageFilter = "130_130";
-
-            SvgHelper.SvgDrawable svgThumb = null;
-            if (document != null) {
-                svgThumb = DocumentObject.getSvgThumb(document.thumbs, Theme.key_emptyListPlaceholder, 0.2f);
-            }
-            if (svgThumb != null) {
-                svgThumb.overrideWidthAndHeight(512, 512);
-            }
-
-            if (document != null) {
-                ImageLocation imageLocation = ImageLocation.getForDocument(document);
-                imageView.setImage(imageLocation, imageFilter, "tgs", svgThumb, set);
-                imageView.getImageReceiver().setAutoRepeat(2);
-            } else {
-                MediaDataController.getInstance(currentAccount).loadStickersByEmojiOrName(AndroidUtilities.STICKERS_PLACEHOLDER_PACK_NAME, false, set == null);
-            }
-        }
-    }
-
-    private void openCameraScanActivity() {
-        CameraScanActivity.showAsSheet(SessionsActivity.this, false, CameraScanActivity.TYPE_QR_LOGIN, new CameraScanActivity.CameraScanActivityDelegate() {
-
-            private TLObject response = null;
-            private TLRPC.TL_error error = null;
-
-            @Override
-            public void didFindQr(String link) {
-                if (response instanceof TLRPC.TL_authorization) {
-                    TLRPC.TL_authorization authorization = (TLRPC.TL_authorization) response;
-                    if (((TLRPC.TL_authorization) response).password_pending) {
-                        passwordSessions.add(0, authorization);
-                        repeatLoad = 4;
-                        loadSessions(false);
-                    } else {
-                        sessions.add(0, authorization);
-                    }
-                    updateRows();
-                    listAdapter.notifyDataSetChanged();
-                    undoView.showWithAction(0, UndoView.ACTION_QR_SESSION_ACCEPTED, response);
-                } else if (error != null) {
-                    AndroidUtilities.runOnUIThread(() -> {
-                        final String text;
-                        if (error.text != null && error.text.equals("AUTH_TOKEN_EXCEPTION")) {
-                            text = LocaleController.getString("AccountAlreadyLoggedIn", R.string.AccountAlreadyLoggedIn);
-                        } else {
-                            text = LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred) + "\n" + error.text;
-                        }
-                        AlertsCreator.showSimpleAlert(SessionsActivity.this, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), text);
-                    });
-                }
-            }
-
-            @Override
-            public boolean processQr(String link, Runnable onLoadEnd) {
-                this.response = null;
-                this.error = null;
-                AndroidUtilities.runOnUIThread(() -> {
-                    try {
-                        String code = link.substring("tg://login?token=".length());
-                        code = code.replaceAll("\\/", "_");
-                        code = code.replaceAll("\\+", "-");
-                        byte[] token = Base64.decode(code, Base64.URL_SAFE);
-                        TLRPC.TL_auth_acceptLoginToken req = new TLRPC.TL_auth_acceptLoginToken();
-                        req.token = token;
-                        getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
-                            this.response = response;
-                            this.error = error;
-                            onLoadEnd.run();
-                        }));
-                    } catch (Exception e) {
-                        FileLog.e("Failed to pass qr code auth", e);
-                        AndroidUtilities.runOnUIThread(() -> {
-                            AlertsCreator.showSimpleAlert(SessionsActivity.this, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred));
-                        });
-                        onLoadEnd.run();
-                    }
-                }, 750);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -1213,9 +909,7 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
             return;
         }
         if (requestCode == ActionIntroActivity.CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCameraScanActivity();
-            } else {
+            if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 new AlertDialog.Builder(getParentActivity())
                         .setMessage(AndroidUtilities.replaceTags(LocaleController.getString("QRCodePermissionNoCameraWithHint", R.string.QRCodePermissionNoCameraWithHint)))
                         .setPositiveButton(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), (dialogInterface, i) -> {
@@ -1228,7 +922,6 @@ public class SessionsActivity extends BaseFragment implements NotificationCenter
                             }
                         })
                         .setNegativeButton(LocaleController.getString("ContactsPermissionAlertNotNow", R.string.ContactsPermissionAlertNotNow), null)
-                        .setTopAnimation(R.raw.permission_request_camera, 72, false, Theme.getColor(Theme.key_dialogTopBackground))
                         .show();
             }
         }

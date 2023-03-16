@@ -67,7 +67,6 @@ import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.Forum.ForumUtilities;
 import org.telegram.ui.Components.ImageUpdater;
 import org.telegram.ui.Components.MediaActionDrawable;
-import org.telegram.ui.Components.Premium.StarParticlesView;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RadialProgress2;
 import org.telegram.ui.Components.RadialProgressView;
@@ -291,7 +290,6 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
     private View rippleView;
 
     private Path starsPath = new Path();
-    private StarParticlesView.Drawable starParticlesDrawable;
     private int starsSize;
 
     public ChatActionCell(Context context) {
@@ -314,21 +312,6 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         rippleView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ROUNDRECT_6DP, AndroidUtilities.dp(16)));
         rippleView.setVisibility(GONE);
         addView(rippleView);
-
-        starParticlesDrawable = new StarParticlesView.Drawable(10);
-        starParticlesDrawable.type = 100;
-        starParticlesDrawable.isCircle = false;
-        starParticlesDrawable.roundEffect = true;
-        starParticlesDrawable.useRotate = false;
-        starParticlesDrawable.useBlur = true;
-        starParticlesDrawable.checkBounds = true;
-        starParticlesDrawable.size1 = 1;
-        starParticlesDrawable.k1 = starParticlesDrawable.k2 = starParticlesDrawable.k3 = 0.98f;
-        starParticlesDrawable.paused = false;
-        starParticlesDrawable.speedScale = 0f;
-        starParticlesDrawable.minLifeTime = 750;
-        starParticlesDrawable.randLifeTime = 750;
-        starParticlesDrawable.init();
     }
 
     public void setDelegate(ChatActionCellDelegate delegate) {
@@ -638,16 +621,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
     }
 
     private void setStarsPaused(boolean paused) {
-        if (paused == starParticlesDrawable.paused) {
-            return;
-        }
-        starParticlesDrawable.paused = paused;
-        if (paused) {
-            starParticlesDrawable.pausedTime = System.currentTimeMillis();
-        } else {
-            for (int i = 0; i < starParticlesDrawable.particles.size(); i++) {
-                starParticlesDrawable.particles.get(i).lifeTime += System.currentTimeMillis() - starParticlesDrawable.pausedTime;
-            }
+        if (!paused) {
             invalidate();
         }
     }
@@ -953,14 +927,9 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
             giftButtonRect.set(rectX - AndroidUtilities.dp(18), y - AndroidUtilities.dp(8), rectX + giftPremiumButtonWidth + AndroidUtilities.dp(18), y + giftPremiumButtonLayout.getHeight() + AndroidUtilities.dp(8));
 
             int sizeInternal = getMeasuredWidth() << 16 + getMeasuredHeight();
-            starParticlesDrawable.rect.set(giftButtonRect);
-            starParticlesDrawable.rect2.set(giftButtonRect);
             if (starsSize != sizeInternal) {
                 starsSize = sizeInternal;
-                starParticlesDrawable.resetPositions();
             }
-
-
         }
 
         setMeasuredDimension(width, textHeight + additionalHeight + AndroidUtilities.dp(14));
@@ -1181,13 +1150,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
             starsPath.addRoundRect(giftButtonRect, AndroidUtilities.dp(16), AndroidUtilities.dp(16), Path.Direction.CW);
             canvas.save();
             canvas.clipPath(starsPath);
-            if (getMessageObject().type != MessageObject.TYPE_SUGGEST_PHOTO) {
-                starParticlesDrawable.onDraw(canvas);
-                if (!starParticlesDrawable.paused) {
-                    invalidate();
-                }
-            } else {
-                //TODO optimize
+            if (getMessageObject().type == MessageObject.TYPE_SUGGEST_PHOTO) {
                 invalidate();
             }
             canvas.restore();
@@ -1206,11 +1169,11 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
                 canvas.save();
                 canvas.scale(progressToProgress, progressToProgress, giftButtonRect.centerX(), giftButtonRect.centerY());
                 progressView.setSize(rad);
-            progressView.setProgressColor(Theme.getColor(Theme.key_chat_serviceText));
+                progressView.setProgressColor(Theme.getColor(Theme.key_chat_serviceText));
                 progressView.draw(canvas, giftButtonRect.centerX(), giftButtonRect.centerY());
                 canvas.restore();
             }
-            if (progressToProgress != 1f){
+            if (progressToProgress != 1f) {
                 canvas.save();
                 float s = 1f - progressToProgress;
                 canvas.scale(s, s, giftButtonRect.centerX(), giftButtonRect.centerY());

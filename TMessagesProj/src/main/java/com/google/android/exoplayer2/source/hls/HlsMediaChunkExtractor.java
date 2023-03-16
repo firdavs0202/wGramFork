@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.source.hls;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
+
 import java.io.IOException;
 
 /** Extracts samples and track {@link Format Formats} from {@link HlsMediaChunk HlsMediaChunks}. */

@@ -75,7 +75,6 @@ import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.EmptyTextProgressView;
 import org.telegram.ui.Components.GroupCreateSpan;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
@@ -719,9 +718,6 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                     spansContainer.removeSpan(span);
                 } else {
                     if (!(object instanceof String) && (!getUserConfig().isPremium() && selectedCount >= MessagesController.getInstance(currentAccount).dialogFiltersChatsLimitDefault) || selectedCount >= MessagesController.getInstance(currentAccount).dialogFiltersChatsLimitPremium) {
-                        LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(this, context, LimitReachedBottomSheet.TYPE_CHATS_IN_FOLDER, currentAccount);
-                        limitReachedBottomSheet.setCurrentValue(selectedCount);
-                        showDialog(limitReachedBottomSheet);
                         return;
                     }
                     if (object instanceof TLRPC.User) {

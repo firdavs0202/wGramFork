@@ -632,21 +632,6 @@ public class AvatarConstructorFragment extends BaseFragment {
         }
     }
 
-    public void startFrom(AvatarConstructorPreviewCell previewCell) {
-        BackgroundGradient gradient = previewCell.getBackgroundGradient();
-        if (previewView == null) {
-            return;
-        }
-        previewView.setGradient(gradient);
-        if (previewCell.getAnimatedEmoji() != null) {
-            long docId = previewCell.getAnimatedEmoji().getDocumentId();
-            previewView.documentId = docId;
-            previewView.backupImageView.setAnimatedEmojiDrawable(new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_AVATAR_CONSTRUCTOR_PREVIEW, currentAccount, docId));
-        }
-        backgroundSelectView.selectGradient(gradient);
-        selectAnimatedEmojiDialog.setForUser(previewCell.forUser);
-    }
-
     public void startFrom(TLRPC.VideoSize emojiMarkup) {
         BackgroundGradient gradient = new BackgroundGradient();
         gradient.color1 = ColorUtils.setAlphaComponent(emojiMarkup.background_colors.get(0), 255);

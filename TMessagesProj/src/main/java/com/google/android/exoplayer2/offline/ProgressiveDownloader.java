@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.offline;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -28,10 +29,12 @@ import com.google.android.exoplayer2.util.PriorityTaskManager;
 import com.google.android.exoplayer2.util.PriorityTaskManager.PriorityTooLowException;
 import com.google.android.exoplayer2.util.RunnableFutureTask;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** A downloader for progressive media streams. */
 public final class ProgressiveDownloader implements Downloader {

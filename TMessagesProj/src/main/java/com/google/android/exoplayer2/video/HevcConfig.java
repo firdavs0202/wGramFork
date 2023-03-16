@@ -16,11 +16,13 @@
 package com.google.android.exoplayer2.video;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.CodecSpecificDataUtil;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.Collections;
 import java.util.List;
 

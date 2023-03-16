@@ -21,8 +21,10 @@ import static java.lang.Math.min;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.AbstractConcatenatedTimeline;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
@@ -33,6 +35,7 @@ import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

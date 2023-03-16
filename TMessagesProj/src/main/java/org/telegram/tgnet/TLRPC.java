@@ -1,11 +1,3 @@
-/*
- * This is the source code of Telegram for Android v. 5.x.x.
- * It is licensed under GNU GPL v. 2 or later.
- * You should have received a copy of the license in this archive (see LICENSE).
- *
- * Copyright Nikolai Kudashov, 2013-2018.
- */
-
 package org.telegram.tgnet;
 
 import android.graphics.Path;
@@ -20,7 +12,6 @@ import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.MessageObject;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.SvgHelper;
 import org.telegram.messenger.Utilities;
 
@@ -39,30 +30,9 @@ public class TLRPC {
     public static final int USER_FLAG_UNUSED                = 0x00000080;
     public static final int USER_FLAG_UNUSED2               = 0x00000100;
     public static final int USER_FLAG_UNUSED3               = 0x00000200;
-    //public static final int USER_FLAG_SELF                  = 0x00000400;
-    //public static final int USER_FLAG_CONTACT               = 0x00000800;
-    //public static final int USER_FLAG_MUTUAL_CONTACT        = 0x00001000;
-    //public static final int USER_FLAG_DELETED               = 0x00002000;
-    //public static final int USER_FLAG_BOT                   = 0x00004000;
-    //public static final int USER_FLAG_BOT_READING_HISTORY   = 0x00008000;
-    //public static final int USER_FLAG_BOT_CANT_JOIN_GROUP   = 0x00010000;
-    //public static final int USER_FLAG_VERIFIED   			  = 0x00020000;
-
-    //public static final int CHAT_FLAG_CREATOR               = 0x00000001;
-    //public static final int CHAT_FLAG_USER_KICKED           = 0x00000002;
-    //public static final int CHAT_FLAG_USER_LEFT             = 0x00000004;
-    //public static final int CHAT_FLAG_USER_IS_EDITOR        = 0x00000008;
-    //public static final int CHAT_FLAG_USER_IS_MODERATOR     = 0x00000010;
-    //public static final int CHAT_FLAG_IS_BROADCAST          = 0x00000020;
     public static final int CHAT_FLAG_IS_PUBLIC             = 0x00000040;
-    //public static final int CHAT_FLAG_IS_VERIFIED           = 0x00000080;
-
-    //public static final int MESSAGE_FLAG_UNREAD             = 0x00000001;
-    //public static final int MESSAGE_FLAG_OUT                = 0x00000002;
     public static final int MESSAGE_FLAG_FWD                = 0x00000004;
     public static final int MESSAGE_FLAG_REPLY              = 0x00000008;
-    //public static final int MESSAGE_FLAG_MENTION            = 0x00000010;
-    //public static final int MESSAGE_FLAG_CONTENT_UNREAD     = 0x00000020;
     public static final int MESSAGE_FLAG_HAS_MARKUP         = 0x00000040;
     public static final int MESSAGE_FLAG_HAS_ENTITIES       = 0x00000080;
     public static final int MESSAGE_FLAG_HAS_FROM_ID        = 0x00000100;
@@ -72,7 +42,6 @@ public class TLRPC {
     public static final int MESSAGE_FLAG_EDITED             = 0x00008000;
 
     public static final int LAYER = 155;
-
     public static class TL_stats_megagroupStats extends TLObject {
         public static int constructor = 0xef7ff916;
         public TL_statsDateRangeDays period;
@@ -2681,7 +2650,7 @@ public class TLRPC {
         public Peer peer_id;
         public Reaction reaction;
         public int date;
-        public boolean dateIsSeen; //custom
+        public boolean dateIsSeen; 
 
         public static MessagePeerReaction TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             MessagePeerReaction result = null;
@@ -2809,7 +2778,7 @@ public class TLRPC {
                 case 0x44747e9a:
                     result = new TL_auth_authorizationSignUpRequired();
                     break;
-                case 0x33fb7bb8://TODO old constructor need remove
+                case 0x33fb7bb8:
                     result = new TL_auth_authorization();
                     break;
                 case 0x2ea2c0d4:
@@ -6839,7 +6808,7 @@ public class TLRPC {
         public byte[] nonce;
         public String receipt;
         public int push_timeout;
-        public boolean verifiedFirebase; //custom
+        public boolean verifiedFirebase; 
 
         public static auth_SentCodeType TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             auth_SentCodeType result = null;
@@ -12366,8 +12335,8 @@ public class TLRPC {
         public boolean translations_disabled;
         public ChatReactions available_reactions;
 
-        public long inviterId; //custom
-        public int invitesCount; //custom
+        public long inviterId; 
+        public int invitesCount; 
 
         public static ChatFull TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             ChatFull result = null;
@@ -27045,7 +27014,7 @@ public class TLRPC {
         public int reply_to_msg_id;
         public Peer reply_to_peer_id;
         public int reply_to_top_id;
-        public long reply_to_random_id; //custom
+        public long reply_to_random_id; 
 
         public static TL_messageReplyHeader TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             if (TL_messageReplyHeader.constructor != constructor) {
@@ -27732,8 +27701,8 @@ public class TLRPC {
         public byte[] key;
         public byte[] iv;
         public ArrayList<DocumentAttribute> attributes = new ArrayList<>();
-        public String file_name_fixed; //custom
-        public String localPath; //custom
+        public String file_name_fixed; 
+        public String localPath; 
 
         public static Document TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             Document result = null;
@@ -28381,13 +28350,13 @@ public class TLRPC {
     }
 
     public static abstract class PageBlock extends TLObject {
-        public boolean first; //custom
-        public boolean bottom; //custom
-        public int level; //custom
-        public int mid; //custom
-        public int groupId; //custom
-        public PhotoSize thumb; //custom
-        public TLObject thumbObject; //custom
+        public boolean first; 
+        public boolean bottom; 
+        public int level; 
+        public int mid; 
+        public int groupId; 
+        public PhotoSize thumb; 
+        public TLObject thumbObject; 
 
         public static PageBlock TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             PageBlock result = null;
@@ -32922,7 +32891,7 @@ public class TLRPC {
         public int msg_id;
         public int top_msg_id;
         public TL_messageReactions reactions;
-        public boolean updateUnreadState = true; //custom
+        public boolean updateUnreadState = true; 
 
         public void readParams(AbstractSerializedData stream, boolean exception) {
             flags = stream.readInt32(exception);
@@ -41431,7 +41400,7 @@ public class TLRPC {
         public Document effect_animation;
         public Document around_animation;
         public Document center_icon;
-        public int positionInList; //custom
+        public int positionInList; 
 
         public static TL_availableReaction TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             if (TL_availableReaction.constructor != constructor) {
@@ -46512,8 +46481,8 @@ public class TLRPC {
         public int usage;
         public int requested;
         public String title;
-        public ArrayList<User> importers; //custom
-        public boolean expired; //custom
+        public ArrayList<User> importers; 
+        public boolean expired; 
 
         public void readParams(AbstractSerializedData stream, boolean exception) {
             flags = stream.readInt32(exception);
@@ -46918,7 +46887,7 @@ public class TLRPC {
         
         public int flags;
         public int chosen_order;
-        public boolean chosen; //custom
+        public boolean chosen; 
         public int lastDrawnPosition;
         public Reaction reaction;
         public int count;
@@ -49931,20 +49900,20 @@ public class TLRPC {
         public long raise_hand_rating;
         public TL_groupCallParticipantVideo video;
         public TL_groupCallParticipantVideo presentation;
-        public long lastSpeakTime; //custom;
-        public float amplitude; //custom;
-        public boolean hasVoice; //custom;
-        public boolean hasVoiceDelayed; //custom;
-        public long lastVoiceUpdateTime; //custom;
-        public long lastActiveDate; //custom
-        public long lastVisibleDate; //custom
-        public int lastTypingDate; //custom
-        public long lastRaiseHandDate; //custom
-        public String videoEndpoint; //custom
-        public String presentationEndpoint; //custom
-        public int videoIndex;//custom
-        public int hasPresentationFrame;//custom;
-        public int hasCameraFrame;//custom;
+        public long lastSpeakTime; ;
+        public float amplitude; ;
+        public boolean hasVoice; ;
+        public boolean hasVoiceDelayed; ;
+        public long lastVoiceUpdateTime; ;
+        public long lastActiveDate; 
+        public long lastVisibleDate; 
+        public int lastTypingDate; 
+        public long lastRaiseHandDate; 
+        public String videoEndpoint; 
+        public String presentationEndpoint; 
+        public int videoIndex;
+        public int hasPresentationFrame;;
+        public int hasCameraFrame;;
 
         public static TL_groupCallParticipant TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             if (TL_groupCallParticipant.constructor != constructor) {
@@ -59055,8 +59024,6 @@ public class TLRPC {
         }
     }
 
-    //manually created
-
     public static class TL_photoPathSize extends PhotoSize {
         public static int constructor = 0xd8214d41;
         public Path svgPath;
@@ -59075,7 +59042,6 @@ public class TLRPC {
         }
     }
 
-    //RichText start
     public static abstract class RichText extends TLObject {
         public String url;
         public long webpage_id;
@@ -59182,7 +59148,6 @@ public class TLRPC {
             }
         }
     }
-    //RichText end
 
     public static class TL_channels_sendAsPeers extends TLObject {
         public static int constructor = 0xf496b0c6;
@@ -59309,7 +59274,6 @@ public class TLRPC {
         }
     }
 
-    //MessageMedia start
     public static abstract class MessageMedia extends TLObject {
         public byte[] bytes;
         public Audio audio_unused;
@@ -59512,9 +59476,7 @@ public class TLRPC {
             return result;
         }
     }
-    //MessageMedia end
 
-    //PageBlock start
     public static class TL_pageBlockAuthorDate_layer60 extends TL_pageBlockAuthorDate {
         public static int constructor = 0x3d5b64f2;
 
@@ -59757,9 +59719,7 @@ public class TLRPC {
             caption.text.serializeToStream(stream);
         }
     }
-    //PageBlock end
 
-    //EncryptedChat start
     public static abstract class EncryptedChat extends TLObject {
         public int flags;
         public int folder_id;
@@ -59773,22 +59733,22 @@ public class TLRPC {
         public byte[] g_a_or_b;
         public long key_fingerprint;
         public boolean history_deleted;
-        public byte[] a_or_b; //custom
-        public byte[] auth_key; //custom
-        public long user_id; //custom
-        public int ttl; //custom
-        public int layer; //custom
-        public int seq_in; //custom
-        public int seq_out; //custom
-        public int in_seq_no; //custom
-        public int mtproto_seq; //custom
-        public byte[] key_hash; //custom
-        public short key_use_count_in; //custom
-        public short key_use_count_out; //custom
-        public long exchange_id; //custom
-        public int key_create_date; //custom
-        public long future_key_fingerprint; //custom
-        public byte[] future_auth_key; //custom
+        public byte[] a_or_b; 
+        public byte[] auth_key; 
+        public long user_id; 
+        public int ttl; 
+        public int layer; 
+        public int seq_in; 
+        public int seq_out; 
+        public int in_seq_no; 
+        public int mtproto_seq; 
+        public byte[] key_hash; 
+        public short key_use_count_in; 
+        public short key_use_count_out; 
+        public long exchange_id; 
+        public int key_create_date; 
+        public long future_key_fingerprint; 
+        public byte[] future_auth_key; 
 
         public static EncryptedChat TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             EncryptedChat result = null;
@@ -59839,9 +59799,7 @@ public class TLRPC {
             return result;
         }
     }
-    //EncryptedChat end
 
-    //Message start
     public static class Message extends TLObject {
         public int id;
         public Peer from_id;
@@ -59879,34 +59837,34 @@ public class TLRPC {
         public int ttl_period;
         public boolean noforwards;
         public boolean topic_start;
-        public int send_state = 0; //custom
-        public int fwd_msg_id = 0; //custom
-        public String attachPath = ""; //custom
-        public HashMap<String, String> params; //custom
-        public long random_id; //custom
-        public int local_id = 0; //custom
-        public long dialog_id; //custom
-        public int ttl; //custom
-        public int destroyTime; //custom
-        public int layer; //custom
-        public int seq_in; //custom
-        public int seq_out; //custom
+        public int send_state = 0; 
+        public int fwd_msg_id = 0; 
+        public String attachPath = ""; 
+        public HashMap<String, String> params; 
+        public long random_id; 
+        public int local_id = 0; 
+        public long dialog_id; 
+        public int ttl; 
+        public int destroyTime; 
+        public int layer; 
+        public int seq_in; 
+        public int seq_out; 
         public boolean with_my_score;
-        public Message replyMessage; //custom
-        public int reqId; //custom
-        public int realId; //custom
-        public int stickerVerified = 1; //custom
-        public boolean isThreadMessage; //custom
-        public String voiceTranscription; //custom
-        public boolean voiceTranscriptionOpen; //custom
-        public boolean voiceTranscriptionRated; //custom
-        public boolean voiceTranscriptionFinal; //custom
-        public boolean voiceTranscriptionForce; //custom
-        public long voiceTranscriptionId; //custom
-        public boolean premiumEffectWasPlayed; //custom
-        public String originalLanguage; //custom
-        public String translatedToLanguage; //custom
-        public TL_textWithEntities translatedText; // custom
+        public Message replyMessage; 
+        public int reqId; 
+        public int realId; 
+        public int stickerVerified = 1; 
+        public boolean isThreadMessage; 
+        public String voiceTranscription; 
+        public boolean voiceTranscriptionOpen; 
+        public boolean voiceTranscriptionRated; 
+        public boolean voiceTranscriptionFinal; 
+        public boolean voiceTranscriptionForce; 
+        public long voiceTranscriptionId; 
+        public boolean premiumEffectWasPlayed; 
+        public String originalLanguage; 
+        public String translatedToLanguage; 
+        public TL_textWithEntities translatedText; 
 
         public static Message TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             Message result = null;
@@ -61085,7 +61043,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -61222,7 +61180,7 @@ public class TLRPC {
             if ((flags & 33554432) != 0) {
                 stream.writeInt32(ttl_period);
             }
-            writeAttachPath(stream); //custom
+            writeAttachPath(stream); 
         }
     }
 
@@ -61260,7 +61218,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -61430,7 +61388,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -61593,7 +61551,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -61750,7 +61708,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -61913,7 +61871,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -62055,7 +62013,7 @@ public class TLRPC {
             if ((flags & 512) != 0) {
                 media = MessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
                 if (media != null) {
-                    ttl = media.ttl_seconds; //custom
+                    ttl = media.ttl_seconds; 
                 }
                 if (media != null && !TextUtils.isEmpty(media.captionLegacy)) {
                     message = media.captionLegacy;
@@ -62979,9 +62937,7 @@ public class TLRPC {
             writeAttachPath(stream);
         }
     }
-    //Message end
 
-    //TL_dialog start
     public static abstract class Dialog extends TLObject {
 
         public int flags;
@@ -62999,10 +62955,10 @@ public class TLRPC {
         public DraftMessage draft;
         public int folder_id;
         public int ttl_period;
-        public int last_message_date; //custom
-        public long id; //custom
-        public int pinnedNum; //custom
-        public boolean isFolder; //custom
+        public int last_message_date; 
+        public long id; 
+        public int pinnedNum; 
+        public boolean isFolder; 
 
          public static Dialog TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             Dialog result = null;
@@ -63176,17 +63132,13 @@ public class TLRPC {
             stream.writeInt32(unread_unmuted_messages_count);
         }
     }
-    //TL_dialog end
 
-    //ChatParticipant start
     public static class TL_chatChannelParticipant extends ChatParticipant {
         public static int constructor = 0xc8d7493e;
 
         public ChannelParticipant channelParticipant;
     }
-    //ChatParticipant end
 
-    //Chat start
     public static class TL_chatEmpty extends Chat {
         public static int constructor = 0x29562865;
 
@@ -63218,9 +63170,7 @@ public class TLRPC {
             stream.writeInt32((int) id);
         }
     }
-    //Chat end
 
-    //functions memory optimize
     public static class TL_upload_saveFilePart extends TLObject {
         public static int constructor = 0xb304a621;
 
@@ -65717,7 +65667,7 @@ public class TLRPC {
         public static int constructor = 0xc8cf05f8;
 
         public long document_id;
-        public TLRPC.Document document; //custom
+        public TLRPC.Document document; 
 
         public void readParams(AbstractSerializedData stream, boolean exception) {
             offset = stream.readInt32(exception);
@@ -66092,12 +66042,12 @@ public class TLRPC {
         public Peer from_id;
         public PeerNotifySettings notify_settings;
         public DraftMessage draft;
-        public Message topicStartMessage; // custom
-        public ArrayList<MessageObject> groupedMessages; // custom
-        public Message topMessage; // custom
-        public String searchQuery; //custom
-        public int pinnedOrder; // custom
-        public int totalMessagesCount; // custom
+        public Message topicStartMessage; 
+        public ArrayList<MessageObject> groupedMessages; 
+        public Message topMessage; 
+        public String searchQuery; 
+        public int pinnedOrder; 
+        public int totalMessagesCount; 
 
         public static TL_forumTopic TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             TL_forumTopic result = null;
@@ -66973,8 +66923,6 @@ public class TLRPC {
             stream.writeInt64(user_id);
         }
     }
-
-    //functions
 
     public static class Vector extends TLObject {
         public static int constructor = 0x1cb5c415;

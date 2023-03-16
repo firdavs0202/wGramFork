@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.upstream;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

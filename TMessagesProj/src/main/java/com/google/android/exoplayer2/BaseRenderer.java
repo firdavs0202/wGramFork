@@ -19,6 +19,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static java.lang.Math.max;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer.InsufficientCapacityException;
@@ -27,8 +28,10 @@ import com.google.android.exoplayer2.source.SampleStream.ReadDataResult;
 import com.google.android.exoplayer2.source.SampleStream.ReadFlags;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MediaClock;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.io.IOException;
 
 /** An abstract base class suitable for most {@link Renderer} implementations. */
 public abstract class BaseRenderer implements Renderer, RendererCapabilities {

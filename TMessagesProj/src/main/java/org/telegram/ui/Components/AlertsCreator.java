@@ -103,7 +103,6 @@ import org.telegram.ui.Cells.CheckBoxCell;
 import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Cells.TextColorCell;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.voip.VoIPHelper;
 import org.telegram.ui.LanguageSelectActivity;
 import org.telegram.ui.LaunchActivity;
@@ -141,7 +140,6 @@ public class AlertsCreator {
         return new AlertDialog.Builder(ctx)
                 .setMessage(AndroidUtilities.replaceTags(friends ? LocaleController.getString("PermissionNoLocationFriends", R.string.PermissionNoLocationFriends) :
                         LocaleController.getString("PermissionNoLocationPeopleNearby", R.string.PermissionNoLocationPeopleNearby)))
-                .setTopAnimation(R.raw.permission_request_location, PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground))
                 .setPositiveButton(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), (dialogInterface, i) -> {
                     try {
                         Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -160,7 +158,6 @@ public class AlertsCreator {
                 .setTitle(LocaleController.getString(R.string.AllowBackgroundActivity))
                 .setMessage(AndroidUtilities.replaceTags(LocaleController.getString(OneUIUtilities.isOneUI() ? Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? R.string.AllowBackgroundActivityInfoOneUIAboveS :
                         R.string.AllowBackgroundActivityInfoOneUIBelowS : R.string.AllowBackgroundActivityInfo)))
-                .setTopAnimation(R.raw.permission_request_apk, PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground))
                 .setPositiveButton(LocaleController.getString(R.string.PermissionOpenSettings), (dialogInterface, i) -> {
                     try {
                         Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -221,7 +218,6 @@ public class AlertsCreator {
     public static Dialog createApkRestrictedDialog(Context ctx, Theme.ResourcesProvider resourcesProvider) {
         return new AlertDialog.Builder(ctx, resourcesProvider)
                 .setMessage(LocaleController.getString("ApkRestricted", R.string.ApkRestricted))
-                .setTopAnimation(R.raw.permission_request_apk, PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground))
                 .setPositiveButton(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), (dialogInterface, i) -> {
                     try {
                         ctx.startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + ctx.getPackageName())));
@@ -292,9 +288,7 @@ public class AlertsCreator {
                 request instanceof TLRPC.TL_messages_migrateChat ||
                 request instanceof TLRPC.TL_phone_inviteToGroupCall) {
             if (fragment != null && error.text.equals("CHANNELS_TOO_MUCH")) {
-                if (fragment.getParentActivity() != null) {
-                    fragment.showDialog(new LimitReachedBottomSheet(fragment, fragment.getParentActivity(), LimitReachedBottomSheet.TYPE_TO0_MANY_COMMUNITIES, currentAccount));
-                } else {
+                if (fragment.getParentActivity() == null) {
                     if (request instanceof TLRPC.TL_channels_joinChannel || request instanceof TLRPC.TL_channels_inviteToChannel) {
                         fragment.presentFragment(new TooManyCommunitiesActivity(TooManyCommunitiesActivity.TYPE_JOIN));
                     } else {
@@ -311,9 +305,7 @@ public class AlertsCreator {
             }
         } else if (request instanceof TLRPC.TL_messages_createChat) {
             if (error.text.equals("CHANNELS_TOO_MUCH")) {
-                if (fragment.getParentActivity() != null) {
-                    fragment.showDialog(new LimitReachedBottomSheet(fragment, fragment.getParentActivity(), LimitReachedBottomSheet.TYPE_TO0_MANY_COMMUNITIES, currentAccount));
-                } else {
+                if (fragment.getParentActivity() == null) {
                     fragment.presentFragment(new TooManyCommunitiesActivity(TooManyCommunitiesActivity.TYPE_CREATE));
                 }
                 return null;
@@ -324,9 +316,7 @@ public class AlertsCreator {
             }
         } else if (request instanceof TLRPC.TL_channels_createChannel) {
             if (error.text.equals("CHANNELS_TOO_MUCH")) {
-                if (fragment.getParentActivity() != null) {
-                    fragment.showDialog(new LimitReachedBottomSheet(fragment, fragment.getParentActivity(), LimitReachedBottomSheet.TYPE_TO0_MANY_COMMUNITIES, currentAccount));
-                } else {
+                if (fragment.getParentActivity() == null) {
                     fragment.presentFragment(new TooManyCommunitiesActivity(TooManyCommunitiesActivity.TYPE_CREATE));
                 }
                 return null;
@@ -419,9 +409,7 @@ public class AlertsCreator {
             } else if (error.text.equals("USERS_TOO_MUCH")) {
                 showSimpleAlert(fragment, LocaleController.getString("JoinToGroupErrorFull", R.string.JoinToGroupErrorFull));
             } else if (error.text.equals("CHANNELS_TOO_MUCH")) {
-                if (fragment.getParentActivity() != null) {
-                    fragment.showDialog(new LimitReachedBottomSheet(fragment, fragment.getParentActivity(), LimitReachedBottomSheet.TYPE_TO0_MANY_COMMUNITIES, currentAccount));
-                } else {
+                if (fragment.getParentActivity() == null) {
                     fragment.presentFragment(new TooManyCommunitiesActivity(TooManyCommunitiesActivity.TYPE_JOIN));
                 }
             } else if (error.text.equals("INVITE_HASH_EXPIRED")) {
@@ -758,178 +746,7 @@ public class AlertsCreator {
         return dialog;
     }
 
-    public static void showBlockReportSpamReplyAlert(ChatActivity fragment, MessageObject messageObject, long peerId, Theme.ResourcesProvider resourcesProvider, Runnable hideDim) {
-        if (fragment == null || fragment.getParentActivity() == null || messageObject == null) {
-            return;
-        }
 
-        AccountInstance accountInstance = fragment.getAccountInstance();
-        TLRPC.User user = peerId > 0 ? accountInstance.getMessagesController().getUser(peerId) : null;
-        TLRPC.Chat chat = peerId < 0 ? accountInstance.getMessagesController().getChat(-peerId) : null;
-        if (user == null && chat == null) {
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getParentActivity(), resourcesProvider);
-        builder.setDimEnabled(hideDim == null);
-        builder.setOnPreDismissListener(di -> {
-            if (hideDim != null) {
-                hideDim.run();
-            }
-        });
-
-        builder.setTitle(LocaleController.getString("BlockUser", R.string.BlockUser));
-        if (user != null) {
-            builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("BlockUserReplyAlert", R.string.BlockUserReplyAlert, UserObject.getFirstName(user))));
-        } else {
-            builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("BlockUserReplyAlert", R.string.BlockUserReplyAlert, chat.title)));
-        }
-
-        CheckBoxCell[] cells = new CheckBoxCell[1];
-        LinearLayout linearLayout = new LinearLayout(fragment.getParentActivity());
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-
-        cells[0] = new CheckBoxCell(fragment.getParentActivity(), 1, resourcesProvider);
-        cells[0].setBackgroundDrawable(Theme.getSelectorDrawable(false));
-        cells[0].setTag(0);
-        cells[0].setText(LocaleController.getString("DeleteReportSpam", R.string.DeleteReportSpam), "", true, false);
-
-        cells[0].setPadding(LocaleController.isRTL ? AndroidUtilities.dp(16) : AndroidUtilities.dp(8), 0, LocaleController.isRTL ? AndroidUtilities.dp(8) : AndroidUtilities.dp(16), 0);
-        linearLayout.addView(cells[0], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        cells[0].setOnClickListener(v -> {
-            Integer num = (Integer) v.getTag();
-            cells[num].setChecked(!cells[num].isChecked(), true);
-        });
-
-        builder.setView(linearLayout);
-
-        builder.setPositiveButton(LocaleController.getString("BlockAndDeleteReplies", R.string.BlockAndDeleteReplies), (dialogInterface, i) -> {
-            if (user != null) {
-                accountInstance.getMessagesStorage().deleteUserChatHistory(fragment.getDialogId(), user.id);
-            } else {
-                accountInstance.getMessagesStorage().deleteUserChatHistory(fragment.getDialogId(), -chat.id);
-            }
-            TLRPC.TL_contacts_blockFromReplies request = new TLRPC.TL_contacts_blockFromReplies();
-            request.msg_id = messageObject.getId();
-            request.delete_message = true;
-            request.delete_history = true;
-            if (cells[0].isChecked()) {
-                request.report_spam = true;
-                if (fragment.getParentActivity() != null) {
-                    if (fragment instanceof ChatActivity) {
-                        UndoView undoView = fragment.getUndoView();
-                        if (undoView != null) {
-                            undoView.showWithAction(0, UndoView.ACTION_REPORT_SENT, null);
-                        }
-                    } else if (fragment != null) {
-                        BulletinFactory.of(fragment).createReportSent(resourcesProvider).show();
-                    } else {
-                        Toast.makeText(fragment.getParentActivity(), LocaleController.getString("ReportChatSent", R.string.ReportChatSent), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            accountInstance.getConnectionsManager().sendRequest(request, (response, error) -> {
-                if (response instanceof TLRPC.Updates) {
-                    accountInstance.getMessagesController().processUpdates((TLRPC.Updates) response, false);
-                }
-            });
-        });
-        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-        AlertDialog dialog = builder.create();
-        fragment.showDialog(dialog);
-        TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (button != null) {
-            button.setTextColor(Theme.getColor(Theme.key_dialogTextRed));
-        }
-    }
-
-    public static void showBlockReportSpamAlert(BaseFragment fragment, long dialog_id, TLRPC.User currentUser, TLRPC.Chat currentChat, TLRPC.EncryptedChat encryptedChat, boolean isLocation, TLRPC.ChatFull chatInfo, MessagesStorage.IntCallback callback, Theme.ResourcesProvider resourcesProvider) {
-        if (fragment == null || fragment.getParentActivity() == null) {
-            return;
-        }
-        AccountInstance accountInstance = fragment.getAccountInstance();
-        AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getParentActivity(), resourcesProvider);
-        CharSequence reportText;
-        CheckBoxCell[] cells;
-        SharedPreferences preferences = MessagesController.getNotificationsSettings(fragment.getCurrentAccount());
-        boolean showReport = encryptedChat != null || preferences.getBoolean("dialog_bar_report" + dialog_id, false);
-        if (currentUser != null) {
-            builder.setTitle(LocaleController.formatString("BlockUserTitle", R.string.BlockUserTitle, UserObject.getFirstName(currentUser)));
-            builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("BlockUserAlert", R.string.BlockUserAlert, UserObject.getFirstName(currentUser))));
-            reportText = LocaleController.getString("BlockContact", R.string.BlockContact);
-
-            cells = new CheckBoxCell[2];
-            LinearLayout linearLayout = new LinearLayout(fragment.getParentActivity());
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            for (int a = 0; a < 2; a++) {
-                if (a == 0 && !showReport) {
-                    continue;
-                }
-                cells[a] = new CheckBoxCell(fragment.getParentActivity(), 1, resourcesProvider);
-                cells[a].setBackgroundDrawable(Theme.getSelectorDrawable(false));
-                cells[a].setTag(a);
-                if (a == 0) {
-                    cells[a].setText(LocaleController.getString("DeleteReportSpam", R.string.DeleteReportSpam), "", true, false);
-                } else {
-                    cells[a].setText(LocaleController.formatString("DeleteThisChat", R.string.DeleteThisChat), "", true, false);
-                }
-                cells[a].setPadding(LocaleController.isRTL ? AndroidUtilities.dp(16) : AndroidUtilities.dp(8), 0, LocaleController.isRTL ? AndroidUtilities.dp(8) : AndroidUtilities.dp(16), 0);
-                linearLayout.addView(cells[a], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-                cells[a].setOnClickListener(v -> {
-                    Integer num = (Integer) v.getTag();
-                    cells[num].setChecked(!cells[num].isChecked(), true);
-                });
-            }
-            builder.setView(linearLayout);
-        } else {
-            cells = null;
-            if (currentChat != null && isLocation) {
-                builder.setTitle(LocaleController.getString("ReportUnrelatedGroup", R.string.ReportUnrelatedGroup));
-                if (chatInfo != null && chatInfo.location instanceof TLRPC.TL_channelLocation) {
-                    TLRPC.TL_channelLocation location = (TLRPC.TL_channelLocation) chatInfo.location;
-                    builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("ReportUnrelatedGroupText", R.string.ReportUnrelatedGroupText, location.address)));
-                } else {
-                    builder.setMessage(LocaleController.getString("ReportUnrelatedGroupTextNoAddress", R.string.ReportUnrelatedGroupTextNoAddress));
-                }
-            } else {
-                builder.setTitle(LocaleController.getString("ReportSpamTitle", R.string.ReportSpamTitle));
-                if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
-                    builder.setMessage(LocaleController.getString("ReportSpamAlertChannel", R.string.ReportSpamAlertChannel));
-                } else {
-                    builder.setMessage(LocaleController.getString("ReportSpamAlertGroup", R.string.ReportSpamAlertGroup));
-                }
-            }
-            reportText = LocaleController.getString("ReportChat", R.string.ReportChat);
-        }
-        builder.setPositiveButton(reportText, (dialogInterface, i) -> {
-            if (currentUser != null) {
-                accountInstance.getMessagesController().blockPeer(currentUser.id);
-            }
-            if (cells == null || cells[0] != null && cells[0].isChecked()) {
-                accountInstance.getMessagesController().reportSpam(dialog_id, currentUser, currentChat, encryptedChat, currentChat != null && isLocation);
-            }
-            if (cells == null || cells[1].isChecked()) {
-                if (currentChat != null) {
-                    if (ChatObject.isNotInChat(currentChat)) {
-                        accountInstance.getMessagesController().deleteDialog(dialog_id, 0);
-                    } else {
-                        accountInstance.getMessagesController().deleteParticipantFromChat(-dialog_id, accountInstance.getMessagesController().getUser(accountInstance.getUserConfig().getClientUserId()));
-                    }
-                } else {
-                    accountInstance.getMessagesController().deleteDialog(dialog_id, 0);
-                }
-                callback.run(1);
-            } else {
-                callback.run(0);
-            }
-        });
-        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-        AlertDialog dialog = builder.create();
-        fragment.showDialog(dialog);
-        TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (button != null) {
-            button.setTextColor(Theme.getColor(Theme.key_dialogTextRed));
-        }
-    }
 
     public static void showCustomNotificationsDialog(BaseFragment parentFragment, long did, int topicId, int globalType, ArrayList<NotificationsSettingsActivity.NotificationException> exceptions, int currentAccount, MessagesStorage.IntCallback callback) {
         showCustomNotificationsDialog(parentFragment, did, topicId, globalType, exceptions, currentAccount, callback, null);
@@ -2269,17 +2086,6 @@ public class AlertsCreator {
                     arrayList.add(user);
                 }
             }
-        }
-        if (arrayList != null) {
-            ArrayList<TLRPC.User> finalArrayList = arrayList;
-            AndroidUtilities.runOnUIThread(() -> {
-                BaseFragment lastFragment = LaunchActivity.getLastFragment();
-                if (lastFragment != null && lastFragment.getParentActivity() != null) {
-                    LimitReachedBottomSheet restricterdUsersBottomSheet = new LimitReachedBottomSheet(lastFragment, lastFragment.getParentActivity(), LimitReachedBottomSheet.TYPE_ADD_MEMBERS_RESTRICTED, currentAccount);
-                    restricterdUsersBottomSheet.setRestrictedUsers(currentChat, finalArrayList);
-                    restricterdUsersBottomSheet.show();
-                }
-            }, 200);
         }
     }
 
@@ -3974,10 +3780,6 @@ public class AlertsCreator {
         });
     }
 
-    public static void createReportAlert(final Context context, final long dialog_id, final int messageId, final BaseFragment parentFragment, Runnable hideDim) {
-        createReportAlert(context, dialog_id, messageId, parentFragment, null, hideDim);
-    }
-
     public final static int REPORT_TYPE_SPAM = 0;
     public final static int REPORT_TYPE_VIOLENCE = 1;
     public final static int REPORT_TYPE_CHILD_ABUSE = 2;
@@ -3986,178 +3788,6 @@ public class AlertsCreator {
     public final static int REPORT_TYPE_PORNOGRAPHY = 5;
     public final static int REPORT_TYPE_FAKE_ACCOUNT = 6;
     public final static int REPORT_TYPE_OTHER = 100;
-
-    public static void createReportAlert(final Context context, final long dialog_id, final int messageId, final BaseFragment parentFragment, Theme.ResourcesProvider resourcesProvider, Runnable hideDim) {
-        if (context == null || parentFragment == null) {
-            return;
-        }
-
-        BottomSheet.Builder builder = new BottomSheet.Builder(context, true, resourcesProvider);
-        builder.setDimBehind(hideDim == null);
-        builder.setOnPreDismissListener(di -> {
-            if (hideDim != null) {
-                hideDim.run();
-            }
-        });
-        builder.setTitle(LocaleController.getString("ReportChat", R.string.ReportChat), true);
-        CharSequence[] items;
-        int[] icons;
-        int[] types;
-        if (messageId != 0) {
-
-            items = new CharSequence[]{
-                    LocaleController.getString("ReportChatSpam", R.string.ReportChatSpam),
-                    LocaleController.getString("ReportChatViolence", R.string.ReportChatViolence),
-                    LocaleController.getString("ReportChatChild", R.string.ReportChatChild),
-                    LocaleController.getString("ReportChatIllegalDrugs", R.string.ReportChatIllegalDrugs),
-                    LocaleController.getString("ReportChatPersonalDetails", R.string.ReportChatPersonalDetails),
-                    LocaleController.getString("ReportChatPornography", R.string.ReportChatPornography),
-                    LocaleController.getString("ReportChatOther", R.string.ReportChatOther)
-            };
-            icons = new int[]{
-                    R.drawable.msg_clearcache,
-                    R.drawable.msg_report_violence,
-                    R.drawable.msg_block2,
-                    R.drawable.msg_report_drugs,
-                    R.drawable.msg_report_personal,
-                    R.drawable.msg_report_xxx,
-                    R.drawable.msg_report_other
-            };
-            types = new int[]{
-                    REPORT_TYPE_SPAM,
-                    REPORT_TYPE_VIOLENCE,
-                    REPORT_TYPE_CHILD_ABUSE,
-                    REPORT_TYPE_ILLEGAL_DRUGS,
-                    REPORT_TYPE_PERSONAL_DETAILS,
-                    REPORT_TYPE_PORNOGRAPHY,
-                    REPORT_TYPE_OTHER
-            };
-        } else {
-            items = new CharSequence[]{
-                    LocaleController.getString("ReportChatSpam", R.string.ReportChatSpam),
-                    LocaleController.getString("ReportChatFakeAccount", R.string.ReportChatFakeAccount),
-                    LocaleController.getString("ReportChatViolence", R.string.ReportChatViolence),
-                    LocaleController.getString("ReportChatChild", R.string.ReportChatChild),
-                    LocaleController.getString("ReportChatIllegalDrugs", R.string.ReportChatIllegalDrugs),
-                    LocaleController.getString("ReportChatPersonalDetails", R.string.ReportChatPersonalDetails),
-                    LocaleController.getString("ReportChatPornography", R.string.ReportChatPornography),
-                    LocaleController.getString("ReportChatOther", R.string.ReportChatOther)
-            };
-            icons = new int[]{
-                    R.drawable.msg_clearcache,
-                    R.drawable.msg_report_fake,
-                    R.drawable.msg_report_violence,
-                    R.drawable.msg_block2,
-                    R.drawable.msg_report_drugs,
-                    R.drawable.msg_report_personal,
-                    R.drawable.msg_report_xxx,
-                    R.drawable.msg_report_other
-            };
-            types = new int[]{
-                    REPORT_TYPE_SPAM,
-                    REPORT_TYPE_FAKE_ACCOUNT,
-                    REPORT_TYPE_VIOLENCE,
-                    REPORT_TYPE_CHILD_ABUSE,
-                    REPORT_TYPE_ILLEGAL_DRUGS,
-                    REPORT_TYPE_PERSONAL_DETAILS,
-                    REPORT_TYPE_PORNOGRAPHY,
-                    REPORT_TYPE_OTHER
-            };
-        }
-        builder.setItems(items, icons, (dialogInterface, i) -> {
-            int type = types[i];
-            if (messageId == 0 && (type == REPORT_TYPE_SPAM || type == REPORT_TYPE_VIOLENCE || type == REPORT_TYPE_CHILD_ABUSE || type == REPORT_TYPE_PORNOGRAPHY || type == REPORT_TYPE_ILLEGAL_DRUGS || type == REPORT_TYPE_PERSONAL_DETAILS) && parentFragment instanceof ChatActivity) {
-                ((ChatActivity) parentFragment).openReportChat(type);
-                return;
-            } else if (messageId == 0 && (type == REPORT_TYPE_OTHER || type == REPORT_TYPE_FAKE_ACCOUNT) || messageId != 0 && type == REPORT_TYPE_OTHER) {
-                if (parentFragment instanceof ChatActivity) {
-                    AndroidUtilities.requestAdjustNothing(parentFragment.getParentActivity(), parentFragment.getClassGuid());
-                }
-                parentFragment.showDialog(new ReportAlert(context, type) {
-
-                    @Override
-                    public void dismissInternal() {
-                        super.dismissInternal();
-                        if (parentFragment instanceof ChatActivity) {
-                            ((ChatActivity) parentFragment).checkAdjustResize();
-                        }
-                    }
-
-                    @Override
-                    protected void onSend(int type, String message) {
-                        ArrayList<Integer> ids = new ArrayList<>();
-                        if (messageId != 0) {
-                            ids.add(messageId);
-                        }
-                        TLRPC.InputPeer peer = MessagesController.getInstance(UserConfig.selectedAccount).getInputPeer(dialog_id);
-                        sendReport(peer, type, message, ids);
-                        if (parentFragment instanceof ChatActivity) {
-                            UndoView undoView = ((ChatActivity) parentFragment).getUndoView();
-                            if (undoView != null) {
-                                undoView.showWithAction(0, UndoView.ACTION_REPORT_SENT, null);
-                            }
-                        }
-                    }
-                });
-                return;
-            }
-            TLObject req;
-            TLRPC.InputPeer peer = MessagesController.getInstance(UserConfig.selectedAccount).getInputPeer(dialog_id);
-            if (messageId != 0) {
-                TLRPC.TL_messages_report request = new TLRPC.TL_messages_report();
-                request.peer = peer;
-                request.id.add(messageId);
-                request.message = "";
-                if (type == REPORT_TYPE_SPAM) {
-                    request.reason = new TLRPC.TL_inputReportReasonSpam();
-                } else if (type == REPORT_TYPE_VIOLENCE) {
-                    request.reason = new TLRPC.TL_inputReportReasonViolence();
-                } else if (type == REPORT_TYPE_CHILD_ABUSE) {
-                    request.reason = new TLRPC.TL_inputReportReasonChildAbuse();
-                } else if (type == REPORT_TYPE_PORNOGRAPHY) {
-                    request.reason = new TLRPC.TL_inputReportReasonPornography();
-                } else if (type == REPORT_TYPE_ILLEGAL_DRUGS) {
-                    request.reason = new TLRPC.TL_inputReportReasonIllegalDrugs();
-                } else if (type == REPORT_TYPE_PERSONAL_DETAILS) {
-                    request.reason = new TLRPC.TL_inputReportReasonPersonalDetails();
-                }
-                req = request;
-            } else {
-                TLRPC.TL_account_reportPeer request = new TLRPC.TL_account_reportPeer();
-                request.peer = peer;
-                request.message = "";
-                if (type == REPORT_TYPE_SPAM) {
-                    request.reason = new TLRPC.TL_inputReportReasonSpam();
-                } else if (type == REPORT_TYPE_FAKE_ACCOUNT) {
-                    request.reason = new TLRPC.TL_inputReportReasonFake();
-                } else if (type == REPORT_TYPE_VIOLENCE) {
-                    request.reason = new TLRPC.TL_inputReportReasonViolence();
-                } else if (type == REPORT_TYPE_CHILD_ABUSE) {
-                    request.reason = new TLRPC.TL_inputReportReasonChildAbuse();
-                } else if (type == REPORT_TYPE_PORNOGRAPHY) {
-                    request.reason = new TLRPC.TL_inputReportReasonPornography();
-                } else if (type == REPORT_TYPE_ILLEGAL_DRUGS) {
-                    request.reason = new TLRPC.TL_inputReportReasonIllegalDrugs();
-                } else if (type == REPORT_TYPE_PERSONAL_DETAILS) {
-                    request.reason = new TLRPC.TL_inputReportReasonPersonalDetails();
-                }
-                req = request;
-            }
-            ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> {
-
-            });
-            if (parentFragment instanceof ChatActivity) {
-                UndoView undoView = ((ChatActivity) parentFragment).getUndoView();
-                if (undoView != null) {
-                    undoView.showWithAction(0, UndoView.ACTION_REPORT_SENT, null);
-                }
-            } else {
-                BulletinFactory.of(parentFragment).createReportSent(resourcesProvider).show();
-            }
-        });
-        BottomSheet sheet = builder.create();
-        parentFragment.showDialog(sheet);
-    }
 
     private static String getFloodWaitString(String error) {
         int time = Utilities.parseInt(error);
@@ -4804,7 +4434,6 @@ public class AlertsCreator {
 
     public static AlertDialog.Builder createContactsPermissionDialog(Activity parentActivity, MessagesStorage.IntCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
-        builder.setTopAnimation(R.raw.permission_request_contacts, PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground));
         builder.setMessage(AndroidUtilities.replaceTags(LocaleController.getString("ContactsPermissionAlert", R.string.ContactsPermissionAlert)));
         builder.setPositiveButton(LocaleController.getString("ContactsPermissionAlertContinue", R.string.ContactsPermissionAlertContinue), (dialog, which) -> callback.run(1));
         builder.setNegativeButton(LocaleController.getString("ContactsPermissionAlertNotNow", R.string.ContactsPermissionAlertNotNow), (dialog, which) -> callback.run(0));

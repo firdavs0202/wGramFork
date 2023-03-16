@@ -26,7 +26,9 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.text.Cue;
@@ -40,11 +42,13 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /** A {@link SubtitleDecoder} for CEA-608 (also known as "line 21 captions" and "EIA-608"). */
 public final class Cea608Decoder extends CeaDecoder {

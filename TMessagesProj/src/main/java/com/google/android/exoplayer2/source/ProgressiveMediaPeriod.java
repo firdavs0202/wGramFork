@@ -21,7 +21,9 @@ import static java.lang.Math.min;
 
 import android.net.Uri;
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.DataType;
 import com.google.android.exoplayer2.Format;
@@ -58,15 +60,17 @@ import com.google.android.exoplayer2.util.ConditionVariable;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** A {@link MediaPeriod} that extracts data using an {@link Extractor}. */
 /* package */ final class ProgressiveMediaPeriod

@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.extractor.mp3;
 import static java.lang.Math.max;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.audio.MpegAudioUtil;
 import com.google.android.exoplayer2.extractor.SeekPoint;

@@ -17,11 +17,14 @@ package com.google.android.exoplayer2.source.mediaparser;
 
 import android.annotation.SuppressLint;
 import android.media.MediaParser;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataReader;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 /** {@link MediaParser.SeekableInputReader} implementation wrapping a {@link DataReader}. */

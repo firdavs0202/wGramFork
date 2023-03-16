@@ -1812,9 +1812,9 @@ public class WallpapersListActivity extends BaseFragment implements Notification
                 case 0: {
                     TextCell textCell = (TextCell) holder.itemView;
                     if (position == uploadImageRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("SelectFromGallery", R.string.SelectFromGallery), R.drawable.msg_photos, true);
+                        textCell.setTextAndIcon(LocaleController.getString("SelectFromGallery", R.string.SelectFromGallery), true);
                     } else if (position == setColorRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("SetColor", R.string.SetColor), R.drawable.msg_palette, true);
+                        textCell.setTextAndIcon(LocaleController.getString("SetColor", R.string.SetColor), true);
                     } else if (position == resetRow) {
                         textCell.setText(LocaleController.getString("ResetChatBackgrounds", R.string.ResetChatBackgrounds), false);
                     }

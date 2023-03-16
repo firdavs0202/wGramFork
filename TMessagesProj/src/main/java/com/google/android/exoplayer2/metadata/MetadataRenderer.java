@@ -22,7 +22,9 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Looper;
 import android.os.Message;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -31,9 +33,11 @@ import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.SampleStream.ReadDataResult;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.dataflow.qual.SideEffectFree;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.checkerframework.dataflow.qual.SideEffectFree;
 
 /**
  * A renderer for metadata.

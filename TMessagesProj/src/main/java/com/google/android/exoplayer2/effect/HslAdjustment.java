@@ -19,6 +19,7 @@ package com.google.android.exoplayer2.effect;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import android.content.Context;
+
 import com.google.android.exoplayer2.util.FrameProcessingException;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 

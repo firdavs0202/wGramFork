@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.upstream;
 
 import com.google.android.exoplayer2.C;
+
 import java.io.IOException;
 
 /** Reads bytes from a data stream. */

@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.upstream;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.PlaybackException;
+
 import java.io.IOException;
 
 /** Used to specify reason of a DataSource error. */

@@ -20,6 +20,7 @@ import android.graphics.PointF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
 import androidx.annotation.BinderThread;
 
 /**

@@ -18,11 +18,13 @@ package com.google.android.exoplayer2.source.rtsp;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.common.base.Ascii;
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 
 /**

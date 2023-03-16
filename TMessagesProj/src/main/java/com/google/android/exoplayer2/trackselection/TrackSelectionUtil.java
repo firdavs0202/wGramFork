@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.trackselection;
 
 import android.os.SystemClock;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.Tracks;
@@ -26,9 +28,11 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Selecti
 import com.google.android.exoplayer2.trackselection.ExoTrackSelection.Definition;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.util.Arrays;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /** Track selection related utility methods. */
 public final class TrackSelectionUtil {

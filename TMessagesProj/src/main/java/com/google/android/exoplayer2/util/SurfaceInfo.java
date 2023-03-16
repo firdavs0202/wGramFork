@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.util;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
 
 /** Immutable value class for a {@link Surface} and supporting information. */

@@ -44,14 +44,14 @@ public class Emoji {
     private static boolean inited = false;
     private static Paint placeholderPaint;
     private static int[] emojiCounts = new int[]{
-        EmojiData.data[0].length,
-        EmojiData.data[1].length,
-        EmojiData.data[2].length,
-        EmojiData.data[3].length,
-        EmojiData.data[4].length,
-        EmojiData.data[5].length,
-        EmojiData.data[6].length,
-        EmojiData.data[7].length
+            EmojiData.data[0].length,
+            EmojiData.data[1].length,
+            EmojiData.data[2].length,
+            EmojiData.data[3].length,
+            EmojiData.data[4].length,
+            EmojiData.data[5].length,
+            EmojiData.data[6].length,
+            EmojiData.data[7].length
     };
     private static Bitmap[][] emojiBmp = new Bitmap[8][];
     private static boolean[][] loadingEmoji = new boolean[8][];
@@ -65,12 +65,12 @@ public class Emoji {
     public static boolean emojiDrawingUseAlpha = true;
 
     private static String[] DEFAULT_RECENT = new String[]{
-        "\uD83D\uDE02", "\uD83D\uDE18", "\u2764", "\uD83D\uDE0D", "\uD83D\uDE0A", "\uD83D\uDE01",
-        "\uD83D\uDC4D", "\u263A", "\uD83D\uDE14", "\uD83D\uDE04", "\uD83D\uDE2D", "\uD83D\uDC8B",
-        "\uD83D\uDE12", "\uD83D\uDE33", "\uD83D\uDE1C", "\uD83D\uDE48", "\uD83D\uDE09", "\uD83D\uDE03",
-        "\uD83D\uDE22", "\uD83D\uDE1D", "\uD83D\uDE31", "\uD83D\uDE21", "\uD83D\uDE0F", "\uD83D\uDE1E",
-        "\uD83D\uDE05", "\uD83D\uDE1A", "\uD83D\uDE4A", "\uD83D\uDE0C", "\uD83D\uDE00", "\uD83D\uDE0B",
-        "\uD83D\uDE06", "\uD83D\uDC4C", "\uD83D\uDE10", "\uD83D\uDE15"
+            "\uD83D\uDE02", "\uD83D\uDE18", "\u2764", "\uD83D\uDE0D", "\uD83D\uDE0A", "\uD83D\uDE01",
+            "\uD83D\uDC4D", "\u263A", "\uD83D\uDE14", "\uD83D\uDE04", "\uD83D\uDE2D", "\uD83D\uDC8B",
+            "\uD83D\uDE12", "\uD83D\uDE33", "\uD83D\uDE1C", "\uD83D\uDE48", "\uD83D\uDE09", "\uD83D\uDE03",
+            "\uD83D\uDE22", "\uD83D\uDE1D", "\uD83D\uDE31", "\uD83D\uDE21", "\uD83D\uDE0F", "\uD83D\uDE1E",
+            "\uD83D\uDE05", "\uD83D\uDE1A", "\uD83D\uDE4A", "\uD83D\uDE0C", "\uD83D\uDE00", "\uD83D\uDE0B",
+            "\uD83D\uDE06", "\uD83D\uDC4C", "\uD83D\uDE10", "\uD83D\uDE15"
     };
 
     private final static int MAX_RECENT_EMOJI_COUNT = 48;
@@ -338,6 +338,7 @@ public class Emoji {
             this.end = end;
             this.code = code;
         }
+
         public int start;
         public int end;
         public CharSequence code;

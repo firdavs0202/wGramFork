@@ -27,8 +27,10 @@ import android.net.NetworkCapabilities;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.util.Util;
 
 /**

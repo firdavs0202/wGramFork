@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.io.IOException;
 
 /** Data object to store header information. */

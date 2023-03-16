@@ -16,9 +16,11 @@
 package com.google.android.exoplayer2.audio;
 
 import android.os.Bundle;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.Util;

@@ -22,6 +22,7 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
@@ -32,13 +33,15 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Collections;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * Parses an ISO/IEC 14496-2 (MPEG-4 Part 2) or ITU-T Recommendation H.263 byte stream and extracts

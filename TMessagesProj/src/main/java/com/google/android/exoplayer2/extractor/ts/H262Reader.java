@@ -19,7 +19,9 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
 
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
@@ -29,9 +31,11 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.util.Arrays;
 import java.util.Collections;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Parses a continuous H262 byte stream and extracts individual frames. */
 public final class H262Reader implements ElementaryStreamReader {

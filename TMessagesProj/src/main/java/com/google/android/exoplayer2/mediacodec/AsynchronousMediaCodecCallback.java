@@ -23,12 +23,16 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.util.Util;
-import java.util.ArrayDeque;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.util.ArrayDeque;
 
 /** A {@link MediaCodec.Callback} that routes callbacks on a separate thread. */
 @RequiresApi(23)

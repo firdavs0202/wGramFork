@@ -20,8 +20,10 @@ import android.os.ConditionVariable;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager.Mode;
@@ -29,6 +31,7 @@ import com.google.android.exoplayer2.drm.DrmSession.DrmSessionException;
 import com.google.android.exoplayer2.source.MediaSource.MediaPeriodId;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Assertions;
+
 import java.util.Map;
 import java.util.UUID;
 

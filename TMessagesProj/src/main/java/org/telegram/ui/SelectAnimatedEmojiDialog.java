@@ -26,7 +26,6 @@ import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -103,9 +102,6 @@ import org.telegram.ui.Components.EmojiPacksAlert;
 import org.telegram.ui.Components.EmojiTabsStrip;
 import org.telegram.ui.Components.EmojiView;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumButtonView;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
-import org.telegram.ui.Components.Premium.PremiumLockIconView;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.Reactions.ReactionsEffectOverlay;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
@@ -1788,10 +1784,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                     imageView.span = null;
                     imageView.document = null;
                     imageView.setDrawable(null);
-                    if (imageView.premiumLockIconView != null) {
-                        imageView.premiumLockIconView.setVisibility(View.GONE);
-                        imageView.premiumLockIconView.setImageReceiver(null);
-                    }
                 } else {
                     imageView.isDefaultReaction = false;
                     imageView.span = new AnimatedEmojiSpan(currentReaction.documentId, null);
@@ -1805,11 +1797,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                         emojiSearchGridView.animatedEmojiDrawables.put(imageView.span.getDocumentId(), drawable);
                     }
                     imageView.setDrawable(drawable);
-
-                    if (!UserConfig.getInstance(currentAccount).isPremium() && type != TYPE_AVATAR_CONSTRUCTOR && type != TYPE_TOPIC_ICON) {
-                        imageView.createPremiumLockView();
-                        imageView.premiumLockIconView.setVisibility(View.VISIBLE);
-                    }
                 }
             } else if (holder.getItemViewType() == VIEW_TYPE_EMOJI) {
                 ImageViewEmoji imageView = (ImageViewEmoji) holder.itemView;
@@ -2094,10 +2081,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                     imageView.span = null;
                     imageView.document = null;
                     imageView.setDrawable(null);
-                    if (imageView.premiumLockIconView != null) {
-                        imageView.premiumLockIconView.setVisibility(View.GONE);
-                        imageView.premiumLockIconView.setImageReceiver(null);
-                    }
                 } else {
                     imageView.isDefaultReaction = false;
                     imageView.span = new AnimatedEmojiSpan(currentReaction.documentId, null);
@@ -2111,11 +2094,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                         emojiGridView.animatedEmojiDrawables.put(imageView.span.getDocumentId(), (AnimatedEmojiDrawable) drawable);
                     }
                     imageView.setDrawable(drawable);
-
-                    if (!UserConfig.getInstance(currentAccount).isPremium() && type != TYPE_AVATAR_CONSTRUCTOR && type != TYPE_TOPIC_ICON) {
-                        imageView.createPremiumLockView();
-                        imageView.premiumLockIconView.setVisibility(View.VISIBLE);
-                    }
                 }
             } else if (viewType == VIEW_TYPE_EXPAND) {
                 EmojiPackExpand button = (EmojiPackExpand) holder.itemView;
@@ -2144,7 +2122,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                     if (pack != null) {
                         button.set(pack.set.title, !pack.free && !UserConfig.getInstance(currentAccount).isPremium(), pack.installed, e -> {
                             if (!pack.free && !UserConfig.getInstance(currentAccount).isPremium()) {
-                                new PremiumFeatureBottomSheet(baseFragment, getContext(), currentAccount, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false).show();
                                 return;
                             }
                             Integer p = null;
@@ -2376,7 +2353,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
 
         FrameLayout addButtonView;
         AnimatedTextView addButtonTextView;
-        PremiumButtonView premiumButtonView;
 
         public EmojiPackButton(Context context) {
             super(context);
@@ -2392,10 +2368,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
             addButtonView.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), 8));
             addButtonView.addView(addButtonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
             addView(addButtonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-
-            premiumButtonView = new PremiumButtonView(getContext(), false);
-            premiumButtonView.setIcon(R.raw.unlock_icon);
-            addView(premiumButtonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         }
 
         private String lastTitle;
@@ -2404,10 +2376,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
             lastTitle = title;
             if (unlock) {
                 addButtonView.setVisibility(View.GONE);
-                premiumButtonView.setVisibility(View.VISIBLE);
-                premiumButtonView.setButton(LocaleController.formatString("UnlockPremiumEmojiPack", R.string.UnlockPremiumEmojiPack, title), onClickListener);
             } else {
-                premiumButtonView.setVisibility(View.GONE);
                 addButtonView.setVisibility(View.VISIBLE);
                 addButtonView.setOnClickListener(onClickListener);
             }
@@ -2466,23 +2435,17 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
             lockShow = show;
 
             if (animated) {
-                premiumButtonView.setVisibility(View.VISIBLE);
                 lockAnimator = ValueAnimator.ofFloat(lockT, show ? 1f : 0f);
                 lockAnimator.addUpdateListener(anm -> {
                     lockT = (float) anm.getAnimatedValue();
                     if (addButtonView != null) {
                         addButtonView.setAlpha(1f - lockT);
                     }
-                    if (premiumButtonView != null) {
-                        premiumButtonView.setAlpha(lockT);
-                    }
                 });
                 lockAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (!show) {
-                            premiumButtonView.setVisibility(View.GONE);
-                        }
+
                     }
                 });
                 lockAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
@@ -2491,10 +2454,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
             } else {
                 lockT = lockShow ? 1 : 0;
                 addButtonView.setAlpha(1f - lockT);
-                premiumButtonView.setAlpha(lockT);
-                premiumButtonView.setScaleX(lockT);
-                premiumButtonView.setScaleY(lockT);
-                premiumButtonView.setVisibility(lockShow ? View.VISIBLE : View.GONE);
             }
         }
     }
@@ -2550,7 +2509,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
         public float bigReactionSelectedProgress;
         public boolean attached;
         ValueAnimator backAnimator;
-        PremiumLockIconView premiumLockIconView;
         public boolean selected;
         private float pressedProgress;
         public float skewAlpha;
@@ -2727,15 +2685,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
         public void invalidate() {
             if (getParent() != null) {
                 ((View) getParent()).invalidate();
-            }
-        }
-
-        public void createPremiumLockView() {
-            if (premiumLockIconView == null) {
-                premiumLockIconView = new PremiumLockIconView(getContext(), PremiumLockIconView.TYPE_STICKERS_PREMIUM_LOCKED);
-                int measureSpec = MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(12),MeasureSpec.EXACTLY);
-                premiumLockIconView.measure(measureSpec, measureSpec);
-                premiumLockIconView.layout(0, 0, premiumLockIconView.getMeasuredWidth(), premiumLockIconView.getMeasuredHeight());
             }
         }
     }
@@ -3372,11 +3321,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                             viewsGroupedByLines.put(top, arrayList);
                         }
                         arrayList.add(imageViewEmoji);
-                        if (imageViewEmoji.premiumLockIconView != null && imageViewEmoji.premiumLockIconView.getVisibility() == View.VISIBLE) {
-                            if (imageViewEmoji.premiumLockIconView.getImageReceiver() == null && imageViewEmoji.imageReceiverToDraw != null) {
-                                imageViewEmoji.premiumLockIconView.setImageReceiver(imageViewEmoji.imageReceiverToDraw);
-                            }
-                        }
                     }
                     if (drawButton && child != null) {
                         int position = getChildAdapterPosition(child);
@@ -3450,15 +3394,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                 View child = getChildAt(i);
                 if (child instanceof ImageViewEmoji) {
                     ImageViewEmoji imageViewEmoji = (ImageViewEmoji) child;
-                    if (imageViewEmoji.premiumLockIconView != null && imageViewEmoji.premiumLockIconView.getVisibility() == View.VISIBLE) {
-                        canvas.save();
-                        canvas.translate(
-                            (int) (imageViewEmoji.getX() + imageViewEmoji.getMeasuredWidth() - imageViewEmoji.premiumLockIconView.getMeasuredWidth()),
-                            (int) (imageViewEmoji.getY() + imageViewEmoji.getMeasuredHeight() - imageViewEmoji.premiumLockIconView.getMeasuredHeight())
-                        );
-                        imageViewEmoji.premiumLockIconView.draw(canvas);
-                        canvas.restore();
-                    }
                 } else if (child != null && child != animateExpandFromButton) {
                     canvas.save();
                     canvas.translate((int) child.getX(), (int) child.getY());

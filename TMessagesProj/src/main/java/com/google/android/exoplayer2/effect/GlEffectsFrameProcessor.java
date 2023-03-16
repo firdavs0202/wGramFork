@@ -24,8 +24,10 @@ import android.content.Context;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.DebugViewProvider;
 import com.google.android.exoplayer2.util.Effect;
@@ -37,11 +39,13 @@ import com.google.android.exoplayer2.util.SurfaceInfo;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.ColorInfo;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * A {@link FrameProcessor} implementation that applies {@link GlEffect} instances using OpenGL on a

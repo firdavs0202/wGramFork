@@ -19,8 +19,10 @@ import static com.google.android.exoplayer2.util.FileTypes.inferFileTypeFromResp
 import static com.google.android.exoplayer2.util.FileTypes.inferFileTypeFromUri;
 
 import android.net.Uri;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
@@ -46,6 +48,7 @@ import com.google.android.exoplayer2.util.FileTypes;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

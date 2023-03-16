@@ -19,8 +19,10 @@ import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.UriUtil;

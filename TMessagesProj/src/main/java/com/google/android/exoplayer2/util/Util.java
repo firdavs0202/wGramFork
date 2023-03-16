@@ -67,10 +67,12 @@ import android.util.SparseLongArray;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.ContentType;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
@@ -87,6 +89,12 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
+
+import org.checkerframework.checker.initialization.qual.UnknownInitialization;
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -118,10 +126,6 @@ import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
-import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.PolyNull;
 
 /** Miscellaneous utility methods. */
 public final class Util {

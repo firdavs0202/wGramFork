@@ -17,7 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -29,6 +28,11 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -65,11 +69,6 @@ import org.telegram.ui.Components.voip.VoIPHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import androidx.collection.LongSparseArray;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class CallLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 

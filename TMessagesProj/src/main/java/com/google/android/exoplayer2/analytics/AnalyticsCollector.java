@@ -21,7 +21,9 @@ import android.media.MediaCodec.CodecException;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
@@ -34,6 +36,7 @@ import com.google.android.exoplayer2.source.MediaSource.MediaPeriodId;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.video.VideoDecoderOutputBufferRenderer;
+
 import java.util.List;
 
 /**

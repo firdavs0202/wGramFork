@@ -33,7 +33,6 @@ import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.GroupCreateCheckBox;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumGradient;
 
 public class DrawerUserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -146,7 +145,6 @@ public class DrawerUserCell extends FrameLayout implements NotificationCenter.No
             textView.setRightDrawableOutside(true);
         } else if (MessagesController.getInstance(account).isPremiumUser(user)) {
             textView.setDrawablePadding(AndroidUtilities.dp(6));
-            status.set(PremiumGradient.getInstance().premiumStarDrawableMini, true);
             textView.setRightDrawableOutside(true);
         } else {
             status.set((Drawable) null, true);

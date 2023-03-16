@@ -20,6 +20,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.VorbisUtil;
@@ -28,10 +29,12 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 
 /** {@link StreamReader} to extract Vorbis data out of Ogg byte stream. */
 /* package */ final class VorbisReader extends StreamReader {

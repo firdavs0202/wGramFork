@@ -18,8 +18,10 @@ package com.google.android.exoplayer2.source;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import android.os.Bundle;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -29,6 +31,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -32,7 +32,6 @@ import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SvgHelper;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.Premium.StarParticlesView;
 
 import java.util.Arrays;
 
@@ -100,8 +99,6 @@ public class CacheChart extends View {
 
     private AnimatedTextView.AnimatedTextDrawable topCompleteText = new AnimatedTextView.AnimatedTextDrawable(false, true, true);
     private AnimatedTextView.AnimatedTextDrawable bottomCompleteText = new AnimatedTextView.AnimatedTextDrawable(false, true, true);
-
-    private StarParticlesView.Drawable completeDrawable;
 
     private static long particlesStart = -1;
     class Sector {
@@ -832,30 +829,8 @@ public class CacheChart extends View {
 
         if (complete > 0) {
             boolean init = false;
-            if (completeDrawable == null) {
-                completeDrawable = new StarParticlesView.Drawable(25);
-                completeDrawable.type = 100;
-                completeDrawable.roundEffect = true;
-                completeDrawable.useRotate = true;
-                completeDrawable.useBlur = false;
-                completeDrawable.checkBounds = true;
-                completeDrawable.size1 = 18;
-                completeDrawable.distributionAlgorithm = false;
-                completeDrawable.excludeRadius = AndroidUtilities.dp(80);
-                completeDrawable.k1 = completeDrawable.k2 = completeDrawable.k3 = .85f;
-                completeDrawable.init();
-                init = true;
-            }
-            if (init || completePathBounds == null || !completePathBounds.equals(chartMeasureBounds)) {
-                float d = Math.min(getMeasuredHeight(), Math.min(getMeasuredWidth(), AndroidUtilities.dp(150)));
-                completeDrawable.rect.set(0, 0, d, d);
-                completeDrawable.rect.offset((getMeasuredWidth() - completeDrawable.rect.width()) / 2, (getMeasuredHeight() - completeDrawable.rect.height()) / 2);
-                completeDrawable.rect2.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
-                completeDrawable.resetPositions();
-            }
 
             canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), 255, Canvas.ALL_SAVE_FLAG);
-            completeDrawable.onDraw(canvas, complete);
             completePaint.setAlpha((int) (0xFF * complete));
             canvas.drawRect(0, 0, getWidth(), getHeight(), completePaint);
             canvas.restore();
@@ -941,13 +916,6 @@ public class CacheChart extends View {
         completeTextGradientMatrix.reset();
         completeTextGradientMatrix.setTranslate(chartMeasureBounds.left, -chartMeasureBounds.centerY());
         completeTextGradient.setLocalMatrix(completeTextGradientMatrix);
-
-        if (completeDrawable != null) {
-            completeDrawable.rect.set(0, 0, AndroidUtilities.dp(140), AndroidUtilities.dp(140));
-            completeDrawable.rect.offset((getMeasuredWidth() - completeDrawable.rect.width()) / 2, (getMeasuredHeight() - completeDrawable.rect.height()) / 2);
-            completeDrawable.rect2.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
-            completeDrawable.resetPositions();
-        }
 
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),

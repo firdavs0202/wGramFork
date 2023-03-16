@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.util;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 

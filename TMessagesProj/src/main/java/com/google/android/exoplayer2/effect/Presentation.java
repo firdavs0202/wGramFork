@@ -22,13 +22,17 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import android.graphics.Matrix;
 import android.util.Pair;
+
 import androidx.annotation.IntDef;
+
 import com.google.android.exoplayer2.C;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * Controls how a frame is presented with options to set the output resolution and choose how to map

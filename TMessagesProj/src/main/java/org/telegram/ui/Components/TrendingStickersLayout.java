@@ -725,24 +725,6 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
                 case 4:
                     view = new GraySectionCell(context, resourcesProvider);
                     break;
-                case 5:
-                    final FeaturedStickerSetCell2 stickerSetCell = new FeaturedStickerSetCell2(context, resourcesProvider);
-                    stickerSetCell.setAddOnClickListener(v -> {
-                        final FeaturedStickerSetCell2 cell = (FeaturedStickerSetCell2) v.getParent();
-                        TLRPC.StickerSetCovered pack = cell.getStickerSet();
-                        if (installingStickerSets.indexOfKey(pack.set.id) >= 0 || removingStickerSets.indexOfKey(pack.set.id) >= 0) {
-                            return;
-                        }
-                        if (cell.isInstalled()) {
-                            removingStickerSets.put(pack.set.id, pack);
-                            delegate.onStickerSetRemove(pack);
-                        } else {
-                            installStickerSet(pack, cell);
-                        }
-                    });
-                    stickerSetCell.getImageView().setLayerNum(3);
-                    view = stickerSetCell;
-                    break;
             }
 
             return new RecyclerListView.Holder(view);

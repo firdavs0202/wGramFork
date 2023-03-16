@@ -160,7 +160,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
             addView(dayNightCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             browseThemesCell = new TextCell(context);
-            browseThemesCell.setTextAndIcon(LocaleController.getString("SettingsBrowseThemes", R.string.SettingsBrowseThemes), R.drawable.msg_colors, false);
+            browseThemesCell.setTextAndIcon(LocaleController.getString("SettingsBrowseThemes", R.string.SettingsBrowseThemes), false);
 
             addView(browseThemesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
@@ -201,11 +201,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
 
                     darkThemeDrawable.setCustomEndFrame(toDark ? darkThemeDrawable.getFramesCount() - 1 : 0);
 
-                    dayNightCell.getImageView().playAnimation();
                     int[] pos = new int[2];
-                    dayNightCell.getImageView().getLocationInWindow(pos);
-                    pos[0] += dayNightCell.getImageView().getMeasuredWidth() / 2;
-                    pos[1] += dayNightCell.getImageView().getMeasuredHeight() / 2 + AndroidUtilities.dp(3);
 
                     Runnable then = () -> {
                         updateDayNightMode();
@@ -269,7 +265,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
                         Theme.turnOffAutoNight(parentFragment);
                     };
 
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, themeInfo, false, pos, -1, toDark, dayNightCell.getImageView(), dayNightCell, then);
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, themeInfo, false, pos, -1, toDark, null, dayNightCell, then);
                 }
             });
 

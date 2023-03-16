@@ -223,7 +223,6 @@ import org.telegram.ui.Components.PhotoViewerWebView;
 import org.telegram.ui.Components.PickerBottomLayoutViewer;
 import org.telegram.ui.Components.PipVideoOverlay;
 import org.telegram.ui.Components.PlayPauseDrawable;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RadialProgressView;
 import org.telegram.ui.Components.RecyclerListView;
@@ -6587,9 +6586,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (parentAlert != null) {
                 parentAlert.dismiss(true);
             }
-            if (parentFragment != null) {
-                parentFragment.presentFragment(new PremiumPreviewFragment("caption_limit"));
-            }
         }).show();
     }
 
@@ -6773,10 +6769,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (videoEditedInfo != null) {
                 long sizeToCheck = (long) (videoEditedInfo.estimatedSize * 0.9f);
                 if ((sizeToCheck > FileLoader.DEFAULT_MAX_FILE_SIZE && !UserConfig.getInstance(currentAccount).isPremium()) || sizeToCheck > FileLoader.DEFAULT_MAX_FILE_SIZE_PREMIUM) {
-                    if (parentAlert != null) {
-                        LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(parentAlert.getBaseFragment(), parentAlert.getContainer().getContext(), LimitReachedBottomSheet.TYPE_LARGE_FILE, UserConfig.selectedAccount);
-                        limitReachedBottomSheet.show();
-                    }
                     return;
                 }
             }
@@ -11558,7 +11550,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 dateTextView.setText("");
             } else {
                 allowShare = !noforwards;
-                if (newMessageObject.isNewGif() && allowShare && !DialogObject.isEncryptedDialog(newMessageObject.getDialogId())) {
+                if (newMessageObject.isNewGif() && allowShare) {
                     menuItem.showSubItem(gallery_menu_savegif);
                 }
                 if (newMessageObject.canDeleteMessage(parentChatActivity != null && parentChatActivity.isInScheduleMode(), null) && slideshowMessageId == 0) {

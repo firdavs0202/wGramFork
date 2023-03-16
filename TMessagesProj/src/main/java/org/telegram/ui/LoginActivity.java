@@ -1,11 +1,3 @@
-/*
- * This is the source code of Telegram for Android v. 5.x.x.
- * It is licensed under GNU GPL v. 2 or later.
- * You should have received a copy of the license in this archive (see LICENSE).
- *
- * Copyright Nikolai Kudashov, 2013-2018.
- */
-
 package org.telegram.ui;
 
 import android.Manifest;
@@ -24,10 +16,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -35,7 +25,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -64,7 +53,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -222,7 +210,8 @@ public class LoginActivity extends BaseFragment {
             AUTH_TYPE_MISSED_CALL,
             AUTH_TYPE_FRAGMENT_SMS
     })
-    public @interface AuthType {}
+    public @interface AuthType {
+    }
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -231,7 +220,8 @@ public class LoginActivity extends BaseFragment {
             MODE_CHANGE_PHONE_NUMBER,
             MODE_CHANGE_LOGIN_EMAIL
     })
-    public @interface ActivityMode {}
+    public @interface ActivityMode {
+    }
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
@@ -252,14 +242,16 @@ public class LoginActivity extends BaseFragment {
             VIEW_CODE_EMAIL,
             VIEW_CODE_FRAGMENT_SMS
     })
-    private @interface ViewNumber {}
+    private @interface ViewNumber {
+    }
 
     @IntDef({
             COUNTRY_STATE_NOT_SET_OR_VALID,
             COUNTRY_STATE_EMPTY,
             COUNTRY_STATE_INVALID
     })
-    private @interface CountryState {}
+    private @interface CountryState {
+    }
 
     @ViewNumber
     private int currentViewNum;
@@ -289,12 +281,8 @@ public class LoginActivity extends BaseFragment {
     private int currentDoneType;
     private AnimatorSet[] showDoneAnimation = new AnimatorSet[2];
     private AnimatorSet doneItemAnimation;
-    private TransformableLoginButtonView floatingButtonIcon;
-    private FrameLayout floatingButtonContainer;
-    private VerticalPositionAutoAnimator floatingAutoAnimator;
-    private RadialProgressView floatingProgressView;
     private int progressRequestId;
-    private boolean[] doneButtonVisible = new boolean[] {true, false};
+    private boolean[] doneButtonVisible = new boolean[]{true, false};
 
     private AlertDialog cancelDeleteProgressDialog;
 
@@ -314,8 +302,6 @@ public class LoginActivity extends BaseFragment {
 
     private boolean isAnimatingIntro;
     private Runnable animationFinishCallback;
-
-    private PhoneNumberConfirmView phoneNumberConfirmView;
 
     private static final int DONE_TYPE_FLOATING = 0;
     private static final int DONE_TYPE_ACTION = 1;
@@ -475,24 +461,15 @@ public class LoginActivity extends BaseFragment {
         sizeNotifierFrameLayout = new SizeNotifierFrameLayout(context) {
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                MarginLayoutParams marginLayoutParams = (MarginLayoutParams) floatingButtonContainer.getLayoutParams();
                 int keyboardOffset = isCustomKeyboardVisible() ? AndroidUtilities.dp(CustomPhoneKeyboardView.KEYBOARD_HEIGHT_DP) : 0;
                 if (isCustomKeyboardVisible() && measureKeyboardHeight() > AndroidUtilities.dp(20)) {
                     keyboardOffset -= measureKeyboardHeight();
                 }
                 if (Bulletin.getVisibleBulletin() != null && Bulletin.getVisibleBulletin().isShowing()) {
                     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-                    marginLayoutParams.bottomMargin = AndroidUtilities.dp(16) + Bulletin.getVisibleBulletin().getLayout().getMeasuredHeight() - AndroidUtilities.dp(10) + keyboardOffset;
-                } else {
-                    marginLayoutParams.bottomMargin = AndroidUtilities.dp(16) + keyboardOffset;
                 }
 
                 int statusBarHeight = AndroidUtilities.isTablet() ? 0 : AndroidUtilities.statusBarHeight;
-                marginLayoutParams = (MarginLayoutParams) backButtonView.getLayoutParams();
-                marginLayoutParams.topMargin = AndroidUtilities.dp(16) + statusBarHeight;
-
-                marginLayoutParams = (MarginLayoutParams) radialProgressView.getLayoutParams();
-                marginLayoutParams.topMargin = AndroidUtilities.dp(16) + statusBarHeight;
 
                 if (measureKeyboardHeight() > AndroidUtilities.dp(20) && keyboardView.getVisibility() != GONE && !isCustomKeyboardForceDisabled() && !customKeyboardWasVisible) {
                     if (keyboardAnimator != null) {
@@ -618,29 +595,9 @@ public class LoginActivity extends BaseFragment {
             }
         }
 
-        floatingButtonContainer = new FrameLayout(context);
-        floatingButtonContainer.setVisibility(doneButtonVisible[DONE_TYPE_FLOATING] ? View.VISIBLE : View.GONE);
         if (Build.VERSION.SDK_INT >= 21) {
             StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButtonContainer.setStateListAnimator(animator);
-            floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                }
-            });
         }
-        floatingAutoAnimator = VerticalPositionAutoAnimator.attach(floatingButtonContainer);
-        sizeNotifierFrameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 24, 16));
-        floatingButtonContainer.setOnClickListener(view -> onDoneButtonPressed());
-        floatingAutoAnimator.addUpdateListener((animation, value, velocity) -> {
-            if (phoneNumberConfirmView != null) {
-                phoneNumberConfirmView.updateFabPosition();
-            }
-        });
 
         backButtonView = new ImageView(context);
         backButtonView.setImageResource(R.drawable.ic_ab_back);
@@ -660,21 +617,6 @@ public class LoginActivity extends BaseFragment {
         radialProgressView.setScaleX(0.1f);
         radialProgressView.setScaleY(0.1f);
         sizeNotifierFrameLayout.addView(radialProgressView, LayoutHelper.createFrame(32, 32, Gravity.RIGHT | Gravity.TOP, 0, 16, 16, 0));
-
-        floatingButtonIcon = new TransformableLoginButtonView(context);
-        floatingButtonIcon.setTransformType(TransformableLoginButtonView.TRANSFORM_OPEN_ARROW);
-        floatingButtonIcon.setProgress(1f);
-        floatingButtonIcon.setDrawBackground(false);
-        floatingButtonContainer.setContentDescription(LocaleController.getString("Done", R.string.Done));
-        floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60));
-
-        floatingProgressView = new RadialProgressView(context);
-        floatingProgressView.setSize(AndroidUtilities.dp(22));
-        floatingProgressView.setAlpha(0.0f);
-        floatingProgressView.setScaleX(0.1f);
-        floatingProgressView.setScaleY(0.1f);
-        floatingProgressView.setVisibility(View.INVISIBLE);
-        floatingButtonContainer.addView(floatingProgressView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         if (savedInstanceState != null) {
             restoringState = true;
@@ -840,9 +782,6 @@ public class LoginActivity extends BaseFragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         setCustomKeyboardVisible(views[currentViewNum].hasCustomKeyboard(), false);
-        if (phoneNumberConfirmView != null) {
-            phoneNumberConfirmView.dismiss();
-        }
     }
 
     @Override
@@ -853,7 +792,7 @@ public class LoginActivity extends BaseFragment {
         if (requestCode == 6) {
             checkPermissions = false;
             if (currentViewNum == VIEW_PHONE_INPUT) {
-                ((PhoneView)views[currentViewNum]).confirmedNumber = true;
+                ((PhoneView) views[currentViewNum]).confirmedNumber = true;
                 views[currentViewNum].onNextPressed(null);
             }
         } else if (requestCode == BasePermissionsActivity.REQUEST_CODE_CALLS) {
@@ -1043,7 +982,7 @@ public class LoginActivity extends BaseFragment {
                 TextWatcher textWatcher = new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        editText.post(()-> {
+                        editText.post(() -> {
                             editText.removeTextChangedListener(this);
                             editText.removeCallbacks(timeoutCallbackRef.get());
                             timeoutCallbackRef.get().run();
@@ -1051,10 +990,12 @@ public class LoginActivity extends BaseFragment {
                     }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
                 };
 
                 outlineTextContainerView.animateError(1f);
@@ -1062,7 +1003,7 @@ public class LoginActivity extends BaseFragment {
                     outlineTextContainerView.animateError(0f);
                     view.setTag(R.id.timeout_callback, null);
                     if (editText != null) {
-                        editText.post(()-> editText.removeTextChangedListener(textWatcher));
+                        editText.post(() -> editText.removeTextChangedListener(textWatcher));
                     }
                 };
                 timeoutCallbackRef.set(timeoutCallback);
@@ -1152,53 +1093,10 @@ public class LoginActivity extends BaseFragment {
         doneButtonVisible[currentDoneType] = show;
         if (animated) {
             showDoneAnimation[currentDoneType] = new AnimatorSet();
-            if (show) {
-                if (floating) {
-                    if (floatingButtonContainer.getVisibility() != View.VISIBLE) {
-                        floatingAutoAnimator.setOffsetY(AndroidUtilities.dpf2(70f));
-                        floatingButtonContainer.setVisibility(View.VISIBLE);
-                    }
-                    ValueAnimator offsetAnimator = ValueAnimator.ofFloat(floatingAutoAnimator.getOffsetY(), 0);
-                    offsetAnimator.addUpdateListener(animation -> {
-                        float val = (Float) animation.getAnimatedValue();
-                        floatingAutoAnimator.setOffsetY(val);
-                        floatingButtonContainer.setAlpha(1f - (val / AndroidUtilities.dpf2(70f)));
-                    });
-                    showDoneAnimation[currentDoneType].play(offsetAnimator);
-                }
-            } else {
-                if (floating) {
-                    ValueAnimator offsetAnimator = ValueAnimator.ofFloat(floatingAutoAnimator.getOffsetY(), AndroidUtilities.dpf2(70f));
-                    offsetAnimator.addUpdateListener(animation -> {
-                        float val = (Float) animation.getAnimatedValue();
-                        floatingAutoAnimator.setOffsetY(val);
-                        floatingButtonContainer.setAlpha(1f - (val / AndroidUtilities.dpf2(70f)));
-                    });
-                    showDoneAnimation[currentDoneType].play(offsetAnimator);
-                }
-            }
+
             showDoneAnimation[currentDoneType].addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (showDoneAnimation[floating ? 0 : 1] != null && showDoneAnimation[floating ? 0 : 1].equals(animation)) {
-                        if (!show) {
-                            if (floating) {
-                                floatingButtonContainer.setVisibility(View.GONE);
-                            }
-
-                            if (floating && floatingButtonIcon.getAlpha() != 1f) {
-                                floatingButtonIcon.setAlpha(1f);
-                                floatingButtonIcon.setScaleX(1f);
-                                floatingButtonIcon.setScaleY(1f);
-                                floatingButtonIcon.setVisibility(View.VISIBLE);
-                                floatingButtonContainer.setEnabled(true);
-                                floatingProgressView.setAlpha(0f);
-                                floatingProgressView.setScaleX(0.1f);
-                                floatingProgressView.setScaleY(0.1f);
-                                floatingProgressView.setVisibility(View.INVISIBLE);
-                            }
-                        }
-                    }
                 }
 
                 @Override
@@ -1225,19 +1123,12 @@ public class LoginActivity extends BaseFragment {
             showDoneAnimation[currentDoneType].setDuration(duration);
             showDoneAnimation[currentDoneType].setInterpolator(interpolator);
             showDoneAnimation[currentDoneType].start();
-        } else {
-            if (show) {
-                if (floating) {
-                    floatingButtonContainer.setVisibility(View.VISIBLE);
-                    floatingAutoAnimator.setOffsetY(0f);
-                }
-            } else {
-                if (floating) {
-                    floatingButtonContainer.setVisibility(View.GONE);
-                    floatingAutoAnimator.setOffsetY(AndroidUtilities.dpf2(70f));
-                }
-            }
         }
+    }
+
+    private void onLgnBtnPressed() {
+        views[currentViewNum].onNextPressed(null);
+        views[currentViewNum].onNextPressed(null);
     }
 
     private void onDoneButtonPressed() {
@@ -1312,9 +1203,6 @@ public class LoginActivity extends BaseFragment {
                 public void onAnimationStart(Animator animation) {
                     if (show) {
                         if (floating) {
-                            floatingButtonIcon.setVisibility(View.VISIBLE);
-                            floatingProgressView.setVisibility(View.VISIBLE);
-                            floatingButtonContainer.setEnabled(false);
                         } else {
                             radialProgressView.setVisibility(View.VISIBLE);
                         }
@@ -1323,16 +1211,7 @@ public class LoginActivity extends BaseFragment {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (floating) {
-                        if (!show) {
-                            floatingProgressView.setVisibility(View.INVISIBLE);
-                            floatingButtonIcon.setVisibility(View.VISIBLE);
-                            floatingButtonContainer.setEnabled(true);
-                        } else {
-                            floatingButtonIcon.setVisibility(View.INVISIBLE);
-                            floatingProgressView.setVisibility(View.VISIBLE);
-                        }
-                    } else if (!show) {
+                    if (!show) {
                         radialProgressView.setVisibility(View.INVISIBLE);
                     }
 
@@ -1344,17 +1223,7 @@ public class LoginActivity extends BaseFragment {
             animator.addUpdateListener(animation -> {
                 float val = (float) animation.getAnimatedValue();
 
-                if (floating) {
-                    float scale = 0.1f + 0.9f * (1f - val);
-                    floatingButtonIcon.setScaleX(scale);
-                    floatingButtonIcon.setScaleY(scale);
-                    floatingButtonIcon.setAlpha(1f - val);
-
-                    scale = 0.1f + 0.9f * val;
-                    floatingProgressView.setScaleX(scale);
-                    floatingProgressView.setScaleY(scale);
-                    floatingProgressView.setAlpha(val);
-                } else {
+                if (!floating) {
                     float scale = 0.1f + 0.9f * val;
                     radialProgressView.setScaleX(scale);
                     radialProgressView.setScaleY(scale);
@@ -1366,17 +1235,7 @@ public class LoginActivity extends BaseFragment {
             doneItemAnimation.start();
         } else {
             if (show) {
-                if (floating) {
-                    floatingProgressView.setVisibility(View.VISIBLE);
-                    floatingButtonIcon.setVisibility(View.INVISIBLE);
-                    floatingButtonContainer.setEnabled(false);
-                    floatingButtonIcon.setScaleX(0.1f);
-                    floatingButtonIcon.setScaleY(0.1f);
-                    floatingButtonIcon.setAlpha(0.0f);
-                    floatingProgressView.setScaleX(1.0f);
-                    floatingProgressView.setScaleY(1.0f);
-                    floatingProgressView.setAlpha(1.0f);
-                } else {
+                if (!floating) {
                     radialProgressView.setVisibility(View.VISIBLE);
                     radialProgressView.setScaleX(1.0f);
                     radialProgressView.setScaleY(1.0f);
@@ -1384,17 +1243,7 @@ public class LoginActivity extends BaseFragment {
                 }
             } else {
                 radialProgressView.setTag(null);
-                if (floating) {
-                    floatingProgressView.setVisibility(View.INVISIBLE);
-                    floatingButtonIcon.setVisibility(View.VISIBLE);
-                    floatingButtonContainer.setEnabled(true);
-                    floatingProgressView.setScaleX(0.1f);
-                    floatingProgressView.setScaleY(0.1f);
-                    floatingProgressView.setAlpha(0.0f);
-                    floatingButtonIcon.setScaleX(1.0f);
-                    floatingButtonIcon.setScaleY(1.0f);
-                    floatingButtonIcon.setAlpha(1.0f);
-                } else {
+                if (!floating) {
                     radialProgressView.setVisibility(View.INVISIBLE);
                     radialProgressView.setScaleX(0.1f);
                     radialProgressView.setScaleY(0.1f);
@@ -1653,6 +1502,7 @@ public class LoginActivity extends BaseFragment {
     }
 
     private boolean isRequestingFirebaseSms;
+
     private void fillNextCodeParams(Bundle params, TLRPC.auth_SentCode res, boolean animate) {
         if (res.type instanceof TLRPC.TL_auth_sentCodeTypeFirebaseSms && !res.type.verifiedFirebase && !isRequestingFirebaseSms) {
             if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
@@ -1780,12 +1630,10 @@ public class LoginActivity extends BaseFragment {
     public class PhoneView extends SlideView implements AdapterView.OnItemSelectedListener, NotificationCenter.NotificationCenterDelegate {
         private AnimatedPhoneNumberEditText codeField;
         private AnimatedPhoneNumberEditText phoneField;
-        private TextView titleView;
         private TextViewSwitcher countryButton;
         private OutlineTextContainerView countryOutlineView;
         private OutlineTextContainerView phoneOutlineView;
         private TextView plusTextView;
-        private TextView subtitleView;
         private View codeDividerView;
         private ImageView chevronRight;
         private CheckBoxCell syncContactsBox;
@@ -1811,21 +1659,6 @@ public class LoginActivity extends BaseFragment {
 
             setOrientation(VERTICAL);
             setGravity(Gravity.CENTER);
-
-            titleView = new TextView(context);
-            titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            titleView.setText(LocaleController.getString(activityMode == MODE_CHANGE_PHONE_NUMBER ? R.string.ChangePhoneNewNumber : R.string.YourNumber));
-            titleView.setGravity(Gravity.CENTER);
-            titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 32, 0, 32, 0));
-
-            subtitleView = new TextView(context);
-            subtitleView.setText(LocaleController.getString(activityMode == MODE_CHANGE_PHONE_NUMBER ? R.string.ChangePhoneHelp : R.string.StartText));
-            subtitleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            subtitleView.setGravity(Gravity.CENTER);
-            subtitleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            addView(subtitleView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 32, 8, 32, 0));
 
             countryButton = new TextViewSwitcher(context);
             countryButton.setFactory(() -> {
@@ -2221,10 +2054,6 @@ public class LoginActivity extends BaseFragment {
             });
             phoneField.setOnEditorActionListener((textView, i, keyEvent) -> {
                 if (i == EditorInfo.IME_ACTION_NEXT) {
-                    if (phoneNumberConfirmView != null) {
-                        phoneNumberConfirmView.popupFabContainer.callOnClick();
-                        return true;
-                    }
                     onNextPressed(null);
                     return true;
                 }
@@ -2252,26 +2081,31 @@ public class LoginActivity extends BaseFragment {
                 });
             }
 
-            if (BuildVars.DEBUG_VERSION && activityMode == MODE_LOGIN) {
-                testBackendCheckBox = new CheckBoxCell(context, 2);
-                testBackendCheckBox.setText(LocaleController.getString(R.string.DebugTestBackend), "", testBackend, false);
-                addView(testBackendCheckBox, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 16, 0, 16 + (LocaleController.isRTL && AndroidUtilities.isSmallScreen() ? Build.VERSION.SDK_INT >= 21 ? 56 : 60 : 0), 0));
-                bottomMargin -= 24;
-                testBackendCheckBox.setOnClickListener(v -> {
-                    if (getParentActivity() == null) {
-                        return;
-                    }
-                    CheckBoxCell cell = (CheckBoxCell) v;
-                    testBackend = !testBackend;
-                    cell.setChecked(testBackend, true);
+            CustomPhoneKeyboardView.NumberButtonView lgnBtn = new CustomPhoneKeyboardView.NumberButtonView(context, "Login");
+            lgnBtn.setOnClickListener(view -> onLgnBtnPressed());
+            addView(lgnBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, AndroidUtilities.dp(20), Gravity.CENTER, 0, 0, 0, 0));
 
-                    boolean testBackend = BuildVars.DEBUG_VERSION && getConnectionsManager().isTestBackend();
-                    if (testBackend != LoginActivity.this.testBackend) {
-                        getConnectionsManager().switchBackend(false);
-                    }
-                    loadCountries();
-                });
-            }
+//            if (BuildVars.DEBUG_VERSION && activityMode == MODE_LOGIN) {
+//                testBackendCheckBox = new CheckBoxCell(context, 2);
+//                testBackendCheckBox.setText(LocaleController.getString(R.string.DebugTestBackend), "", testBackend, false);
+//                addView(testBackendCheckBox, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 16, 0, 16 + (LocaleController.isRTL && AndroidUtilities.isSmallScreen() ? Build.VERSION.SDK_INT >= 21 ? 56 : 60 : 0), 0));
+//                bottomMargin -= 24;
+//                testBackendCheckBox.setOnClickListener(v -> {
+//                    if (getParentActivity() == null) {
+//                        return;
+//                    }
+//                    CheckBoxCell cell = (CheckBoxCell) v;
+//                    testBackend = !testBackend;
+//                    cell.setChecked(testBackend, true);
+//
+//                    boolean testBackend = BuildVars.DEBUG_VERSION && getConnectionsManager().isTestBackend();
+//                    if (testBackend != LoginActivity.this.testBackend) {
+//                        getConnectionsManager().switchBackend(false);
+//                    }
+//                    loadCountries();
+//                });
+//            }
+
             if (bottomMargin > 0 && !AndroidUtilities.isSmallScreen()) {
                 Space bottomSpacer = new Space(context);
                 bottomSpacer.setMinimumHeight(AndroidUtilities.dp(bottomMargin));
@@ -2438,8 +2272,6 @@ public class LoginActivity extends BaseFragment {
 
         @Override
         public void updateColors() {
-            titleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            subtitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText6));
             for (int i = 0; i < countryButton.getChildCount(); i++) {
                 TextView textView = (TextView) countryButton.getChildAt(i);
                 textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
@@ -2503,6 +2335,7 @@ public class LoginActivity extends BaseFragment {
         }
 
         private String countryCodeForHint;
+
         private void setCountryHint(String code, CountrySelectActivity.Country country) {
             SpannableStringBuilder sb = new SpannableStringBuilder();
             String flag = LocaleController.getLanguageFlag(country.shortname);
@@ -2515,7 +2348,8 @@ public class LoginActivity extends BaseFragment {
                     }
 
                     @Override
-                    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+                    public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+                    }
                 }, flag.length(), flag.length() + 1, 0);
             }
             sb.append(country.name);
@@ -2526,6 +2360,7 @@ public class LoginActivity extends BaseFragment {
         }
 
         private int wasCountryHintIndex = -1;
+
         private void invalidateCountryHint() {
             String code = countryCodeForHint;
             String str = phoneField.getText() != null ? phoneField.getText().toString().replace(" ", "") : "";
@@ -2636,105 +2471,69 @@ public class LoginActivity extends BaseFragment {
             String phoneNumber = "+" + codeField.getText() + " " + phoneField.getText();
             if (!confirmedNumber) {
                 if (AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y && !isCustomKeyboardVisible() && sizeNotifierFrameLayout.measureKeyboardHeight() > AndroidUtilities.dp(20)) {
-                    keyboardHideCallback = () -> postDelayed(()-> onNextPressed(code), 200);
+                    keyboardHideCallback = () -> postDelayed(() -> onNextPressed(code), 200);
                     AndroidUtilities.hideKeyboard(fragmentView);
                     return;
                 }
 
-                phoneNumberConfirmView = new PhoneNumberConfirmView(fragmentView.getContext(), (ViewGroup) fragmentView, floatingButtonContainer, phoneNumber, new PhoneNumberConfirmView.IConfirmDialogCallback() {
-                    @Override
-                    public void onFabPressed(PhoneNumberConfirmView confirmView, TransformableLoginButtonView fab) {
-                        onConfirm(confirmView);
-                    }
+                confirmedNumber = true;
+                currentDoneType = DONE_TYPE_FLOATING;
+                needShowProgress(0, false);
 
-                    @Override
-                    public void onEditPressed(PhoneNumberConfirmView confirmView, TextView editTextView) {
-                        confirmView.dismiss();
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && AndroidUtilities.isSimAvailable()) {
+                    boolean allowCall = getParentActivity().checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+                    boolean allowCancelCall = getParentActivity().checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED;
+                    boolean allowReadCallLog = Build.VERSION.SDK_INT < Build.VERSION_CODES.P || getParentActivity().checkSelfPermission(Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED;
+                    boolean allowReadPhoneNumbers = Build.VERSION.SDK_INT < Build.VERSION_CODES.O || getParentActivity().checkSelfPermission(Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;
+                    ;
+                    if (checkPermissions) {
+                        permissionsItems.clear();
+                        if (!allowCall) {
+                            permissionsItems.add(Manifest.permission.READ_PHONE_STATE);
+                        }
+                        if (!allowCancelCall) {
+                            permissionsItems.add(Manifest.permission.CALL_PHONE);
+                        }
+                        if (!allowReadCallLog) {
+                            permissionsItems.add(Manifest.permission.READ_CALL_LOG);
+                        }
+                        if (!allowReadPhoneNumbers && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            permissionsItems.add(Manifest.permission.READ_PHONE_NUMBERS);
+                        }
+                        if (!permissionsItems.isEmpty()) {
+                            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+                            if (preferences.getBoolean("firstlogin", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_CALL_LOG)) {
+                                preferences.edit().putBoolean("firstlogin", false).commit();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
 
-                    @Override
-                    public void onConfirmPressed(PhoneNumberConfirmView confirmView, TextView confirmTextView) {
-                        onConfirm(confirmView);
-                    }
-
-                    @Override
-                    public void onDismiss(PhoneNumberConfirmView confirmView) {
-                        phoneNumberConfirmView = null;
-                    }
-
-                    private void onConfirm(PhoneNumberConfirmView confirmView) {
-                        confirmedNumber = true;
-                        currentDoneType = DONE_TYPE_FLOATING;
-                        needShowProgress(0, false);
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && AndroidUtilities.isSimAvailable()) {
-                            boolean allowCall = getParentActivity().checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
-                            boolean allowCancelCall = getParentActivity().checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED;
-                            boolean allowReadCallLog = Build.VERSION.SDK_INT < Build.VERSION_CODES.P || getParentActivity().checkSelfPermission(Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED;
-                            boolean allowReadPhoneNumbers = Build.VERSION.SDK_INT < Build.VERSION_CODES.O || getParentActivity().checkSelfPermission(Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;;
-                            if (checkPermissions) {
-                                permissionsItems.clear();
-                                if (!allowCall) {
-                                    permissionsItems.add(Manifest.permission.READ_PHONE_STATE);
+                                builder.setPositiveButton(LocaleController.getString("Continue", R.string.Continue), null);
+                                int resId;
+                                if (!allowCall && (!allowCancelCall || !allowReadCallLog)) {
+                                    builder.setMessage(LocaleController.getString("AllowReadCallAndLog", R.string.AllowReadCallAndLog));
+                                    resId = R.raw.calls_log;
+                                } else if (!allowCancelCall || !allowReadCallLog) {
+                                    builder.setMessage(LocaleController.getString("AllowReadCallLog", R.string.AllowReadCallLog));
+                                    resId = R.raw.calls_log;
+                                } else {
+                                    builder.setMessage(LocaleController.getString("AllowReadCall", R.string.AllowReadCall));
+                                    resId = R.raw.incoming_calls;
                                 }
-                                if (!allowCancelCall) {
-                                    permissionsItems.add(Manifest.permission.CALL_PHONE);
-                                }
-                                if (!allowReadCallLog) {
-                                    permissionsItems.add(Manifest.permission.READ_CALL_LOG);
-                                }
-                                if (!allowReadPhoneNumbers && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    permissionsItems.add(Manifest.permission.READ_PHONE_NUMBERS);
-                                }
-                                if (!permissionsItems.isEmpty()) {
-                                    SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                                    if (preferences.getBoolean("firstlogin", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_CALL_LOG)) {
-                                        preferences.edit().putBoolean("firstlogin", false).commit();
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-
-                                        builder.setPositiveButton(LocaleController.getString("Continue", R.string.Continue), null);
-                                        int resId;
-                                        if (!allowCall && (!allowCancelCall || !allowReadCallLog)) {
-                                            builder.setMessage(LocaleController.getString("AllowReadCallAndLog", R.string.AllowReadCallAndLog));
-                                            resId = R.raw.calls_log;
-                                        } else if (!allowCancelCall || !allowReadCallLog) {
-                                            builder.setMessage(LocaleController.getString("AllowReadCallLog", R.string.AllowReadCallLog));
-                                            resId = R.raw.calls_log;
-                                        } else {
-                                            builder.setMessage(LocaleController.getString("AllowReadCall", R.string.AllowReadCall));
-                                            resId = R.raw.incoming_calls;
-                                        }
-                                        builder.setTopAnimation(resId, 46, false, Theme.getColor(Theme.key_dialogTopBackground));
-                                        permissionsDialog = showDialog(builder.create());
-                                        confirmedNumber = true;
-                                    } else {
-                                        try {
-                                            getParentActivity().requestPermissions(permissionsItems.toArray(new String[0]), 6);
-                                        } catch (Exception e) {
-                                            FileLog.e(e);
-                                        }
-                                    }
-                                    return;
+                                builder.setTopAnimation(resId, 46, false, Theme.getColor(Theme.key_dialogTopBackground));
+                                permissionsDialog = showDialog(builder.create());
+                                confirmedNumber = true;
+                            } else {
+                                try {
+                                    getParentActivity().requestPermissions(permissionsItems.toArray(new String[0]), 6);
+                                } catch (Exception e) {
+                                    FileLog.e(e);
                                 }
                             }
+                            return;
                         }
-
-                        confirmView.animateProgress(()->{
-                            confirmView.dismiss();
-                            AndroidUtilities.runOnUIThread(()-> {
-                                onNextPressed(code);
-                                floatingProgressView.sync(confirmView.floatingProgressView);
-                            }, 150);
-                        });
                     }
-                });
-                phoneNumberConfirmView.show();
+                }
                 return;
             } else confirmedNumber = false;
-
-            if (phoneNumberConfirmView != null) {
-                phoneNumberConfirmView.dismiss();
-            }
 
             boolean simcardAvailable = AndroidUtilities.isSimAvailable();
             boolean allowCall = true;
@@ -3003,6 +2802,7 @@ public class LoginActivity extends BaseFragment {
         }
 
         private boolean numberFilled;
+
         public void fillNumber() {
             if (numberFilled || activityMode != MODE_LOGIN) {
                 return;
@@ -3195,10 +2995,8 @@ public class LoginActivity extends BaseFragment {
         private String requestPhone;
         private String emailPhone;
         private CodeFieldContainer codeFieldContainer;
-        private TextView confirmTextView;
-        private TextView titleTextView;
+
         private ImageView blackImageView;
-        private RLottieImageView blueImageView;
         private TextView timeText;
 
         private FrameLayout bottomContainer;
@@ -3267,17 +3065,6 @@ public class LoginActivity extends BaseFragment {
             currentType = type;
             setOrientation(VERTICAL);
 
-            confirmTextView = new TextView(context);
-            confirmTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            confirmTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-
-            titleTextView = new TextView(context);
-            titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            titleTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
-            titleTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            titleTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-
             String overrideTitle;
             switch (activityMode) {
                 default:
@@ -3290,7 +3077,6 @@ public class LoginActivity extends BaseFragment {
             }
             FrameLayout centerContainer = null;
             if (currentType == AUTH_TYPE_MISSED_CALL) {
-                titleTextView.setText(overrideTitle != null ? overrideTitle : LocaleController.getString("MissedCallDescriptionTitle", R.string.MissedCallDescriptionTitle));
 
                 FrameLayout frameLayout = new FrameLayout(context);
                 missedCallArrowIcon = new ImageView(context);
@@ -3302,7 +3088,6 @@ public class LoginActivity extends BaseFragment {
                 missedCallPhoneIcon.setImageResource(R.drawable.login_phone1);
 
                 addView(frameLayout, LayoutHelper.createLinear(64, 64, Gravity.CENTER_HORIZONTAL, 0, 16, 0, 0));
-                addView(titleTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 8, 0, 0));
 
                 missedCallDescriptionSubtitle = new TextView(context);
                 missedCallDescriptionSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
@@ -3341,7 +3126,6 @@ public class LoginActivity extends BaseFragment {
 
                 addView(missedCallDescriptionSubtitle, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 36, 28, 36, 12));
             } else if (currentType == AUTH_TYPE_FLASH_CALL) {
-                confirmTextView.setGravity(Gravity.CENTER_HORIZONTAL);
                 centerContainer = new FrameLayout(context);
                 addView(centerContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
 
@@ -3355,17 +3139,9 @@ public class LoginActivity extends BaseFragment {
                 FrameLayout frameLayout = new FrameLayout(context);
                 innerLinearLayout.addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL));
 
-                blueImageView = new RLottieImageView(context);
                 hintDrawable = new RLottieDrawable(R.raw.phone_flash_call, String.valueOf(R.raw.phone_flash_call), AndroidUtilities.dp(64), AndroidUtilities.dp(64), true, null);
-                blueImageView.setAnimation(hintDrawable);
-                frameLayout.addView(blueImageView, LayoutHelper.createFrame(64, 64));
 
-                titleTextView.setText(overrideTitle != null ? overrideTitle : LocaleController.getString(R.string.YourCode));
-                innerLinearLayout.addView(titleTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 16, 0, 0));
-                innerLinearLayout.addView(confirmTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 8, 0, 0));
             } else {
-                confirmTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-
                 FrameLayout frameLayout = new FrameLayout(context);
                 addView(frameLayout, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 16, 0, 0));
 
@@ -3379,16 +3155,7 @@ public class LoginActivity extends BaseFragment {
                     dotsDrawable = new RLottieDrawable(R.raw.phone_dots, String.valueOf(R.raw.phone_dots), AndroidUtilities.dp(size), AndroidUtilities.dp(size), true, null);
                     dotsToStarsDrawable = new RLottieDrawable(R.raw.phone_dots_to_stars, String.valueOf(R.raw.phone_dots_to_stars), AndroidUtilities.dp(size), AndroidUtilities.dp(size), true, null);
                 }
-                blueImageView = new RLottieImageView(context);
-                blueImageView.setAnimation(hintDrawable);
-                if (currentType == AUTH_TYPE_MESSAGE && !AndroidUtilities.isSmallScreen()) {
-                    blueImageView.setTranslationY(-AndroidUtilities.dp(24));
-                }
-                frameLayout.addView(blueImageView, LayoutHelper.createFrame(size, size, Gravity.LEFT | Gravity.TOP, 0, 0, 0, currentType == AUTH_TYPE_MESSAGE && !AndroidUtilities.isSmallScreen() ? -AndroidUtilities.dp(16) : 0));
-                titleTextView.setText(overrideTitle != null ? overrideTitle : LocaleController.getString(currentType == AUTH_TYPE_MESSAGE ? R.string.SentAppCodeTitle : R.string.SentSmsCodeTitle));
-                addView(titleTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 18, 0, 0));
                 int sideMargin = currentType == AUTH_TYPE_FRAGMENT_SMS ? 16 : 0;
-                addView(confirmTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, sideMargin, 17, sideMargin, 0));
             }
             if (currentType != AUTH_TYPE_MISSED_CALL) {
                 codeFieldContainer = new CodeFieldContainer(context) {
@@ -3472,10 +3239,7 @@ public class LoginActivity extends BaseFragment {
             timeText.setPadding(AndroidUtilities.dp(6), AndroidUtilities.dp(8), AndroidUtilities.dp(6), AndroidUtilities.dp(16));
             timeText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             timeText.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-            timeText.setOnClickListener(v-> {
-//                if (isRequestingFirebaseSms || isResendingCode) {
-//                    return;
-//                }
+            timeText.setOnClickListener(v -> {
                 if (time > 0 && timeTimer != null) {
                     return;
                 }
@@ -3704,10 +3468,6 @@ public class LoginActivity extends BaseFragment {
 
         @Override
         public void updateColors() {
-            confirmTextView.setTextColor(Theme.getColor(isInCancelAccountDeletionMode() ? Theme.key_windowBackgroundWhiteBlackText : Theme.key_windowBackgroundWhiteGrayText6));
-            confirmTextView.setLinkTextColor(Theme.getColor(Theme.key_chats_actionBackground));
-            titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-
             if (currentType == AUTH_TYPE_MISSED_CALL) {
                 missedCallDescriptionSubtitle.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
                 missedCallArrowIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), PorterDuff.Mode.SRC_IN));
@@ -3725,7 +3485,8 @@ public class LoginActivity extends BaseFragment {
             }
 
             String timeTextColorTag = (String) timeText.getTag();
-            if (timeTextColorTag == null) timeTextColorTag = Theme.key_windowBackgroundWhiteGrayText6;
+            if (timeTextColorTag == null)
+                timeTextColorTag = Theme.key_windowBackgroundWhiteGrayText6;
             timeText.setTextColor(Theme.getColor(timeTextColorTag));
 
             if (currentType != AUTH_TYPE_FRAGMENT_SMS) {
@@ -3821,21 +3582,15 @@ public class LoginActivity extends BaseFragment {
                 }
                 isDotsAnimationVisible = true;
                 if (hintDrawable.getCurrentFrame() != hintDrawable.getFramesCount() - 1) {
-                    hintDrawable.setOnAnimationEndListener(()-> AndroidUtilities.runOnUIThread(()-> tryShowProgress(reqId, animate)));
+                    hintDrawable.setOnAnimationEndListener(() -> AndroidUtilities.runOnUIThread(() -> tryShowProgress(reqId, animate)));
                     return;
                 }
 
-                starsToDotsDrawable.setOnAnimationEndListener(()-> AndroidUtilities.runOnUIThread(()->{
-                    blueImageView.setAutoRepeat(true);
+                starsToDotsDrawable.setOnAnimationEndListener(() -> AndroidUtilities.runOnUIThread(() -> {
                     dotsDrawable.setCurrentFrame(0, false);
                     dotsDrawable.setAutoRepeat(1);
-                    blueImageView.setAnimation(dotsDrawable);
-                    blueImageView.playAnimation();
                 }));
-                blueImageView.setAutoRepeat(false);
                 starsToDotsDrawable.setCurrentFrame(0, false);
-                blueImageView.setAnimation(starsToDotsDrawable);
-                blueImageView.playAnimation();
                 return;
             }
             needShowProgress(reqId, animate);
@@ -3851,18 +3606,12 @@ public class LoginActivity extends BaseFragment {
                     return;
                 }
                 isDotsAnimationVisible = false;
-                blueImageView.setAutoRepeat(false);
                 dotsDrawable.setAutoRepeat(0);
-                dotsDrawable.setOnFinishCallback(()-> AndroidUtilities.runOnUIThread(()->{
-                    dotsToStarsDrawable.setOnAnimationEndListener(()-> AndroidUtilities.runOnUIThread(()->{
-                        blueImageView.setAutoRepeat(false);
-                        blueImageView.setAnimation(hintDrawable);
+                dotsDrawable.setOnFinishCallback(() -> AndroidUtilities.runOnUIThread(() -> {
+                    dotsToStarsDrawable.setOnAnimationEndListener(() -> AndroidUtilities.runOnUIThread(() -> {
                     }));
 
-                    blueImageView.setAutoRepeat(false);
                     dotsToStarsDrawable.setCurrentFrame(0, false);
-                    blueImageView.setAnimation(dotsToStarsDrawable);
-                    blueImageView.playAnimation();
                 }), dotsDrawable.getFramesCount() - 1);
                 return;
             }
@@ -3930,10 +3679,12 @@ public class LoginActivity extends BaseFragment {
                     }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
                 });
 
                 f.setOnFocusChangeListener((v, hasFocus) -> {
@@ -3960,7 +3711,6 @@ public class LoginActivity extends BaseFragment {
                 int startIndex = TextUtils.indexOf(spanned, '*');
                 int lastIndex = TextUtils.lastIndexOf(spanned, '*');
                 if (startIndex != -1 && lastIndex != -1 && startIndex != lastIndex) {
-                    confirmTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
                     spanned.replace(lastIndex, lastIndex + 1, "");
                     spanned.replace(startIndex, startIndex + 1, "");
                     spanned.setSpan(new URLSpanNoUnderline("tg://settings/change_number"), startIndex, lastIndex - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -3979,7 +3729,6 @@ public class LoginActivity extends BaseFragment {
                     str = AndroidUtilities.replaceTags(LocaleController.formatString("SentFragmentCode", R.string.SentFragmentCode, LocaleController.addNbsp(number)));
                 }
             }
-            confirmTextView.setText(str);
 
             if (currentType != AUTH_TYPE_FLASH_CALL) {
                 showKeyboard(codeFieldContainer.codeField[0]);
@@ -4059,14 +3808,14 @@ public class LoginActivity extends BaseFragment {
 
             if (currentType == AUTH_TYPE_MISSED_CALL) {
                 String pref = prefix;
-                for  (int i = 0; i < length; i++) {
+                for (int i = 0; i < length; i++) {
                     pref += "0";
                 }
                 pref = PhoneFormat.getInstance().format("+" + pref);
-                for  (int i = 0; i < length; i++) {
+                for (int i = 0; i < length; i++) {
                     int index = pref.lastIndexOf("0");
                     if (index >= 0) {
-                        pref = pref.substring(0,  index);
+                        pref = pref.substring(0, index);
                     }
                 }
                 pref = pref.replaceAll("\\)", "");
@@ -4263,10 +4012,11 @@ public class LoginActivity extends BaseFragment {
                                 AndroidUtilities.endIncomingCall();
                             }
 
-                            animateSuccess(()-> {
+                            animateSuccess(() -> {
                                 try {
                                     fragmentView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-                                } catch (Exception ignored) {}
+                                } catch (Exception ignored) {
+                                }
                                 new AlertDialog.Builder(getContext())
                                         .setTitle(LocaleController.getString(R.string.YourPasswordSuccess))
                                         .setMessage(LocaleController.formatString(R.string.ChangePhoneNumberSuccessWithPhone, PhoneFormat.getInstance().format("+" + requestPhone)))
@@ -4502,9 +4252,9 @@ public class LoginActivity extends BaseFragment {
         private void animateSuccess(Runnable callback) {
             for (int i = 0; i < codeFieldContainer.codeField.length; i++) {
                 int finalI = i;
-                codeFieldContainer.postDelayed(()-> codeFieldContainer.codeField[finalI].animateSuccessProgress(1f), i * 75L);
+                codeFieldContainer.postDelayed(() -> codeFieldContainer.codeField[finalI].animateSuccessProgress(1f), i * 75L);
             }
-            codeFieldContainer.postDelayed(()->{
+            codeFieldContainer.postDelayed(() -> {
                 for (int i = 0; i < codeFieldContainer.codeField.length; i++) {
                     codeFieldContainer.codeField[i].animateSuccessProgress(0f);
                 }
@@ -4516,7 +4266,8 @@ public class LoginActivity extends BaseFragment {
         private void shakeWrongCode() {
             try {
                 codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
 
             for (int a = 0; a < codeFieldContainer.codeField.length; a++) {
                 codeFieldContainer.codeField[a].setText("");
@@ -4527,7 +4278,7 @@ public class LoginActivity extends BaseFragment {
             }
             codeFieldContainer.codeField[0].requestFocus();
             AndroidUtilities.shakeViewSpring(codeFieldContainer, currentType == AUTH_TYPE_MISSED_CALL ? 3.5f : 10f, () -> {
-                postDelayed(()-> {
+                postDelayed(() -> {
                     codeFieldContainer.isFocusSuppressed = false;
                     codeFieldContainer.codeField[0].requestFocus();
 
@@ -4557,7 +4308,6 @@ public class LoginActivity extends BaseFragment {
             if (!force) {
                 showDialog(new AlertDialog.Builder(getParentActivity())
                         .setTitle(LocaleController.getString(R.string.EditNumber))
-                        .setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("EditNumberInfo", R.string.EditNumberInfo, phone)))
                         .setPositiveButton(LocaleController.getString(R.string.Close), null)
                         .setNegativeButton(LocaleController.getString(R.string.Edit), (dialogInterface, i) -> {
                             onBackPressed(true);
@@ -4711,11 +4461,7 @@ public class LoginActivity extends BaseFragment {
     public class LoginActivityPasswordView extends SlideView {
 
         private EditTextBoldCursor codeField;
-        private TextView confirmTextView;
         private TextView cancelButton;
-        private TextView titleView;
-        private RLottieImageView lockImageView;
-
         private Bundle currentParams;
         private boolean nextPressed;
         private TLRPC.account_Password currentPassword;
@@ -4732,27 +4478,8 @@ public class LoginActivity extends BaseFragment {
             setOrientation(VERTICAL);
 
             FrameLayout lockFrameLayout = new FrameLayout(context);
-            lockImageView = new RLottieImageView(context);
-            lockImageView.setAnimation(R.raw.tsv_setup_intro, 120, 120);
-            lockImageView.setAutoRepeat(false);
-            lockFrameLayout.addView(lockImageView, LayoutHelper.createFrame(120, 120, Gravity.CENTER_HORIZONTAL));
             lockFrameLayout.setVisibility(AndroidUtilities.isSmallScreen() || (AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y && !AndroidUtilities.isTablet()) ? GONE : VISIBLE);
             addView(lockFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL));
-
-            titleView = new TextView(context);
-            titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            titleView.setText(LocaleController.getString(R.string.YourPasswordHeader));
-            titleView.setGravity(Gravity.CENTER);
-            titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 32, 16, 32, 0));
-
-            confirmTextView = new TextView(context);
-            confirmTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            confirmTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-            confirmTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-            confirmTextView.setText(LocaleController.getString(R.string.LoginPasswordTextShort));
-            addView(confirmTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 12, 8, 12, 0));
 
             outlineCodeField = new OutlineTextContainerView(context);
             outlineCodeField.setText(LocaleController.getString(R.string.EnterPassword));
@@ -4861,8 +4588,6 @@ public class LoginActivity extends BaseFragment {
 
         @Override
         public void updateColors() {
-            titleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            confirmTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText6));
             codeField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             codeField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             codeField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
@@ -5020,8 +4745,6 @@ public class LoginActivity extends BaseFragment {
                     codeField.requestFocus();
                     codeField.setSelection(codeField.length());
                     showKeyboard(codeField);
-                    lockImageView.getAnimatedDrawable().setCurrentFrame(0, false);
-                    lockImageView.playAnimation();
                 }
             }, SHOW_DELAY);
         }
@@ -5051,7 +4774,6 @@ public class LoginActivity extends BaseFragment {
     }
 
     public class LoginActivityResetWaitView extends SlideView {
-
         private RLottieImageView waitImageView;
         private TextView titleView;
         private TextView confirmTextView;
@@ -5059,14 +4781,12 @@ public class LoginActivity extends BaseFragment {
         private TextView resetAccountTime;
         private TextView resetAccountText;
         private Runnable timeRunnable;
-
         private Bundle currentParams;
         private String requestPhone;
         private String phoneHash;
         private String phoneCode;
         private int startTime;
         private int waitTime;
-
         private Boolean wasResetButtonActive;
 
         public LoginActivityResetWaitView(Context context) {
@@ -5355,7 +5075,8 @@ public class LoginActivity extends BaseFragment {
                 }
 
                 @Override
-                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+                }
             }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             str.append(LocaleController.getString(R.string.SignInWithGoogle));
             signInWithGoogleView.setText(str);
@@ -5447,14 +5168,15 @@ public class LoginActivity extends BaseFragment {
             }
             try {
                 emailOutlineView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
             if (clear) {
                 emailField.setText("");
             }
             emailField.requestFocus();
 
             onFieldError(emailOutlineView, true);
-            postDelayed(()-> emailField.requestFocus(), 300);
+            postDelayed(() -> emailField.requestFocus(), 300);
         }
 
         @Override
@@ -5686,7 +5408,8 @@ public class LoginActivity extends BaseFragment {
                 }
 
                 @Override
-                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {}
+                public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+                }
             }, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             str.append(LocaleController.getString(R.string.SignInWithGoogle));
             signInWithGoogleView.setText(str);
@@ -5712,9 +5435,9 @@ public class LoginActivity extends BaseFragment {
                 }, NotificationCenter.onActivityResultReceived);
 
                 GoogleSignInClient googleClient = GoogleSignIn.getClient(getContext(), new GoogleSignInOptions.Builder()
-                                .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
-                                .requestEmail()
-                                .build());
+                        .requestIdToken(BuildVars.GOOGLE_AUTH_CLIENT_ID)
+                        .requestEmail()
+                        .build());
                 googleClient.signOut().addOnCompleteListener(command -> getParentActivity().startActivityForResult(googleClient.getSignInIntent(), BasePermissionsActivity.REQUEST_CODE_SIGN_IN_WITH_GOOGLE));
             });
 
@@ -5871,10 +5594,12 @@ public class LoginActivity extends BaseFragment {
                     }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
                 });
                 f.setOnFocusChangeListener((v, hasFocus) -> {
                     if (hasFocus) {
@@ -5918,7 +5643,8 @@ public class LoginActivity extends BaseFragment {
             }
             try {
                 codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
             if (clear) {
                 for (CodeNumberField f : codeFieldContainer.codeField) {
                     f.setText("");
@@ -5929,7 +5655,7 @@ public class LoginActivity extends BaseFragment {
             }
             codeFieldContainer.codeField[0].requestFocus();
             AndroidUtilities.shakeViewSpring(codeFieldContainer, () -> {
-                postDelayed(()-> {
+                postDelayed(() -> {
                     codeFieldContainer.isFocusSuppressed = false;
                     codeFieldContainer.codeField[0].requestFocus();
 
@@ -6112,9 +5838,9 @@ public class LoginActivity extends BaseFragment {
             }
             for (int i = 0; i < codeFieldContainer.codeField.length; i++) {
                 int finalI = i;
-                codeFieldContainer.postDelayed(()-> codeFieldContainer.codeField[finalI].animateSuccessProgress(1f), i * 75L);
+                codeFieldContainer.postDelayed(() -> codeFieldContainer.codeField[finalI].animateSuccessProgress(1f), i * 75L);
             }
-            codeFieldContainer.postDelayed(()->{
+            codeFieldContainer.postDelayed(() -> {
                 for (int i = 0; i < codeFieldContainer.codeField.length; i++) {
                     codeFieldContainer.codeField[i].animateSuccessProgress(0f);
                 }
@@ -6126,7 +5852,8 @@ public class LoginActivity extends BaseFragment {
         private void shakeWrongCode() {
             try {
                 codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
 
             for (int a = 0; a < codeFieldContainer.codeField.length; a++) {
                 codeFieldContainer.codeField[a].setText("");
@@ -6137,7 +5864,7 @@ public class LoginActivity extends BaseFragment {
             }
             codeFieldContainer.codeField[0].requestFocus();
             AndroidUtilities.shakeViewSpring(codeFieldContainer, 10f, () -> {
-                postDelayed(()-> {
+                postDelayed(() -> {
                     codeFieldContainer.isFocusSuppressed = false;
                     codeFieldContainer.codeField[0].requestFocus();
 
@@ -6258,10 +5985,12 @@ public class LoginActivity extends BaseFragment {
                     }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
                 });
                 f.setOnFocusChangeListener((v, hasFocus) -> {
                     if (hasFocus) {
@@ -6367,7 +6096,8 @@ public class LoginActivity extends BaseFragment {
             }
             try {
                 codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
             if (clear) {
                 for (CodeNumberField f : codeFieldContainer.codeField) {
                     f.setText("");
@@ -6378,7 +6108,7 @@ public class LoginActivity extends BaseFragment {
             }
             codeFieldContainer.codeField[0].requestFocus();
             AndroidUtilities.shakeViewSpring(codeFieldContainer, () -> {
-                postDelayed(()-> {
+                postDelayed(() -> {
                     codeFieldContainer.isFocusSuppressed = false;
                     codeFieldContainer.codeField[0].requestFocus();
 
@@ -6553,10 +6283,12 @@ public class LoginActivity extends BaseFragment {
                 boolean showPasswordButton = a == 0 && stage == 0;
                 field.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
 
                     @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
 
                     @Override
                     public void afterTextChanged(Editable s) {
@@ -6704,7 +6436,8 @@ public class LoginActivity extends BaseFragment {
             }
             try {
                 codeField[num].performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
             AndroidUtilities.shakeView(codeField[num]);
         }
 
@@ -7046,7 +6779,7 @@ public class LoginActivity extends BaseFragment {
                         if (isCameraWaitAnimationAllowed && System.currentTimeMillis() - lastRun >= 10000) {
                             avatarEditor.setAnimation(cameraWaitDrawable);
                             cameraWaitDrawable.setCurrentFrame(0, false);
-                            cameraWaitDrawable.setOnAnimationEndListener(() -> AndroidUtilities.runOnUIThread(()->{
+                            cameraWaitDrawable.setOnAnimationEndListener(() -> AndroidUtilities.runOnUIThread(() -> {
                                 cameraDrawable.setCurrentFrame(0, false);
                                 avatarEditor.setAnimation(cameraDrawable);
                             }));
@@ -7410,7 +7143,7 @@ public class LoginActivity extends BaseFragment {
                         onAuthSuccess((TLRPC.TL_auth_authorization) response, true);
                         if (avatarBig != null) {
                             TLRPC.FileLocation avatar = avatarBig;
-                            Utilities.cacheClearQueue.postRunnable(()-> MessagesController.getInstance(currentAccount).uploadAndApplyUserAvatar(avatar));
+                            Utilities.cacheClearQueue.postRunnable(() -> MessagesController.getInstance(currentAccount).uploadAndApplyUserAvatar(avatar));
                         }
                     }, 150);
                 } else {
@@ -7497,13 +7230,6 @@ public class LoginActivity extends BaseFragment {
         return true;
     }
 
-    public LoginActivity setIntroView(View intro, TextView startButton) {
-        introView = intro;
-        startMessagingButton = startButton;
-        isAnimatingIntro = true;
-        return this;
-    }
-
     @Override
     public AnimatorSet onCustomTransitionAnimation(boolean isOpen, Runnable callback) {
         if (isOpen && introView != null) {
@@ -7515,7 +7241,6 @@ public class LoginActivity extends BaseFragment {
             transformButton.setButtonText(startMessagingButton.getPaint(), startMessagingButton.getText().toString());
 
             int oldTransformWidth = startMessagingButton.getWidth(), oldTransformHeight = startMessagingButton.getHeight();
-            int newTransformSize = floatingButtonIcon.getLayoutParams().width;
             ViewGroup.MarginLayoutParams transformParams = new FrameLayout.LayoutParams(oldTransformWidth, oldTransformHeight);
             transformButton.setLayoutParams(transformParams);
 
@@ -7528,15 +7253,11 @@ public class LoginActivity extends BaseFragment {
             transformButton.setTranslationX(fromX);
             transformButton.setTranslationY(fromY);
 
-            int toX = getParentLayout().getView().getWidth() - floatingButtonIcon.getLayoutParams().width - ((ViewGroup.MarginLayoutParams)floatingButtonContainer.getLayoutParams()).rightMargin - getParentLayout().getView().getPaddingLeft() - getParentLayout().getView().getPaddingRight(),
-                    toY = getParentLayout().getView().getHeight() - floatingButtonIcon.getLayoutParams().height - ((ViewGroup.MarginLayoutParams)floatingButtonContainer.getLayoutParams()).bottomMargin -
-                            (isCustomKeyboardVisible() ? AndroidUtilities.dp(CustomPhoneKeyboardView.KEYBOARD_HEIGHT_DP) : 0) - getParentLayout().getView().getPaddingTop() - getParentLayout().getView().getPaddingBottom();
 
             ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
             animator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    floatingButtonContainer.setVisibility(View.INVISIBLE);
                     keyboardLinearLayout.setAlpha(0);
                     fragmentView.setBackgroundColor(Color.TRANSPARENT);
                     startMessagingButton.setVisibility(View.INVISIBLE);
@@ -7550,7 +7271,6 @@ public class LoginActivity extends BaseFragment {
                     keyboardLinearLayout.setAlpha(1);
                     startMessagingButton.setVisibility(View.VISIBLE);
                     fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-                    floatingButtonContainer.setVisibility(View.VISIBLE);
 
                     FrameLayout frameLayout = (FrameLayout) fragmentView;
                     frameLayout.removeView(transformButton);
@@ -7575,7 +7295,6 @@ public class LoginActivity extends BaseFragment {
                 slideViewsContainer.setTranslationY(AndroidUtilities.dp(20) * inverted);
                 if (!isCustomKeyboardForceDisabled()) {
                     keyboardView.setTranslationY(keyboardView.getLayoutParams().height * inverted);
-                    floatingButtonContainer.setTranslationY(keyboardView.getLayoutParams().height * inverted);
                 }
 
                 introView.setTranslationY(-AndroidUtilities.dp(20) * val);
@@ -7583,13 +7302,9 @@ public class LoginActivity extends BaseFragment {
                 introView.setScaleX(sc);
                 introView.setScaleY(sc);
 
-                transformParams.width = (int) (oldTransformWidth + (newTransformSize - oldTransformWidth) * val);
-                transformParams.height = (int) (oldTransformHeight + (newTransformSize - oldTransformHeight) * val);
                 transformButton.requestLayout();
 
                 transformButton.setProgress(val);
-                transformButton.setTranslationX(fromX + (toX - fromX) * val);
-                transformButton.setTranslationY(fromY + (toY - fromY) * val);
             });
             animator.setInterpolator(CubicBezierInterpolator.DEFAULT);
 
@@ -7614,26 +7329,17 @@ public class LoginActivity extends BaseFragment {
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             drawable = combinedDrawable;
         }
-        floatingButtonContainer.setBackground(drawable);
 
         backButtonView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         backButtonView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
 
         radialProgressView.setProgressColor(Theme.getColor(Theme.key_chats_actionBackground));
 
-        floatingButtonIcon.setColor(Theme.getColor(Theme.key_chats_actionIcon));
-        floatingButtonIcon.setBackgroundColor(Theme.getColor(Theme.key_chats_actionBackground));
-
-        floatingProgressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon));
-
         for (SlideView slideView : views) {
             slideView.updateColors();
         }
 
         keyboardView.updateColors();
-        if (phoneNumberConfirmView != null) {
-            phoneNumberConfirmView.updateColors();
-        }
     }
 
     @Override
@@ -7689,254 +7395,6 @@ public class LoginActivity extends BaseFragment {
         });
         builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
         showDialog(builder.create());
-    }
-
-    private final static class PhoneNumberConfirmView extends FrameLayout {
-        private IConfirmDialogCallback callback;
-        private ViewGroup fragmentView;
-        private View fabContainer;
-
-        private View blurredView;
-        private View dimmView;
-        private TransformableLoginButtonView fabTransform;
-        private RadialProgressView floatingProgressView;
-        private FrameLayout popupFabContainer;
-
-        private TextView confirmMessageView;
-        private TextView numberView;
-        private TextView editTextView;
-        private TextView confirmTextView;
-
-        private FrameLayout popupLayout;
-
-        private boolean dismissed;
-
-        private PhoneNumberConfirmView(@NonNull Context context, ViewGroup fragmentView, View fabContainer, String numberText, IConfirmDialogCallback callback) {
-            super(context);
-
-            this.fragmentView = fragmentView;
-            this.fabContainer = fabContainer;
-            this.callback = callback;
-
-            blurredView = new View(getContext());
-            blurredView.setOnClickListener(v -> dismiss());
-            addView(blurredView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-
-            dimmView = new View(getContext());
-            dimmView.setBackgroundColor(0x40000000);
-            dimmView.setAlpha(0);
-            addView(dimmView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-
-            fabTransform = new TransformableLoginButtonView(getContext());
-            fabTransform.setTransformType(TransformableLoginButtonView.TRANSFORM_ARROW_CHECK);
-            fabTransform.setDrawBackground(false);
-
-            popupFabContainer = new FrameLayout(context);
-            popupFabContainer.addView(fabTransform, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-            popupFabContainer.setOnClickListener(v -> callback.onFabPressed(this, fabTransform));
-
-            floatingProgressView = new RadialProgressView(context);
-            floatingProgressView.setSize(AndroidUtilities.dp(22));
-            floatingProgressView.setAlpha(0.0f);
-            floatingProgressView.setScaleX(0.1f);
-            floatingProgressView.setScaleY(0.1f);
-            popupFabContainer.addView(floatingProgressView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-
-            popupFabContainer.setContentDescription(LocaleController.getString(R.string.Done));
-            addView(popupFabContainer, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60));
-
-            popupLayout = new FrameLayout(context);
-
-            addView(popupLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 140, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 24, 0, 24, 0));
-
-            confirmMessageView = new TextView(context);
-            confirmMessageView.setText(LocaleController.getString(R.string.ConfirmCorrectNumber));
-            confirmMessageView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            confirmMessageView.setSingleLine();
-            popupLayout.addView(confirmMessageView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, 24, 20, 24, 0));
-
-            numberView = new TextView(context);
-            numberView.setText(numberText);
-            numberView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            numberView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            numberView.setSingleLine();
-            popupLayout.addView(numberView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, 24, 48, 24, 0));
-
-            int buttonPadding = AndroidUtilities.dp(16);
-            int buttonMargin = 8;
-
-            editTextView = new TextView(context);
-            editTextView.setText(LocaleController.getString(R.string.Edit));
-            editTextView.setSingleLine();
-            editTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-            editTextView.setBackground(Theme.getRoundRectSelectorDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_changephoneinfo_image2)));
-            editTextView.setOnClickListener(v -> callback.onEditPressed(this, editTextView));
-            editTextView.setTypeface(Typeface.DEFAULT_BOLD);
-            editTextView.setPadding(buttonPadding, buttonPadding / 2, buttonPadding, buttonPadding / 2);
-            popupLayout.addView(editTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), buttonMargin, buttonMargin, buttonMargin, buttonMargin));
-
-            confirmTextView = new TextView(context);
-            confirmTextView.setText(LocaleController.getString(R.string.CheckPhoneNumberYes));
-            confirmTextView.setSingleLine();
-            confirmTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-            confirmTextView.setBackground(Theme.getRoundRectSelectorDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_changephoneinfo_image2)));
-            confirmTextView.setOnClickListener(v -> callback.onConfirmPressed(this, confirmTextView));
-            confirmTextView.setTypeface(Typeface.DEFAULT_BOLD);
-            confirmTextView.setPadding(buttonPadding, buttonPadding / 2, buttonPadding, buttonPadding / 2);
-            popupLayout.addView(confirmTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), buttonMargin, buttonMargin, buttonMargin, buttonMargin));
-
-            updateFabPosition();
-            updateColors();
-        }
-
-        private void updateFabPosition() {
-            int[] loc = new int[2];
-            fragmentView.getLocationInWindow(loc);
-            int fragmentX = loc[0], fragmentY = loc[1];
-
-            fabContainer.getLocationInWindow(loc);
-            popupFabContainer.setTranslationX(loc[0] - fragmentX);
-            popupFabContainer.setTranslationY(loc[1] - fragmentY);
-            requestLayout();
-        }
-
-        private void updateColors() {
-            fabTransform.setColor(Theme.getColor(Theme.key_chats_actionIcon));
-            fabTransform.setBackgroundColor(Theme.getColor(Theme.key_chats_actionBackground));
-            popupLayout.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(12), Theme.getColor(Theme.key_dialogBackground)));
-            confirmMessageView.setTextColor(Theme.getColor(Theme.key_dialogTextGray2));
-            numberView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
-            editTextView.setTextColor(Theme.getColor(Theme.key_changephoneinfo_image2));
-            confirmTextView.setTextColor(Theme.getColor(Theme.key_changephoneinfo_image2));
-            popupFabContainer.setBackground(Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground)));
-            floatingProgressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon));
-        }
-
-        @Override
-        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-            super.onLayout(changed, left, top, right, bottom);
-
-            int height = popupLayout.getMeasuredHeight();
-            int popupBottom = (int) (popupFabContainer.getTranslationY() - AndroidUtilities.dp(32));
-            popupLayout.layout(popupLayout.getLeft(), popupBottom - height, popupLayout.getRight(), popupBottom);
-        }
-
-        private void show() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ObjectAnimator.ofFloat(fabContainer, View.TRANSLATION_Z, fabContainer.getTranslationZ(), 0).setDuration(150).start();
-            }
-
-            ValueAnimator anim = ValueAnimator.ofFloat(0, 1).setDuration(250);
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    fabContainer.setVisibility(GONE);
-
-                    // TODO: Generify this code, currently it's a clone
-                    float scaleFactor = 10;
-                    int w = (int) (fragmentView.getMeasuredWidth() / scaleFactor);
-                    int h = (int) (fragmentView.getMeasuredHeight() / scaleFactor);
-                    Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    canvas.scale(1.0f / scaleFactor, 1.0f / scaleFactor);
-                    canvas.drawColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-                    fragmentView.draw(canvas);
-                    Utilities.stackBlurBitmap(bitmap, Math.max(8, Math.max(w, h) / 150));
-                    blurredView.setBackground(new BitmapDrawable(getContext().getResources(), bitmap));
-                    blurredView.setAlpha(0.0f);
-                    blurredView.setVisibility(View.VISIBLE);
-
-                    fragmentView.addView(PhoneNumberConfirmView.this);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (AndroidUtilities.isAccessibilityTouchExplorationEnabled()) {
-                        popupFabContainer.requestFocus();
-                    }
-                }
-            });
-            anim.addUpdateListener(animation -> {
-                float val = (float) animation.getAnimatedValue();
-                fabTransform.setProgress(val);
-                blurredView.setAlpha(val);
-                dimmView.setAlpha(val);
-
-                popupLayout.setAlpha(val);
-                float scale = 0.5f + val * 0.5f;
-                popupLayout.setScaleX(scale);
-                popupLayout.setScaleY(scale);
-            });
-            anim.setInterpolator(CubicBezierInterpolator.DEFAULT);
-            anim.start();
-        }
-
-        private void animateProgress(Runnable callback) {
-            ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
-            animator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    callback.run();
-                }
-            });
-            animator.addUpdateListener(animation -> {
-                float val = (float) animation.getAnimatedValue();
-
-                float scale = 0.1f + 0.9f * (1f - val);
-                fabTransform.setScaleX(scale);
-                fabTransform.setScaleY(scale);
-                fabTransform.setAlpha(1f - val);
-
-                scale = 0.1f + 0.9f * val;
-                floatingProgressView.setScaleX(scale);
-                floatingProgressView.setScaleY(scale);
-                floatingProgressView.setAlpha(val);
-            });
-            animator.setDuration(150);
-            animator.start();
-        }
-
-        private void dismiss() {
-            if (dismissed) return;
-            dismissed = true;
-
-            callback.onDismiss(this);
-
-            ValueAnimator anim = ValueAnimator.ofFloat(1, 0).setDuration(250);
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (getParent() instanceof ViewGroup) {
-                        ((ViewGroup) getParent()).removeView(PhoneNumberConfirmView.this);
-                    }
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        ObjectAnimator.ofFloat(fabContainer, View.TRANSLATION_Z, 0, AndroidUtilities.dp(2)).setDuration(150).start();
-                    }
-                    fabContainer.setVisibility(VISIBLE);
-                }
-            });
-            anim.addUpdateListener(animation -> {
-                float val = (float) animation.getAnimatedValue();
-                blurredView.setAlpha(val);
-                dimmView.setAlpha(val);
-                fabTransform.setProgress(val);
-                popupLayout.setAlpha(val);
-
-                float scale = 0.5f + val * 0.5f;
-                popupLayout.setScaleX(scale);
-                popupLayout.setScaleY(scale);
-            });
-            anim.setInterpolator(CubicBezierInterpolator.DEFAULT);
-            anim.start();
-        }
-
-        private interface IConfirmDialogCallback {
-            void onFabPressed(PhoneNumberConfirmView confirmView, TransformableLoginButtonView fab);
-            void onEditPressed(PhoneNumberConfirmView confirmView, TextView editTextView);
-            void onConfirmPressed(PhoneNumberConfirmView confirmView, TextView confirmTextView);
-            void onDismiss(PhoneNumberConfirmView confirmView);
-        }
     }
 
     private final static class PhoneInputData {

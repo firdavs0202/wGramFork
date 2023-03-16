@@ -1096,7 +1096,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                         } else {
                             value = LocaleController.getString("PasswordOff", R.string.PasswordOff);
                         }
-                        textCell2.setTextAndValueAndIcon(LocaleController.getString("AutoDeleteMessages", R.string.AutoDeleteMessages), value, true, R.drawable.msg2_autodelete, true);
+                        textCell2.setTextAndValueAndIcon(LocaleController.getString("AutoDeleteMessages", R.string.AutoDeleteMessages), value, true,  true);
                     } else if (position == sessionsRow) {
                         String count = "";
                         if (sessionsActivityPreload.getSessionsCount() == 0) {
@@ -1109,7 +1109,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                             count = String.format(LocaleController.getInstance().getCurrentLocale(), "%d", sessionsActivityPreload.getSessionsCount());
                         }
                         getMessagesController().lastKnownSessionsCount = sessionsActivityPreload.getSessionsCount();
-                        textCell2.setTextAndValueAndIcon(LocaleController.getString("SessionsTitle", R.string.SessionsTitle), count, true, R.drawable.msg2_devices, false);
+                        textCell2.setTextAndValueAndIcon(LocaleController.getString("SessionsTitle", R.string.SessionsTitle), count, true, false);
                     } else if (position == emailLoginRow) {
                         CharSequence val = "";
                         if (currentPassword == null) {
@@ -1138,7 +1138,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                         } else {
                             value = LocaleController.getString("PasswordOff", R.string.PasswordOff);
                         }
-                        textCell2.setTextAndValueAndIcon(LocaleController.getString("TwoStepVerification", R.string.TwoStepVerification), value, true, R.drawable.msg2_permissions, true);
+                        textCell2.setTextAndValueAndIcon(LocaleController.getString("TwoStepVerification", R.string.TwoStepVerification), value, true,  true);
                     } else if (position == passcodeRow) {
                         int icon;
                         if (SharedConfig.passcodeHash.length() != 0) {
@@ -1148,7 +1148,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                             value = LocaleController.getString("PasswordOff", R.string.PasswordOff);
                             icon = R.drawable.msg2_secret;
                         }
-                        textCell2.setTextAndValueAndIcon(LocaleController.getString("Passcode", R.string.Passcode), value, true, icon, true);
+                        textCell2.setTextAndValueAndIcon(LocaleController.getString("Passcode", R.string.Passcode), value, true,  true);
                     } else if (position == blockedRow) {
                         int totalCount = getMessagesController().totalBlockedCount;
                         if (totalCount == 0) {
@@ -1159,7 +1159,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                             showLoading = true;
                             value = "";
                         }
-                        textCell2.setTextAndValueAndIcon(LocaleController.getString("BlockedUsers", R.string.BlockedUsers), value, true, R.drawable.msg2_block2, true);
+                        textCell2.setTextAndValueAndIcon(LocaleController.getString("BlockedUsers", R.string.BlockedUsers), value, true,  true);
                     }
                     textCell2.setDrawLoading(showLoading, loadingLen, animated);
                     break;

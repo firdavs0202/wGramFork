@@ -57,7 +57,6 @@ import org.telegram.ui.Cells.GroupCreateSectionCell;
 import org.telegram.ui.Cells.GroupCreateUserCell;
 import org.telegram.ui.Cells.ManageChatTextCell;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.GroupCreateActivity;
 import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
@@ -88,7 +87,6 @@ public class InviteMembersBottomSheet extends UsersAlertBase implements Notifica
     private ValueAnimator spansEnterAnimator;
     private GroupCreateSpan currentDeletingSpan;
     private int scrollViewH;
-    private GroupCreateActivity.ContactsAddActivityDelegate delegate;
     private InviteMembersBottomSheetDelegate dialogsDelegate;
     private ArrayList<TLRPC.Dialog> dialogsServerOnly;
 
@@ -347,9 +345,6 @@ public class InviteMembersBottomSheet extends UsersAlertBase implements Notifica
         for (int a = 0; a < selectedContacts.size(); a++) {
             TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(selectedContacts.keyAt(a));
             result.add(user);
-        }
-        if (delegate != null) {
-            delegate.didSelectUsers(result, i);
         }
         dismiss();
     }
@@ -1312,11 +1307,7 @@ public class InviteMembersBottomSheet extends UsersAlertBase implements Notifica
         searchAdapter.searchDialogs(text);
     }
 
-    public void setDelegate(GroupCreateActivity.ContactsAddActivityDelegate contactsAddActivityDelegate) {
-        delegate = contactsAddActivityDelegate;
-    }
-
-    public void setDelegate(InviteMembersBottomSheetDelegate inviteMembersBottomSheetDelegate, ArrayList<Long> selectedDialogs) {
+    public void setDelegate(InviteMembersBottomSheetDelegate inviteMembersBottomSheetDelegate) {
         dialogsDelegate = inviteMembersBottomSheetDelegate;
         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.dialogsNeedReload);
         dialogsServerOnly = new ArrayList<>(MessagesController.getInstance(currentAccount).dialogsServerOnly);

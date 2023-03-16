@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.source;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.analytics.PlayerId;

@@ -21,10 +21,12 @@ import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.dash.DashSegmentIndex;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.math.BigIntegerMath;
+
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;

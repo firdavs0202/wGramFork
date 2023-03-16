@@ -26,7 +26,6 @@ import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
-import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessageObject;
@@ -39,12 +38,10 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.ListView.RecyclerListViewWithOverlayDraw;
-import org.telegram.ui.Components.Premium.PremiumLockIconView;
 
 public class StickerEmojiCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, RecyclerListViewWithOverlayDraw.OverlayView {
 
     private ImageReceiver imageView;
-    private PremiumLockIconView premiumIconView;
     private TLRPC.Document sticker;
     private SendMessagesHelper.ImportingSticker stickerPath;
     private Object parentObject;
@@ -85,11 +82,6 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Theme.getColor(Theme.key_featuredStickers_addButton));
 
-        premiumIconView = new PremiumLockIconView(context, PremiumLockIconView.TYPE_STICKERS_PREMIUM_LOCKED);
-        premiumIconView.setImageReceiver(imageView);
-        premiumIconView.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4));
-        premiumIconView.setImageReceiver(imageView);
-        addView(premiumIconView, LayoutHelper.createFrame(24, 24, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0 ,0, 0, 0));
         setFocusable(true);
     }
 
@@ -145,10 +137,7 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
         isPremiumSticker = MessageObject.isPremiumSticker(document);
         drawInParentView = false;
         imageView.setColorFilter(null);
-        if (isPremiumSticker) {
-            premiumIconView.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-            premiumIconView.setWaitingImage();
-        }
+
         if (path != null) {
             stickerPath = path;
             if (path.validated) {
@@ -221,7 +210,6 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
                 emojiTextView.setVisibility(INVISIBLE);
             }
         }
-        updatePremiumStatus(false);
         imageView.setAlpha(alpha * premiumAlpha);
         if (drawInParentView) {
             imageView.setInvalidateAll(true);
@@ -229,31 +217,6 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
         } else {
             imageView.setParentView(this);
         }
-    }
-
-    private void updatePremiumStatus(boolean animated) {
-        if (isPremiumSticker) {
-            showPremiumLock = true;
-        } else {
-            showPremiumLock = false;
-        }
-        FrameLayout.LayoutParams layoutParams = (LayoutParams) premiumIconView.getLayoutParams();
-        if (!UserConfig.getInstance(currentAccount).isPremium()) {
-            layoutParams.height = layoutParams.width = AndroidUtilities.dp(24);
-            layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-            layoutParams.rightMargin = 0;
-            layoutParams.bottomMargin = AndroidUtilities.dp(8);
-            premiumIconView.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4));
-        } else {
-            layoutParams.height = layoutParams.width = AndroidUtilities.dp(16);
-            layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-            layoutParams.bottomMargin = AndroidUtilities.dp(8);
-            layoutParams.rightMargin = AndroidUtilities.dp(8);
-            premiumIconView.setPadding(AndroidUtilities.dp(1), AndroidUtilities.dp(1), AndroidUtilities.dp(1), AndroidUtilities.dp(1));
-        }
-        premiumIconView.setLocked(!UserConfig.getInstance(currentAccount).isPremium());
-        AndroidUtilities.updateViewVisibilityAnimated(premiumIconView, showPremiumLock, 0.9f, animated);
-        invalidate();
     }
 
     public void disable() {
@@ -314,15 +277,6 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
         info.setEnabled(true);
     }
 
-    public void showRequirePremiumAnimation() {
-        if (premiumIconView != null) {
-            Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-            if (v != null) {
-                v.vibrate(200);
-            }
-            AndroidUtilities.shakeView(premiumIconView);
-        }
-    }
 
     @Override
     protected void onAttachedToWindow() {
@@ -346,9 +300,6 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
 
     @Override
     public void didReceivedNotification(int id, int account, Object... args) {
-        if (id == NotificationCenter.currentUserPremiumStatusChanged) {
-            updatePremiumStatus(true);
-        }
     }
 
     @Override

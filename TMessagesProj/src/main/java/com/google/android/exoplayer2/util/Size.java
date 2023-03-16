@@ -19,6 +19,7 @@ package com.google.android.exoplayer2.util;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 
 /** Immutable class for describing width and height dimensions in pixels. */

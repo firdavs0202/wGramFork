@@ -20,8 +20,10 @@ import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
+
 import java.nio.ByteBuffer;
 
 /** Buffer to which multiple sample buffers can be appended for batch processing */

@@ -21,7 +21,9 @@ import static java.lang.Math.min;
 
 import android.os.Handler;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.drm.DrmSession;
@@ -41,6 +43,9 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.HandlerWrapper;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +55,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /**
  * Concatenates multiple {@link MediaSource}s. The list of {@link MediaSource}s can be modified

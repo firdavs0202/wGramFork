@@ -5,7 +5,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -225,20 +224,18 @@ public class ReactedHeaderView extends FrameLayout {
             if (response instanceof TLRPC.TL_messages_messageReactionsList) {
                 TLRPC.TL_messages_messageReactionsList list = (TLRPC.TL_messages_messageReactionsList) response;
                 int c = list.count;
-                int ic = list.users.size();
                 post(() -> {
                     String str;
                     if (seenUsers.isEmpty() || seenUsers.size() < c) {
                         str = LocaleController.formatPluralString("ReactionsCount", c);
                     } else {
                         String countStr;
-                        int n;
                         if (c == seenUsers.size()) {
-                            countStr = String.valueOf(n = c);
+                            countStr = String.valueOf(c);
                         } else {
-                            countStr = (n = c) + "/" + seenUsers.size();
+                            countStr = c + "/" + seenUsers.size();
                         }
-                        str = String.format(LocaleController.getPluralString("Reacted", n), countStr);
+                        str = String.format(LocaleController.getPluralString("Reacted", c), countStr);
                     }
 
                     if (getMeasuredWidth() > 0) {

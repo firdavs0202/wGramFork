@@ -20,6 +20,7 @@ import static java.lang.Math.min;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Timeline;
@@ -35,10 +36,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /**
  * A bandwidth based adaptive {@link ExoTrackSelection}, whose selected track is updated to be the

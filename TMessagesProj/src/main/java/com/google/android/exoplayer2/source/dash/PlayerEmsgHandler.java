@@ -19,7 +19,9 @@ import static com.google.android.exoplayer2.util.Util.parseXsDateTime;
 
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -36,6 +38,7 @@ import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DataReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;

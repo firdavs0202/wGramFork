@@ -19,8 +19,10 @@ package com.google.android.exoplayer2.source.rtsp;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.os.SystemClock;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
@@ -30,8 +32,10 @@ import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.source.rtsp.reader.DefaultRtpPayloadReaderFactory;
 import com.google.android.exoplayer2.source.rtsp.reader.RtpPayloadReader;
 import com.google.android.exoplayer2.util.ParsableByteArray;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.io.IOException;
 
 /** Extracts data from RTP packets. */
 /* package */ final class RtpExtractor implements Extractor {

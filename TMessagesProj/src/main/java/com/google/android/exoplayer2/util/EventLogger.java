@@ -20,7 +20,9 @@ import static java.lang.Math.min;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.MediaItem;
@@ -41,6 +43,7 @@ import com.google.android.exoplayer2.source.MediaLoadData;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.common.collect.ImmutableList;
+
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;

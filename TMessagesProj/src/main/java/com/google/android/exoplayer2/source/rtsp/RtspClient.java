@@ -41,8 +41,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.SparseArray;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.rtsp.RtspMediaPeriod.RtpLoadInfo;
@@ -57,6 +59,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -68,8 +73,8 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.SocketFactory;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** The RTSP client. */
 /* package */ final class RtspClient implements Closeable {

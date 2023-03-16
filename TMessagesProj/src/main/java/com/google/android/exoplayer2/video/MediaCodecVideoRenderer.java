@@ -41,10 +41,12 @@ import android.os.SystemClock;
 import android.util.Pair;
 import android.view.Display;
 import android.view.Surface;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.DoNotInline;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -71,6 +73,7 @@ import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener.EventDispatcher;
 import com.google.common.collect.ImmutableList;
+
 import java.nio.ByteBuffer;
 import java.util.List;
 

@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.source.chunk;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import android.util.SparseArray;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ChunkIndex;
@@ -35,8 +37,10 @@ import com.google.android.exoplayer2.upstream.DataReader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.io.IOException;
 
 /**
  * {@link ChunkExtractor} implementation that uses ExoPlayer app-bundled {@link Extractor

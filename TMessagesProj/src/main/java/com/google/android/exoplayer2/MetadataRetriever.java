@@ -22,7 +22,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -37,6 +39,7 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.HandlerWrapper;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 // TODO(internal b/161127201): discard samples written to the sample queue.

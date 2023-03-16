@@ -33,10 +33,12 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.FormatSupport;
@@ -64,6 +66,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Ints;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -75,7 +80,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /**
  * A default {@link TrackSelector} suitable for most use cases.

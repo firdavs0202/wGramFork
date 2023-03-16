@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Parses ID3 data and extracts individual text information frames. */

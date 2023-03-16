@@ -67,7 +67,6 @@ import org.telegram.ui.Components.AnimatedFileDrawable;
 import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Point;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.Reactions.ReactionsUtils;
 import org.telegram.ui.PaymentFormActivity;
@@ -4844,20 +4843,6 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                     if (message.sendEncryptedRequest != null && document.dc_id != 0) {
                         File file = new File(location);
                         if (!file.exists()) {
-                            file = getFileLoader().getPathToMessage(message.obj.messageOwner);
-                            if (file != null && file.exists()) {
-                                message.obj.messageOwner.attachPath = location = file.getAbsolutePath();
-                                message.obj.attachPathExists = true;
-                            }
-                        }
-                        if (file == null || !file.exists() && message.obj.getDocument() != null) {
-                            file = getFileLoader().getPathToAttach(message.obj.getDocument(), false);
-                            if (file != null && file.exists()) {
-                                message.obj.messageOwner.attachPath = location = file.getAbsolutePath();
-                                message.obj.attachPathExists = true;
-                            }
-                        }
-                        if (file == null || !file.exists()) {
                             putToDelayedMessages(FileLoader.getAttachFileName(document), message);
                             getFileLoader().loadFile(document, message.parentObject, FileLoader.PRIORITY_HIGH, 0);
                             return;
@@ -4903,16 +4888,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         File file = new File(location);
                         if (!file.exists()) {
                             file = getFileLoader().getPathToMessage(message.obj.messageOwner);
-                            if (file != null && file.exists()) {
+                            if (file != null) {
                                 message.obj.messageOwner.attachPath = location = file.getAbsolutePath();
-                                message.obj.attachPathExists = true;
-                            }
-                        }
-                        if (file == null || !file.exists() && message.obj.getDocument() != null) {
-                            file = getFileLoader().getPathToAttach(message.obj.getDocument(), false);
-                            if (file != null && file.exists()) {
-                                message.obj.messageOwner.attachPath = location = file.getAbsolutePath();
-                                message.obj.attachPathExists = true;
                             }
                         }
 
@@ -6821,7 +6798,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                     if (finalError == ERROR_TYPE_UNSUPPORTED) {
                         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, LocaleController.getString("UnsupportedAttachment", R.string.UnsupportedAttachment));
                     } else if (finalError == ERROR_TYPE_FILE_TOO_LARGE) {
-                        NotificationCenter.getInstance(accountInstance.getCurrentAccount()).postNotificationName(NotificationCenter.currentUserShowLimitReachedDialog, LimitReachedBottomSheet.TYPE_LARGE_FILE);
+//                        NotificationCenter.getInstance(accountInstance.getCurrentAccount()).postNotificationName(NotificationCenter.currentUserShowLimitReachedDialog, LimitReachedBottomSheet.TYPE_LARGE_FILE);
                     }
                 } catch (Exception e) {
                     FileLog.e(e);

@@ -20,13 +20,16 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.BundleableUtil.toBundleArrayList;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.util.BundleableUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Booleans;
+
 import java.util.Arrays;
 import java.util.List;
 

@@ -27,14 +27,17 @@ import android.view.Choreographer.FrameCallback;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**

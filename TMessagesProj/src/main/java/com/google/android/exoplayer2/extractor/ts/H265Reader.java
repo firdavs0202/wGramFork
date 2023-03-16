@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.extractor.ts;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
@@ -31,10 +32,12 @@ import com.google.android.exoplayer2.util.NalUnitUtil;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.ParsableNalUnitBitArray;
 import com.google.android.exoplayer2.util.Util;
-import java.util.Collections;
+
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
+import java.util.Collections;
 
 /** Parses a continuous H.265 byte stream and extracts individual frames. */
 public final class H265Reader implements ElementaryStreamReader {

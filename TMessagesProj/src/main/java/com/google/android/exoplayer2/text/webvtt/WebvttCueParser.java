@@ -34,8 +34,10 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.span.HorizontalTextInVerticalContextSpan;
 import com.google.android.exoplayer2.text.span.RubySpan;
@@ -45,6 +47,9 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -59,7 +64,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Parser for WebVTT cues. (https://w3c.github.io/webvtt/#cues) */
 public final class WebvttCueParser {

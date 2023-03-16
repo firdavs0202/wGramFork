@@ -43,14 +43,13 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumButtonView;
 import org.telegram.ui.Components.ProgressButton;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeaturedStickerSetCell2 extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+public abstract class FeaturedStickerSetCell2 extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private final int currentAccount = UserConfig.selectedAccount;
 
@@ -59,9 +58,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
     private final BackupImageView imageView;
     private final ProgressButton addButton;
     private final TextView delButton;
-    private final PremiumButtonView unlockButton;
-
-    private AnimatorSet currentAnimation;
+//    private AnimatorSet currentAnimation;
     private TLRPC.StickerSetCovered stickersSet;
     private boolean isInstalled;
     private boolean isLocked;
@@ -115,30 +112,11 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         delButton.setText(LocaleController.getString("StickersRemove", R.string.StickersRemove));
         addView(delButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 16, 14, 0));
 
-        unlockButton = new PremiumButtonView(context, AndroidUtilities.dp(4), false);
-        unlockButton.setIcon(R.raw.unlock_icon);
-        unlockButton.setButton(LocaleController.getString("Unlock", R.string.Unlock), e -> onPremiumButtonClick());
-        unlockButton.setVisibility(View.GONE);
-        try {
-            MarginLayoutParams iconLayout = (MarginLayoutParams) unlockButton.getIconView().getLayoutParams();
-            iconLayout.leftMargin = AndroidUtilities.dp(1);
-            iconLayout.topMargin = AndroidUtilities.dp(1);
-            iconLayout.width = iconLayout.height = AndroidUtilities.dp(20);
-            MarginLayoutParams layout = (MarginLayoutParams) unlockButton.getTextView().getLayoutParams();
-            layout.leftMargin = AndroidUtilities.dp(3);
-            unlockButton.getChildAt(0).setPadding(AndroidUtilities.dp(8), 0, AndroidUtilities.dp(8), 0);
-        } catch (Exception ev) {}
-        addView(unlockButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 16, 10, 0));
-
         updateColors();
     }
 
     public TextView getTextView() {
         return textView;
-    }
-
-    protected void onPremiumButtonClick() {
-
     }
 
     @Override
@@ -158,10 +136,10 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
     }
 
     public void setStickersSet(TLRPC.StickerSetCovered set, boolean divider, boolean unread, boolean forceInstalled, boolean animated) {
-        if (currentAnimation != null) {
-            currentAnimation.cancel();
-            currentAnimation = null;
-        }
+//        if (currentAnimation != null) {
+//            currentAnimation.cancel();
+//            currentAnimation = null;
+//        }
 
         needDivider = divider;
         stickersSet = set;
@@ -299,53 +277,42 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         isLocked = !UserConfig.getInstance(currentAccount).isPremium() && MessageObject.isPremiumEmojiPack(set);
         if (animated) {
             if (isLocked) {
-                unlockButton.setVisibility(VISIBLE);
                 delButton.setVisibility(VISIBLE);
                 addButton.setVisibility(VISIBLE);
             } else {
-                unlockButton.setVisibility(VISIBLE);
                 if (isInstalled) {
                     delButton.setVisibility(VISIBLE);
                 } else {
                     addButton.setVisibility(VISIBLE);
                 }
             }
-            currentAnimation = new AnimatorSet();
-            currentAnimation.setDuration(250);
-            currentAnimation.playTogether(
-                    ObjectAnimator.ofFloat(delButton, View.ALPHA, isInstalled && !isLocked ? 1.0f : 0.0f),
-                    ObjectAnimator.ofFloat(delButton, View.SCALE_X, isInstalled && !isLocked ? 1.0f : 0.0f),
-                    ObjectAnimator.ofFloat(delButton, View.SCALE_Y, isInstalled && !isLocked ? 1.0f : 0.0f),
-                    ObjectAnimator.ofFloat(addButton, View.ALPHA, isInstalled || isLocked ? 0.0f : 1.0f),
-                    ObjectAnimator.ofFloat(addButton, View.SCALE_X, isInstalled || isLocked ? 0.0f : 1.0f),
-                    ObjectAnimator.ofFloat(unlockButton, View.SCALE_Y, !isLocked ? 0.0f : 1.0f),
-                    ObjectAnimator.ofFloat(unlockButton, View.SCALE_X, !isLocked ? 0.0f : 1.0f),
-                    ObjectAnimator.ofFloat(unlockButton, View.SCALE_Y, !isLocked ? 0.0f : 1.0f));
-            currentAnimation.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (isLocked) {
-                        addButton.setVisibility(INVISIBLE);
-                        delButton.setVisibility(INVISIBLE);
-                        unlockButton.setVisibility(VISIBLE);
-                    } else {
-                        if (isInstalled) {
-                            addButton.setVisibility(INVISIBLE);
-                        } else {
-                            delButton.setVisibility(INVISIBLE);
-                        }
-                        unlockButton.setVisibility(GONE);
-                    }
-                }
-            });
-            currentAnimation.setInterpolator(new OvershootInterpolator(1.02f));
-            currentAnimation.start();
+//            currentAnimation = new AnimatorSet();
+//            currentAnimation.setDuration(250);
+//            currentAnimation.playTogether(
+//                    ObjectAnimator.ofFloat(delButton, View.ALPHA, isInstalled && !isLocked ? 1.0f : 0.0f),
+//                    ObjectAnimator.ofFloat(delButton, View.SCALE_X, isInstalled && !isLocked ? 1.0f : 0.0f),
+//                    ObjectAnimator.ofFloat(delButton, View.SCALE_Y, isInstalled && !isLocked ? 1.0f : 0.0f),
+//                    ObjectAnimator.ofFloat(addButton, View.ALPHA, isInstalled || isLocked ? 0.0f : 1.0f),
+//                    ObjectAnimator.ofFloat(addButton, View.SCALE_X, isInstalled || isLocked ? 0.0f : 1.0f),
+//            currentAnimation.addListener(new AnimatorListenerAdapter() {
+//                @Override
+//                public void onAnimationEnd(Animator animation) {
+//                    if (isLocked) {
+//                        addButton.setVisibility(INVISIBLE);
+//                        delButton.setVisibility(INVISIBLE);
+//                    } else {
+//                        if (isInstalled) {
+//                            addButton.setVisibility(INVISIBLE);
+//                        } else {
+//                            delButton.setVisibility(INVISIBLE);
+//                        }
+//                    }
+//                }
+//            }));
+//            currentAnimation.setInterpolator(new OvershootInterpolator(1.02f));
+//            currentAnimation.start();
         } else {
             if (isLocked) {
-                unlockButton.setVisibility(VISIBLE);
-                unlockButton.setAlpha(1.0f);
-                unlockButton.setScaleX(1.0f);
-                unlockButton.setScaleY(1.0f);
                 addButton.setVisibility(INVISIBLE);
                 addButton.setAlpha(0.0f);
                 addButton.setScaleX(0.0f);
@@ -355,10 +322,6 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
                 delButton.setScaleX(0.0f);
                 delButton.setScaleY(0.0f);
             } else {
-                unlockButton.setVisibility(GONE);
-                unlockButton.setAlpha(0.0f);
-                unlockButton.setScaleX(0.0f);
-                unlockButton.setScaleY(0.0f);
                 if (isInstalled) {
                     delButton.setVisibility(VISIBLE);
                     delButton.setAlpha(1.0f);
@@ -451,4 +414,6 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
             }
         }
     }
+
+    protected abstract void onPremiumButtonClick();
 }

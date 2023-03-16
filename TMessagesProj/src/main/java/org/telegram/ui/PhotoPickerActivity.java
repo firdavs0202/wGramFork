@@ -65,7 +65,6 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.VideoEditedInfo;
@@ -1880,7 +1879,6 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     if (forceDarckTheme) {
                         TextCell textCell = (TextCell) view;
                         textCell.textView.setTextColor(Theme.getColor(textKey));
-                        textCell.imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_voipgroup_mutedIcon), PorterDuff.Mode.MULTIPLY));
                     }
                     break;
                 }
@@ -1942,9 +1940,9 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 case 3: {
                     TextCell cell = (TextCell) holder.itemView;
                     if (position < recentSearches.size()) {
-                        cell.setTextAndIcon(recentSearches.get(position), R.drawable.msg_recent, false);
+                        cell.setTextAndIcon(recentSearches.get(position), false);
                     } else {
-                        cell.setTextAndIcon(LocaleController.getString("ClearRecentHistory", R.string.ClearRecentHistory), R.drawable.msg_clear_recent, false);
+                        cell.setTextAndIcon(LocaleController.getString("ClearRecentHistory", R.string.ClearRecentHistory), false);
                     }
                     break;
                 }

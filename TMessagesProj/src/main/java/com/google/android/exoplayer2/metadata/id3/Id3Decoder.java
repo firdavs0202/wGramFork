@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.metadata.id3;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataInputBuffer;
@@ -27,6 +28,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;

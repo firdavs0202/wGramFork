@@ -20,6 +20,7 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -33,12 +34,14 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.mp4.MotionPhotoMetadata;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Extracts JPEG image using the Exif format. */
 public final class JpegExtractor implements Extractor {

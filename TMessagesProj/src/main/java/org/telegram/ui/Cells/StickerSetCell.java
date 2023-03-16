@@ -49,7 +49,6 @@ import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.ForegroundColorSpanThemable;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumButtonView;
 import org.telegram.ui.Components.RadialProgressView;
 
 import java.util.ArrayList;
@@ -76,7 +75,6 @@ public class StickerSetCell extends FrameLayout {
     private FrameLayout sideButtons;
     private TextView addButtonView;
     private TextView removeButtonView;
-    private PremiumButtonView premiumButtonView;
 
     public StickerSetCell(Context context, int option) {
         this(context, null, option);
@@ -148,31 +146,8 @@ public class StickerSetCell extends FrameLayout {
         removeButtonView.setOnClickListener(e -> onRemoveButtonClick());
         sideButtons.addView(removeButtonView, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 32, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, 0, -2, 0, 0));
 
-        premiumButtonView = new PremiumButtonView(context, AndroidUtilities.dp(4), false);
-        premiumButtonView.setIcon(R.raw.unlock_icon);
-        premiumButtonView.setButton(LocaleController.getString("Unlock", R.string.Unlock), e -> onPremiumButtonClick());
-        try {
-            MarginLayoutParams iconLayout = (MarginLayoutParams) premiumButtonView.getIconView().getLayoutParams();
-            iconLayout.leftMargin = AndroidUtilities.dp(1);
-            iconLayout.topMargin = AndroidUtilities.dp(1);
-            iconLayout.width = iconLayout.height = AndroidUtilities.dp(20);
-            MarginLayoutParams layout = (MarginLayoutParams) premiumButtonView.getTextView().getLayoutParams();
-            layout.leftMargin = AndroidUtilities.dp(3);
-            premiumButtonView.getChildAt(0).setPadding(AndroidUtilities.dp(8), 0, AndroidUtilities.dp(8), 0);
-        } catch (Exception ev) {}
-        sideButtons.addView(premiumButtonView, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL));
-
         sideButtons.setPadding(AndroidUtilities.dp(10), 0, AndroidUtilities.dp(10), 0);
         addView(sideButtons, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), 0, 0, 0, 0));
-        sideButtons.setOnClickListener(e -> {
-            if (premiumButtonView.getVisibility() == View.VISIBLE && premiumButtonView.isEnabled()) {
-                premiumButtonView.performClick();
-            } else if (addButtonView.getVisibility() == View.VISIBLE && addButtonView.isEnabled()) {
-                addButtonView.performClick();
-            } else if (removeButtonView.getVisibility() == View.VISIBLE && removeButtonView.isEnabled()) {
-                removeButtonView.performClick();
-            }
-        });
 
         textView = new TextView(context) {
             @Override
@@ -565,20 +540,11 @@ public class StickerSetCell extends FrameLayout {
             stateAnimator.cancel();
             stateAnimator = null;
         }
-        if (state == BUTTON_STATE_LOCKED) {
-            premiumButtonView.setButton(LocaleController.getString("Unlock", R.string.Unlock), e -> onPremiumButtonClick());
-        } else if (state == BUTTON_STATE_LOCKED_RESTORE) {
-            premiumButtonView.setButton(LocaleController.getString("Restore", R.string.Restore), e -> onPremiumButtonClick());
-        }
-        premiumButtonView.setEnabled(state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE);
         addButtonView.setEnabled(state == BUTTON_STATE_ADD);
         removeButtonView.setEnabled(state == BUTTON_STATE_REMOVE);
         if (animated) {
             stateAnimator = new AnimatorSet();
             stateAnimator.playTogether(
-                    ObjectAnimator.ofFloat(premiumButtonView, ALPHA, state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? 1 : 0),
-                    ObjectAnimator.ofFloat(premiumButtonView, SCALE_X, state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? 1 : .6f),
-                    ObjectAnimator.ofFloat(premiumButtonView, SCALE_Y, state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? 1 : .6f),
                     ObjectAnimator.ofFloat(addButtonView, ALPHA, state == BUTTON_STATE_ADD ? 1 : 0),
                     ObjectAnimator.ofFloat(addButtonView, SCALE_X, state == BUTTON_STATE_ADD ? 1 : .6f),
                     ObjectAnimator.ofFloat(addButtonView, SCALE_Y, state == BUTTON_STATE_ADD ? 1 : .6f),
@@ -589,14 +555,12 @@ public class StickerSetCell extends FrameLayout {
             stateAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    premiumButtonView.setVisibility(View.VISIBLE);
                     addButtonView.setVisibility(View.VISIBLE);
                     removeButtonView.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    premiumButtonView.setVisibility(state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? View.VISIBLE : View.GONE);
                     addButtonView.setVisibility(state == BUTTON_STATE_ADD ? View.VISIBLE : View.GONE);
                     removeButtonView.setVisibility(state == BUTTON_STATE_REMOVE ? View.VISIBLE : View.GONE);
                     updateRightMargin();
@@ -606,10 +570,6 @@ public class StickerSetCell extends FrameLayout {
             stateAnimator.setInterpolator(new OvershootInterpolator(1.02f));
             stateAnimator.start();
         } else {
-            premiumButtonView.setAlpha(state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? 1 : 0);
-            premiumButtonView.setScaleX(state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? 1 : .6f);
-            premiumButtonView.setScaleY(state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? 1 : .6f);
-            premiumButtonView.setVisibility(state == BUTTON_STATE_LOCKED || state == BUTTON_STATE_LOCKED_RESTORE ? View.VISIBLE : View.GONE);
             addButtonView.setAlpha(state == BUTTON_STATE_ADD ? 1 : 0);
             addButtonView.setScaleX(state == BUTTON_STATE_ADD ? 1 : .6f);
             addButtonView.setScaleY(state == BUTTON_STATE_ADD ? 1 : .6f);

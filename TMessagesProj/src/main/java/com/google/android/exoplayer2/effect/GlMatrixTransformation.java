@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.effect;
 import android.content.Context;
 import android.opengl.Matrix;
 import android.util.Pair;
+
 import com.google.android.exoplayer2.util.FrameProcessingException;
 import com.google.common.collect.ImmutableList;
 

@@ -20,13 +20,16 @@ import static java.lang.Math.min;
 
 import android.net.Uri;
 import android.util.Base64;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Charsets;
+
 import java.io.IOException;
 import java.net.URLDecoder;
 

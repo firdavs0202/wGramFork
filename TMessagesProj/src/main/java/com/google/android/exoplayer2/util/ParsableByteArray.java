@@ -16,10 +16,12 @@
 package com.google.android.exoplayer2.util;
 
 import androidx.annotation.Nullable;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.primitives.Chars;
 import com.google.common.primitives.UnsignedBytes;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;

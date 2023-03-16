@@ -186,7 +186,6 @@ public class ContentPreviewViewer {
     private boolean menuVisible;
     private float blurProgress;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private UnlockPremiumView unlockPremiumView;
     private boolean closeOnDismiss;
     private boolean drawEffect;
 
@@ -199,7 +198,6 @@ public class ContentPreviewViewer {
             closeOnDismiss = true;
             if (currentContentType == CONTENT_TYPE_STICKER) {
                 if (MessageObject.isPremiumSticker(currentDocument) && !AccountInstance.getInstance(currentAccount).getUserConfig().isPremium()) {
-                    showUnlockPremiumView();
                     menuVisible = true;
                     containerView.invalidate();
                     containerView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
@@ -614,32 +612,6 @@ public class ContentPreviewViewer {
         }
     };
 
-    private void showUnlockPremiumView() {
-        if (unlockPremiumView == null) {
-            unlockPremiumView = new UnlockPremiumView(containerView.getContext(), UnlockPremiumView.TYPE_STICKERS, resourcesProvider);
-            containerView.addView(unlockPremiumView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-            unlockPremiumView.setOnClickListener(v -> {
-                menuVisible = false;
-                containerView.invalidate();
-                close();
-            });
-            unlockPremiumView.premiumButtonView.buttonLayout.setOnClickListener(v -> {
-                if (parentActivity instanceof LaunchActivity) {
-                    LaunchActivity activity = (LaunchActivity) parentActivity;
-                    if (activity.getActionBarLayout() != null && activity.getActionBarLayout().getLastFragment() != null) {
-                        activity.getActionBarLayout().getLastFragment().dismissCurrentDialog();
-                    }
-                    activity.presentFragment(new PremiumPreviewFragment(PremiumPreviewFragment.featureTypeToServerString(PremiumPreviewFragment.PREMIUM_FEATURE_STICKERS)));
-                }
-                menuVisible = false;
-                containerView.invalidate();
-                close();
-            });
-        }
-        AndroidUtilities.updateViewVisibilityAnimated(unlockPremiumView, false, 1f, false);
-        AndroidUtilities.updateViewVisibilityAnimated(unlockPremiumView, true);
-        unlockPremiumView.setTranslationY(0);
-    }
 
     private int currentContentType;
     private TLRPC.Document currentDocument;
@@ -806,7 +778,6 @@ public class ContentPreviewViewer {
                             if (popupWindow != null) {
                                 popupWindow.dismiss();
                             }
-                            AndroidUtilities.updateViewVisibilityAnimated(unlockPremiumView, false);
                             if (currentPreviewCell instanceof StickerEmojiCell) {
                                 StickerEmojiCell stickerEmojiCell = (StickerEmojiCell) currentPreviewCell;
                                 open(stickerEmojiCell.getSticker(), stickerEmojiCell.getStickerPath(), stickerEmojiCell.getEmoji(), delegate != null ? delegate.getQuery(false) : null, null, contentType, stickerEmojiCell.isRecent(), stickerEmojiCell.getParentObject(), resourcesProvider);
@@ -1281,9 +1252,7 @@ public class ContentPreviewViewer {
         currentQuery = null;
         delegate = null;
         isVisible = false;
-        if (unlockPremiumView != null) {
-            unlockPremiumView.animate().alpha(0).translationY(AndroidUtilities.dp(56)).setDuration(150).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
-        }
+
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.startAllHeavyOperations, 8);
     }
 
@@ -1447,7 +1416,6 @@ public class ContentPreviewViewer {
                     blurrBitmap.recycle();
                     blurrBitmap = null;
                 }
-                AndroidUtilities.updateViewVisibilityAnimated(unlockPremiumView, false, 1f, false);
                 blurProgress = 0f;
                 try {
                     if (windowView.getParent() != null) {

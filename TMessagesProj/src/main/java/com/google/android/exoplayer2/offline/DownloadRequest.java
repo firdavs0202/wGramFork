@@ -20,13 +20,16 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

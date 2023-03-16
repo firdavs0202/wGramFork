@@ -73,7 +73,6 @@ import org.telegram.ui.Components.CircularProgressDrawable;
 import org.telegram.ui.Components.CrossfadeDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
@@ -1019,9 +1018,7 @@ public class ChatRightsEditActivity extends BaseFragment {
                         }
                     }), ConnectionsManager.RequestFlagWithoutLogin);
                 } else if (error.text.equals("CHANNELS_TOO_MUCH")) {
-                    if (getParentActivity() != null && !AccountInstance.getInstance(currentAccount).getUserConfig().isPremium()) {
-                        showDialog(new LimitReachedBottomSheet(this, getParentActivity(), LimitReachedBottomSheet.TYPE_TO0_MANY_COMMUNITIES, currentAccount));
-                    } else {
+                    if (getParentActivity() == null || AccountInstance.getInstance(currentAccount).getUserConfig().isPremium()) {
                         presentFragment(new TooManyCommunitiesActivity(TooManyCommunitiesActivity.TYPE_EDIT));
                     }
                 } else {

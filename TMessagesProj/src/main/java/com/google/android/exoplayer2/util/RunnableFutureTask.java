@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.util;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import androidx.annotation.Nullable;
+
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RunnableFuture;

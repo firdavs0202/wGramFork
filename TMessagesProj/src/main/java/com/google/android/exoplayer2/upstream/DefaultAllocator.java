@@ -18,10 +18,13 @@ package com.google.android.exoplayer2.upstream;
 import static java.lang.Math.max;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
-import java.util.Arrays;
+
 import org.checkerframework.checker.nullness.compatqual.NullableType;
+
+import java.util.Arrays;
 
 /** Default implementation of {@link Allocator}. */
 public final class DefaultAllocator implements Allocator {

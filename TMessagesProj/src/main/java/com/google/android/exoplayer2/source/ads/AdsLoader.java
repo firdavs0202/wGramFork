@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.source.ads;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
@@ -23,6 +24,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource.AdLoadException;
 import com.google.android.exoplayer2.ui.AdViewProvider;
 import com.google.android.exoplayer2.upstream.DataSpec;
+
 import java.io.IOException;
 
 /**

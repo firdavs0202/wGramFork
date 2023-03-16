@@ -62,13 +62,11 @@ import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ImageUpdater;
 import org.telegram.ui.Components.JoinCallAlert;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.SwipeGestureSettingsView;
 import org.telegram.ui.Components.TranscribeButton;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.EditWidgetActivity;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.TopicsFragment;
 
@@ -3009,16 +3007,6 @@ public class MessagesController extends BaseController implements NotificationCe
             if (value.get(i) instanceof TLRPC.TL_jsonString) {
                 s = ((TLRPC.TL_jsonString) value.get(i)).value;
             }
-            if (s != null) {
-                int type = PremiumPreviewFragment.serverStringToFeatureType(s);
-                if (type >= 0) {
-                    premiumFeaturesTypesToPosition.put(type, i);
-                    if (stringBuilder.length() > 0) {
-                        stringBuilder.append('_');
-                    }
-                    stringBuilder.append(type);
-                }
-            }
         }
 
         boolean changed;
@@ -5441,11 +5429,8 @@ public class MessagesController extends BaseController implements NotificationCe
                         AndroidUtilities.runOnUIThread(() -> {
                             BaseFragment lastFragment = LaunchActivity.getLastFragment();
                             if (lastFragment != null && lastFragment.getParentActivity() != null) {
-                                LimitReachedBottomSheet restricterdUsersBottomSheet = new LimitReachedBottomSheet(lastFragment, lastFragment.getParentActivity(), LimitReachedBottomSheet.TYPE_ADD_MEMBERS_RESTRICTED, currentAccount);
                                 ArrayList<TLRPC.User> users = new ArrayList<TLRPC.User>();
                                 users.add(user);
-                                restricterdUsersBottomSheet.setRestrictedUsers(chat, users);
-                                restricterdUsersBottomSheet.show();
                             }
                             onError.run(error);
                         });
@@ -10990,37 +10975,6 @@ public class MessagesController extends BaseController implements NotificationCe
         final Runnable showUserRestrictedPrivacyAlert = () -> {
             AndroidUtilities.runOnUIThread(() ->{
                 BaseFragment lastFragment = LaunchActivity.getLastFragment();
-                if (lastFragment != null && lastFragment.getParentActivity() != null) {
-//                    if (ChatObject.canUserDoAdminAction(currentChat, ChatObject.ACTION_INVITE)) {
-                        LimitReachedBottomSheet restricterdUsersBottomSheet = new LimitReachedBottomSheet(lastFragment, lastFragment.getParentActivity(), LimitReachedBottomSheet.TYPE_ADD_MEMBERS_RESTRICTED, currentAccount);
-                        restricterdUsersBottomSheet.setRestrictedUsers(currentChat, userRestrictedPrivacy);
-                        restricterdUsersBottomSheet.show();
-//                    } else {
-//                        CharSequence title, description;
-//                        if (userRestrictedPrivacy.size() == 1) {
-//                            if (count > 1) {
-//                                title = LocaleController.getString("InviteToGroupErrorTitleAUser", R.string.InviteToGroupErrorTitleAUser);
-//                            } else {
-//                                title = LocaleController.getString("InviteToGroupErrorTitleThisUser", R.string.InviteToGroupErrorTitleThisUser);
-//                            }
-//                            description = AndroidUtilities.replaceTags(LocaleController.formatString("InviteToGroupErrorMessageSingle", R.string.InviteToGroupErrorMessageSingle, UserObject.getFirstName(userRestrictedPrivacy.get(0))));
-//                        } else if (userRestrictedPrivacy.size() == 2) {
-//                            title = LocaleController.getString("InviteToGroupErrorTitleSomeUsers", R.string.InviteToGroupErrorTitleSomeUsers);
-//                            description = AndroidUtilities.replaceTags(LocaleController.formatString("InviteToGroupErrorMessageDouble", R.string.InviteToGroupErrorMessageDouble, UserObject.getFirstName(userRestrictedPrivacy.get(0)), UserObject.getFirstName(userRestrictedPrivacy.get(1))));
-//                        } else if (userRestrictedPrivacy.size() == count) {
-//                            title = LocaleController.getString("InviteToGroupErrorTitleTheseUsers", R.string.InviteToGroupErrorTitleTheseUsers);
-//                            description = LocaleController.getString("InviteToGroupErrorMessageMultipleAll", R.string.InviteToGroupErrorMessageMultipleAll);
-//                        } else {
-//                            title = LocaleController.getString("InviteToGroupErrorTitleSomeUsers", R.string.InviteToGroupErrorTitleSomeUsers);
-//                            description = LocaleController.getString("InviteToGroupErrorMessageMultipleSome", R.string.InviteToGroupErrorMessageMultipleSome);
-//                        }
-//                        new AlertDialog.Builder(lastFragment.getParentActivity())
-//                                .setTitle(title)
-//                                .setMessage(description)
-//                                .setPositiveButton(LocaleController.getString("OK", R.string.OK), null)
-//                                .show();
-//                    }
-                }
             }, 200);
         };
         long chatId = currentChat.id;

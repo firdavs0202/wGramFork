@@ -23,8 +23,10 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.upstream.Loader;
@@ -34,6 +36,9 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -51,7 +56,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Sends and receives RTSP messages. */
 /* package */ final class RtspMessageChannel implements Closeable {

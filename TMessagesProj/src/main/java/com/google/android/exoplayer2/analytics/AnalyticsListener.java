@@ -28,8 +28,10 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.SparseArray;
 import android.view.Surface;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DeviceInfo;
 import com.google.android.exoplayer2.Format;
@@ -62,6 +64,7 @@ import com.google.android.exoplayer2.util.FlagSet;
 import com.google.android.exoplayer2.video.VideoDecoderOutputBufferRenderer;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.common.base.Objects;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.extractor.wav;
 
 import android.util.Pair;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.audio.WavUtil;
@@ -24,6 +25,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 
 /** Reads a WAV header from an input stream; supports resuming from input failures. */

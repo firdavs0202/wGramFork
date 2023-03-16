@@ -20,12 +20,15 @@ import static java.lang.Math.min;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.rtsp.RtspMessageChannel.InterleavedBinaryDataListener;
 import com.google.android.exoplayer2.upstream.BaseDataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 

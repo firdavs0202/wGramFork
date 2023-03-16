@@ -16,10 +16,13 @@
 package com.google.android.exoplayer2.util;
 
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.common.base.Ascii;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

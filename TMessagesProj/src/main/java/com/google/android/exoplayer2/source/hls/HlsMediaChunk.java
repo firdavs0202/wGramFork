@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.source.hls;
 import static com.google.android.exoplayer2.upstream.DataSpec.FLAG_MIGHT_NOT_USE_FULL_NETWORK_SPEED;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.analytics.PlayerId;
@@ -39,15 +41,17 @@ import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.android.exoplayer2.util.UriUtil;
 import com.google.common.base.Ascii;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /** An HLS {@link MediaChunk}. */
 /* package */ final class HlsMediaChunk extends MediaChunk {

@@ -21,7 +21,9 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 import static java.lang.Math.max;
 
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -47,12 +49,14 @@ import com.google.android.exoplayer2.video.HevcConfig;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /** Utility methods for parsing MP4 format atom payloads according to ISO/IEC 14496-12. */
 @SuppressWarnings("ConstantField")

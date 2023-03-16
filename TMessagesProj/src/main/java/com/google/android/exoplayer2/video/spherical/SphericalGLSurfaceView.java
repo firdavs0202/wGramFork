@@ -30,17 +30,21 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.WindowManager;
+
 import androidx.annotation.AnyThread;
 import androidx.annotation.BinderThread;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.GlUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
+
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 

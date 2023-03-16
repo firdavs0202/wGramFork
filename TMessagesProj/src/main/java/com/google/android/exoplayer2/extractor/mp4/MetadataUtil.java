@@ -19,6 +19,7 @@ import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.GaplessInfoHolder;
@@ -32,6 +33,7 @@ import com.google.android.exoplayer2.metadata.mp4.MdtaMetadataEntry;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.collect.ImmutableList;
+
 import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /** Utilities for handling metadata in MP4. */

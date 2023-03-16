@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.source.chunk;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.DefaultExtractorInput;
@@ -25,8 +26,10 @@ import com.google.android.exoplayer2.source.chunk.ChunkExtractor.TrackOutputProv
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSourceUtil;
 import com.google.android.exoplayer2.upstream.DataSpec;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.io.IOException;
 
 /**
  * A {@link Chunk} that uses an {@link Extractor} to decode initialization data for single track.

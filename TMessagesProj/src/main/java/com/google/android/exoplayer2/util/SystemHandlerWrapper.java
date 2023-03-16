@@ -19,9 +19,12 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.ArrayList;
 import java.util.List;
 

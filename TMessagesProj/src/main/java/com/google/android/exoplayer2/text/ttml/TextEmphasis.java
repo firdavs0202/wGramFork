@@ -19,8 +19,10 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import android.text.TextUtils;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.span.TextAnnotation;
 import com.google.android.exoplayer2.text.span.TextEmphasisSpan;
@@ -28,6 +30,7 @@ import com.google.common.base.Ascii;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

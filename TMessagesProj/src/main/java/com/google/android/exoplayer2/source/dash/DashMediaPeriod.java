@@ -21,8 +21,10 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SeekParameters;
@@ -57,6 +59,9 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.primitives.Ints;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -68,7 +73,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /** A DASH {@link MediaPeriod}. */
 /* package */ final class DashMediaPeriod

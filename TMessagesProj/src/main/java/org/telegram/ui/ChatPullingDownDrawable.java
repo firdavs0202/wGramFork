@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -14,12 +13,9 @@ import android.graphics.RectF;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-
-import androidx.core.graphics.ColorUtils;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -39,7 +35,8 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 
 import java.util.ArrayList;
 
-public class ChatPullingDownDrawable implements NotificationCenter.NotificationCenterDelegate {
+public class
+ChatPullingDownDrawable implements NotificationCenter.NotificationCenterDelegate {
 
     public int dialogFolderId;
     public int dialogFilterId;

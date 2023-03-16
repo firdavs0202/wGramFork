@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.source.hls.playlist;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
 
 /** Factory for {@link HlsPlaylist} parsers. */

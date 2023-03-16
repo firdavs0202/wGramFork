@@ -20,12 +20,16 @@ import static com.google.android.exoplayer2.util.GlUtil.checkGlError;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.util.Log;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.GlProgram;
 import com.google.android.exoplayer2.util.GlUtil;
-import java.nio.FloatBuffer;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.nio.FloatBuffer;
 
 /**
  * Utility class to render spherical meshes for video or images. Call {@link #init()} on the GL

@@ -46,7 +46,6 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -277,7 +276,6 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
 
                 Bulletin bulletin = Bulletin.make(bulletinContainer, new SelectSendAsPremiumHintBulletinLayout(context, parentFragment.themeDelegate, ()->{
                     if (parentFragment != null) {
-                        parentFragment.presentFragment(new PremiumPreviewFragment("select_sender"));
                         dismiss();
                     }
                 }), Bulletin.DURATION_SHORT);

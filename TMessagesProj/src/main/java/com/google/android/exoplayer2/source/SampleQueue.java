@@ -23,10 +23,12 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static java.lang.Math.max;
 
 import android.os.Looper;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -48,8 +50,10 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.compatqual.NullableType;
+
+import java.io.IOException;
 
 /** A queue of media samples. */
 public class SampleQueue implements TrackOutput {

@@ -31,8 +31,10 @@ import android.media.MediaParser;
 import android.media.MediaParser.OutputConsumer;
 import android.media.MediaParser.SeekPoint;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
@@ -45,6 +47,7 @@ import com.google.android.exoplayer2.util.FileTypes;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
 import java.io.IOException;
 
 /** {@link HlsMediaChunkExtractor} implemented on top of the platform's {@link MediaParser}. */

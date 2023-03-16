@@ -24,10 +24,10 @@ public class BuildVars {
     public static boolean USE_CLOUD_STRINGS = true;
     public static boolean CHECK_UPDATES = true;
     public static boolean NO_SCOPED_STORAGE = Build.VERSION.SDK_INT <= 29;
-    public static int BUILD_VERSION = 3213;
-    public static String BUILD_VERSION_STRING = "9.5.3";
-    public static int APP_ID = 4;
-    public static String APP_HASH = "014b35b6184100b085b0d0572f9b5103";
+    public static int BUILD_VERSION = 3208;
+    public static String BUILD_VERSION_STRING = "9.5.2";
+    public static int APP_ID = 24551416;
+    public static String APP_HASH = "a4b8ca36e0cc95a544fcbae5120fa6b9";
 
     // SafetyNet key for Google Identity SDK, set it to empty to disable
     public static String SAFETYNET_KEY = "AIzaSyDqt8P-7F7CPCseMkOiVRgb1LY8RN1bvH8";
@@ -68,6 +68,7 @@ public class BuildVars {
     }
 
     private static Boolean standaloneApp;
+
     public static boolean isStandaloneApp() {
         if (standaloneApp == null) {
             standaloneApp = ApplicationLoader.applicationContext != null && "org.telegram.messenger.web".equals(ApplicationLoader.applicationContext.getPackageName());
@@ -76,6 +77,7 @@ public class BuildVars {
     }
 
     private static Boolean betaApp;
+
     public static boolean isBetaApp() {
         if (betaApp == null) {
             betaApp = ApplicationLoader.applicationContext != null && "org.telegram.messenger.beta".equals(ApplicationLoader.applicationContext.getPackageName());

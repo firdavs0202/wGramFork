@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.util;
 import static java.lang.Math.min;
 
 import com.google.common.base.Charsets;
+
 import java.nio.charset.Charset;
 
 /** Wraps a byte array, providing methods that allow it to be read as a bitstream. */

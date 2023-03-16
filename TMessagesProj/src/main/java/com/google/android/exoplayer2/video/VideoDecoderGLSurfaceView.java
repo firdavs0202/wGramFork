@@ -22,19 +22,24 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.decoder.VideoDecoderOutputBuffer;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.GlProgram;
 import com.google.android.exoplayer2.util.GlUtil;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
+
 import org.checkerframework.checker.nullness.compatqual.NullableType;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * GLSurfaceView implementing {@link VideoDecoderOutputBufferRenderer} for rendering {@link

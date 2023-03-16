@@ -16,11 +16,13 @@
 package com.google.android.exoplayer2.metadata.dvbsi;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataInputBuffer;
 import com.google.android.exoplayer2.metadata.SimpleMetadataDecoder;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.common.base.Charsets;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 

@@ -19,7 +19,9 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.common.base.MoreObjects.firstNonNull;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Timeline;

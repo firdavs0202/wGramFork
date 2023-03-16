@@ -23,13 +23,16 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Objects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -74,7 +74,6 @@ import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.SharedDocumentCell;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.FilteredSearchView;
 import org.telegram.ui.PhotoPickerActivity;
 
@@ -785,9 +784,6 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
                     return false;
                 }
                 if ((item.file.length() > FileLoader.DEFAULT_MAX_FILE_SIZE && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) || item.file.length() > FileLoader.DEFAULT_MAX_FILE_SIZE_PREMIUM) {
-                    LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(parentAlert.baseFragment, parentAlert.getContainer().getContext(), LimitReachedBottomSheet.TYPE_LARGE_FILE, UserConfig.selectedAccount);
-                    limitReachedBottomSheet.setVeryLargeFile(true);
-                    limitReachedBottomSheet.show();
                     return false;
                 }
                 if (maxSelectedFiles >= 0 && selectedFiles.size() >= maxSelectedFiles) {

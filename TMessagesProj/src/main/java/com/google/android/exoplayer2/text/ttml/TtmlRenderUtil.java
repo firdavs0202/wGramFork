@@ -28,7 +28,9 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.span.HorizontalTextInVerticalContextSpan;
 import com.google.android.exoplayer2.text.span.RubySpan;
@@ -37,6 +39,7 @@ import com.google.android.exoplayer2.text.span.TextAnnotation;
 import com.google.android.exoplayer2.text.span.TextEmphasisSpan;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;

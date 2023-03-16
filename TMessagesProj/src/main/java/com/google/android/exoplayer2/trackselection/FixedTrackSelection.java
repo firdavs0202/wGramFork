@@ -16,10 +16,12 @@
 package com.google.android.exoplayer2.trackselection;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.chunk.MediaChunk;
 import com.google.android.exoplayer2.source.chunk.MediaChunkIterator;
+
 import java.util.List;
 
 /** A {@link TrackSelection} consisting of a single track. */

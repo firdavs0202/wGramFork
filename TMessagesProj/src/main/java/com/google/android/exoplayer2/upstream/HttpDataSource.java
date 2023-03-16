@@ -18,13 +18,16 @@ package com.google.android.exoplayer2.upstream;
 import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.text.TextUtils;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.common.base.Predicate;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.lang.annotation.Documented;

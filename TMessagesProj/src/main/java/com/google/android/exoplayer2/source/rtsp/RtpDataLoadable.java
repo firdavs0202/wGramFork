@@ -19,7 +19,9 @@ package com.google.android.exoplayer2.source.rtsp;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.extractor.DefaultExtractorInput;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -29,8 +31,10 @@ import com.google.android.exoplayer2.extractor.PositionHolder;
 import com.google.android.exoplayer2.upstream.DataSourceUtil;
 import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.exoplayer2.util.Util;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.io.IOException;
 
 /**
  * A {@link Loader.Loadable} that uses two {@link RtpDataChannel} instances to listen on incoming

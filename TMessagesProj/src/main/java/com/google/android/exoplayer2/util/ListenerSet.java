@@ -19,13 +19,17 @@ import static com.google.android.exoplayer2.util.Assertions.checkState;
 
 import android.os.Looper;
 import android.os.Message;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayDeque;
 import java.util.concurrent.CopyOnWriteArraySet;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A set of listeners.

@@ -33,7 +33,6 @@ import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.ThemePreviewMessagesCell;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SimpleThemeDescription;
@@ -172,10 +171,6 @@ public class ReactionsDoubleTapManageActivity extends BaseFragment implements No
         listView.setOnItemClickListener((view, position) -> {
             if (view instanceof AvailableReactionCell) {
                 AvailableReactionCell cell = (AvailableReactionCell) view;
-                if (cell.locked && !getUserConfig().isPremium()) {
-                    showDialog(new PremiumFeatureBottomSheet(this, PremiumPreviewFragment.PREMIUM_FEATURE_REACTIONS, true));
-                    return;
-                }
                 MediaDataController.getInstance(currentAccount).setDoubleTapReaction(cell.react.reaction);
                 listView.getAdapter().notifyItemRangeChanged(0, listView.getAdapter().getItemCount());
             } else if (view instanceof SetDefaultReactionCell) {

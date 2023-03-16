@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.extractor;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.VorbisUtil.CommentHeader;
 import com.google.android.exoplayer2.extractor.flac.FlacConstants;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.metadata.id3.Id3Decoder;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.collect.ImmutableList;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;

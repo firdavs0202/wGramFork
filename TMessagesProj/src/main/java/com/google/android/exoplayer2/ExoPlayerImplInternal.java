@@ -27,8 +27,10 @@ import android.os.Message;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.Pair;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.DefaultMediaClock.PlaybackParametersListener;
 import com.google.android.exoplayer2.PlaybackException.ErrorCode;
 import com.google.android.exoplayer2.Player.DiscontinuityReason;
@@ -62,6 +64,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -390,24 +390,6 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     long[] array = new long[]{getUserConfig().getClientUserId()};
                     args.putLongArray("result", array);
                     args.putInt("chatType", ChatObject.CHAT_TYPE_MEGAGROUP);
-                    GroupCreateFinalActivity activity = new GroupCreateFinalActivity(args);
-                    activity.setDelegate(new GroupCreateFinalActivity.GroupCreateFinalActivityDelegate() {
-                        @Override
-                        public void didStartChatCreation() {
-
-                        }
-
-                        @Override
-                        public void didFinishChatCreation(GroupCreateFinalActivity fragment, long chatId) {
-                            linkChat(getMessagesController().getChat(chatId), fragment);
-                        }
-
-                        @Override
-                        public void didFailChatCreation() {
-
-                        }
-                    });
-                    presentFragment(activity);
                 } else {
                     if (chats.isEmpty()) {
                         return;

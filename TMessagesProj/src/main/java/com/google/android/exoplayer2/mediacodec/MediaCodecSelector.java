@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.mediacodec;
 
 import android.media.MediaCodec;
+
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil.DecoderQueryException;
+
 import java.util.List;
 
 /** Selector of {@link MediaCodec} instances. */

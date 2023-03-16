@@ -151,10 +151,10 @@ public class PhotoUtilities {
         }
     }
 
-    public static void showAvatartConstructorForUpdateUserPhoto(ChatActivity chatActivity, TLRPC.VideoSize emojiMarkup) {
+    public static void showAvatartConstructorForUpdateUserPhoto(ChatActivity chatActivity) {
         ImageUpdater imageUpdater = new ImageUpdater(true, ImageUpdater.FOR_TYPE_USER, true);
         imageUpdater.parentFragment = chatActivity;
-        imageUpdater.showAvatarConstructor(emojiMarkup);
+        imageUpdater.showAvatarConstructor();
         final TLRPC.FileLocation[] avatar = new TLRPC.FileLocation[1];
         final TLRPC.FileLocation[] avatarBig = new TLRPC.FileLocation[1];
         long userId = chatActivity.getUserConfig().getClientUserId();

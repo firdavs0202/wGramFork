@@ -14,7 +14,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
-import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,7 +26,6 @@ import androidx.core.content.ContextCompat;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LiteMode;
-import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
@@ -38,12 +36,9 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.Bulletin;
-import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.ReactionsContainerLayout;
-import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.SelectAnimatedEmojiDialog;
 
 import java.util.ArrayList;
@@ -144,16 +139,6 @@ public class CustomEmojiReactionsWindow {
 
             @Override
             protected void onEmojiSelected(View emojiView, Long documentId, TLRPC.Document document, Integer until) {
-                if (!UserConfig.getInstance(baseFragment.getCurrentAccount()).isPremium()) {
-                    windowView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
-                    BulletinFactory.of(windowView, null).createEmojiBulletin(
-                            document,
-                            AndroidUtilities.replaceTags(LocaleController.getString("UnlockPremiumEmojiReaction", R.string.UnlockPremiumEmojiReaction)),
-                            LocaleController.getString("PremiumMore", R.string.PremiumMore),
-                            () -> showUnlockPremiumAlert()
-                    ).show();
-                    return;
-                }
                 reactionsContainerLayout.onReactionClicked(emojiView, ReactionsLayoutInBubble.VisibleReaction.fromCustomEmoji(documentId), false);
                 AndroidUtilities.hideKeyboard(windowView);
             }
@@ -229,13 +214,6 @@ public class CustomEmojiReactionsWindow {
         lp.format = PixelFormat.TRANSLUCENT;
         return lp;
     }
-
-    private void showUnlockPremiumAlert() {
-        if (baseFragment instanceof ChatActivity) {
-            baseFragment.showDialog(new PremiumFeatureBottomSheet(baseFragment, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false));
-        }
-    }
-
     int[] location = new int[2];
     int animationIndex;
 

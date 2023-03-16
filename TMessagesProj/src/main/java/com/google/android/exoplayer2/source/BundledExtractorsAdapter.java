@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.source;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.extractor.DefaultExtractorInput;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -28,6 +30,7 @@ import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
 import com.google.android.exoplayer2.upstream.DataReader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.List;

@@ -17,11 +17,14 @@ package com.google.android.exoplayer2;
 
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Renderer.MessageType;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Clock;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.concurrent.TimeoutException;
 
 /**

@@ -22,6 +22,7 @@ import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.view.Display;
 import android.view.Surface;
+
 import androidx.annotation.BinderThread;
 
 /**

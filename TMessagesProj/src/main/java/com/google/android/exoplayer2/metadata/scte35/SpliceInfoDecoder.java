@@ -16,14 +16,17 @@
 package com.google.android.exoplayer2.metadata.scte35;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataInputBuffer;
 import com.google.android.exoplayer2.metadata.SimpleMetadataDecoder;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
-import java.nio.ByteBuffer;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.nio.ByteBuffer;
 
 /** Decodes splice info sections and produces splice commands. */
 public final class SpliceInfoDecoder extends SimpleMetadataDecoder {

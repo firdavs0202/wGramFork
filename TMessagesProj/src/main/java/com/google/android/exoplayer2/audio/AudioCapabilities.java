@@ -28,9 +28,11 @@ import android.media.AudioTrack;
 import android.net.Uri;
 import android.provider.Settings.Global;
 import android.util.Pair;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -38,6 +40,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Ints;
+
 import java.util.Arrays;
 
 /** Represents the set of audio formats that a device is capable of playing. */

@@ -45,9 +45,9 @@ import java.util.ArrayList;
 @SuppressWarnings("FieldCanBeLocal")
 public class DialogsEmptyCell extends LinearLayout {
     public final static int TYPE_WELCOME_NO_CONTACTS = 0,
-        TYPE_WELCOME_WITH_CONTACTS = 1,
-        TYPE_FILTER_NO_CHATS_TO_DISPLAY = 2,
-        TYPE_FILTER_ADDING_CHATS = 3;
+            TYPE_WELCOME_WITH_CONTACTS = 1,
+            TYPE_FILTER_NO_CHATS_TO_DISPLAY = 2,
+            TYPE_FILTER_ADDING_CHATS = 3;
     private final static int TYPE_UNSPECIFIED = -1;
 
     @Retention(RetentionPolicy.SOURCE)
@@ -58,7 +58,8 @@ public class DialogsEmptyCell extends LinearLayout {
             TYPE_FILTER_NO_CHATS_TO_DISPLAY,
             TYPE_FILTER_ADDING_CHATS
     })
-    public @interface EmptyType {}
+    public @interface EmptyType {
+    }
 
     // Utyan is our special guest here
     private float utyanCollapseProgress;

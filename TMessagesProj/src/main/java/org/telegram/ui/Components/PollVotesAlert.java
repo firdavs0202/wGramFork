@@ -40,6 +40,11 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
@@ -65,11 +70,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
-
-import androidx.annotation.Keep;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class PollVotesAlert extends BottomSheet {
 
@@ -1182,7 +1182,7 @@ public class PollVotesAlert extends BottomSheet {
                     TextCell textCell = (TextCell) holder.itemView;
                     section--;
                     VotesList votesList = voters.get(section);
-                    textCell.setTextAndIcon(LocaleController.formatPluralString("ShowVotes", votesList.count - votesList.getCount()), R.drawable.arrow_more, false);
+                    textCell.setTextAndIcon(LocaleController.formatPluralString("ShowVotes", votesList.count - votesList.getCount()), false);
                     break;
                 }
             }

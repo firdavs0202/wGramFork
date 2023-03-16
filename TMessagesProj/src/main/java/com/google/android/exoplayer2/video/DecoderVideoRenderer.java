@@ -25,9 +25,11 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.Surface;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.VideoOutputMode;
@@ -53,6 +55,7 @@ import com.google.android.exoplayer2.util.TimedValueQueue;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener.EventDispatcher;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.drm.DrmInitData;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.BundleableUtil;
@@ -25,6 +27,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.ColorInfo;
 import com.google.common.base.Joiner;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

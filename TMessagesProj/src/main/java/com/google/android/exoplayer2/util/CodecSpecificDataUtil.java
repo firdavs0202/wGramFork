@@ -18,8 +18,11 @@ package com.google.android.exoplayer2.util;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

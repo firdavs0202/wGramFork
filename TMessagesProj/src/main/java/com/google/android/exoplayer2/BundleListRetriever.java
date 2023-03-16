@@ -22,9 +22,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 
 /**

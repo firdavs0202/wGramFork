@@ -18,7 +18,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -37,7 +36,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Property;
 import android.util.TypedValue;
@@ -83,7 +81,6 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
@@ -108,7 +105,6 @@ import org.telegram.ui.PassportActivity;
 import org.telegram.ui.PaymentFormActivity;
 import org.telegram.ui.PhotoPickerActivity;
 import org.telegram.ui.PhotoPickerSearchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,11 +128,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     private PasscodeView passcodeView;
     private ChatAttachRestrictedLayout restrictedLayout;
     public ImageUpdater parentImageUpdater;
-
-    public void setCanOpenPreview(boolean canOpenPreview) {
-        this.canOpenPreview = canOpenPreview;
-        selectedArrowImageView.setVisibility(canOpenPreview && avatarPicker != 2 ? View.VISIBLE : View.GONE);
-    }
 
     public float getClipLayoutBottom() {
         float alphaOffset = (frameLayout2.getMeasuredHeight() - AndroidUtilities.dp(84)) * (1f - frameLayout2.getAlpha());
@@ -666,7 +657,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     private View shadow;
 
-    private ChatAttachAlertPhotoLayout photoLayout;
     private ChatAttachAlertContactsLayout contactsLayout;
     private ChatAttachAlertAudioLayout audioLayout;
     private ChatAttachAlertPollLayout pollLayout;
@@ -705,7 +695,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     protected ActionBar actionBar;
     private View actionBarShadow;
     private AnimatorSet actionBarAnimation;
-    private AnimatorSet menuAnimator;
     protected ActionBarMenuItem selectedMenuItem;
     protected ActionBarMenuItem searchItem;
     protected ActionBarMenuItem doneItem;
@@ -1600,7 +1589,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     }
 
                     int backgroundColor = currentAttachLayout.hasCustomBackground() ? currentAttachLayout.getCustomBackground() : getThemedColor(forceDarkTheme ? Theme.key_voipgroup_listViewBackground : Theme.key_dialogBackground);
-                    boolean drawBackground = !(currentAttachLayout == photoPreviewLayout || nextAttachLayout == photoPreviewLayout || (currentAttachLayout == photoLayout && nextAttachLayout == null));
+                    boolean drawBackground = !(currentAttachLayout == photoPreviewLayout || nextAttachLayout == photoPreviewLayout);
                     if (drawBackground) {
                         shadowDrawable.setAlpha(viewAlpha);
                         shadowDrawable.setBounds(0, top, getMeasuredWidth(), height);
@@ -1693,7 +1682,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             protected void dispatchDraw(Canvas canvas) {
                 canvas.save();
                 canvas.clipRect(0, getPaddingTop() + currentPanTranslationY, getMeasuredWidth(), getMeasuredHeight() + currentPanTranslationY - getPaddingBottom());
-                if (currentAttachLayout == photoPreviewLayout || nextAttachLayout == photoPreviewLayout || (currentAttachLayout == photoLayout && nextAttachLayout == null)) {
+                if (currentAttachLayout == photoPreviewLayout || nextAttachLayout == photoPreviewLayout) {
                     drawChildBackground(canvas, currentAttachLayout);
                 }
                 super.dispatchDraw(canvas);
@@ -1732,14 +1721,14 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 adjustPanLayoutHelper.setResizableView(this);
                 adjustPanLayoutHelper.onAttach();
                 commentTextView.setAdjustPanLayoutHelper(adjustPanLayoutHelper);
-             //   Bulletin.addDelegate(this, bulletinDelegate);
+                //   Bulletin.addDelegate(this, bulletinDelegate);
             }
 
             @Override
             protected void onDetachedFromWindow() {
                 super.onDetachedFromWindow();
                 adjustPanLayoutHelper.onDetach();
-              //  Bulletin.removeDelegate(this);
+                //  Bulletin.removeDelegate(this);
             }
         };
         sizeNotifierFrameLayout.setDelegate(new SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate() {
@@ -1977,12 +1966,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
         headerView.addView(mediaPreviewView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT));
 
-        layouts[0] = photoLayout = new ChatAttachAlertPhotoLayout(this, context, forceDarkTheme, resourcesProvider);
-        photoLayout.setTranslationX(0);
-        currentAttachLayout = photoLayout;
         selectedId = 1;
-
-        containerView.addView(photoLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         containerView.addView(headerView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT, 23, 0, 48, 0));
         containerView.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
@@ -2004,7 +1988,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             @Override
             public void setTranslationY(float translationY) {
                 super.setTranslationY(translationY);
-                currentAttachLayout.onButtonsTranslationYUpdated();
+                currentAttachLayout.onButtonsTranslationYUpdated(); // TODO: FEDYA
             }
         };
         buttonsRecyclerView.setAdapter(buttonsAdapter = new ButtonsAdapter(context));
@@ -2027,7 +2011,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     if (!photosEnabled && !videosEnabled) {
                         showLayout(restrictedLayout = new ChatAttachRestrictedLayout(1, this, getContext(), resourcesProvider));
                     }
-                    showLayout(photoLayout);
                 } else if (num == 3) {
                     if (Build.VERSION.SDK_INT >= 23 && baseFragment.getParentActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         baseFragment.getParentActivity().requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE);
@@ -2233,9 +2216,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     a.addUpdateListener(animation -> {
                         editText.setOffsetY((float) animation.getAnimatedValue());
                         updateCommentTextViewPosition();
-                        if (currentAttachLayout == photoLayout) {
-                            photoLayout.onContainerTranslationUpdated(currentPanTranslationY);
-                        }
                     });
                     if (messageEditTextAnimator != null) {
                         messageEditTextAnimator.cancel();
@@ -2378,9 +2358,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             @Override
             public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
                 super.onInitializeAccessibilityNodeInfo(info);
-                if (currentAttachLayout == photoLayout) {
-                    info.setText(LocaleController.formatPluralString("AccDescrSendPhotos", photoLayout.getSelectedItemsCount()));
-                } else if (currentAttachLayout == documentLayout) {
+                if (currentAttachLayout == documentLayout) {
                     info.setText(LocaleController.formatPluralString("AccDescrSendFiles", documentLayout.getSelectedItemsCount()));
                 } else if (currentAttachLayout == audioLayout) {
                     info.setText(LocaleController.formatPluralString("AccDescrSendAudio", audioLayout.getSelectedItemsCount()));
@@ -2427,7 +2405,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 AndroidUtilities.shakeView(captionLimitView);
                 try {
                     captionLimitView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
 
                 if (!MessagesController.getInstance(currentAccount).premiumLocked && MessagesController.getInstance(currentAccount).captionLengthLimitPremium > codepointCount) {
                     showCaptionLimitBulletin(parentFragment);
@@ -2436,7 +2415,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             }
             if (editingMessageObject == null && baseFragment instanceof ChatActivity && ((ChatActivity) baseFragment).isInScheduleMode()) {
                 AlertsCreator.createScheduleDatePickerDialog(getContext(), ((ChatActivity) baseFragment).getDialogId(), (notify, scheduleDate) -> {
-                    if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
+                    if ( currentAttachLayout == photoPreviewLayout) {
                         sendPressed(notify, scheduleDate);
                     } else {
                         currentAttachLayout.sendSelectedItems(notify, scheduleDate);
@@ -2445,7 +2424,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     }
                 }, resourcesProvider);
             } else {
-                if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
+                if ( currentAttachLayout == photoPreviewLayout) {
                     sendPressed(true, 0);
                 } else {
                     currentAttachLayout.sendSelectedItems(true, 0);
@@ -2521,7 +2500,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     }
                     if (num == 0) {
                         AlertsCreator.createScheduleDatePickerDialog(getContext(), chatActivity.getDialogId(), (notify, scheduleDate) -> {
-                            if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
+                            if (currentAttachLayout == photoPreviewLayout) {
                                 sendPressed(notify, scheduleDate);
                             } else {
                                 currentAttachLayout.sendSelectedItems(notify, scheduleDate);
@@ -2529,7 +2508,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                             }
                         }, resourcesProvider);
                     } else if (num == 1) {
-                        if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
+                        if ( currentAttachLayout == photoPreviewLayout) {
                             sendPressed(false, 0);
                         } else {
                             currentAttachLayout.sendSelectedItems(false, 0);
@@ -2638,11 +2617,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             return;
         }
 
-        BulletinFactory.of(sizeNotifierFrameLayout, resourcesProvider).createCaptionLimitBulletin(MessagesController.getInstance(currentAccount).captionLengthLimitPremium, ()->{
+        BulletinFactory.of(sizeNotifierFrameLayout, resourcesProvider).createCaptionLimitBulletin(MessagesController.getInstance(currentAccount).captionLengthLimitPremium, () -> {
             dismiss(true);
-            if (parentFragment != null) {
-                parentFragment.presentFragment(new PremiumPreviewFragment("caption_limit"));
-            }
         }).show();
     }
 
@@ -2671,9 +2647,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                         req.enabled = false;
                         ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
                             MediaDataController.getInstance(currentAccount).loadAttachMenuBots(false, true);
-                            if (currentAttachLayout == botAttachLayouts.get(attachMenuBot.bot_id)) {
-                                showLayout(photoLayout);
-                            }
+
                         }), ConnectionsManager.RequestFlagInvokeAfter | ConnectionsManager.RequestFlagFailOnServerErrors);
                     } else {
                         MediaDataController.getInstance(currentAccount).removeInline(currentUser.id);
@@ -2685,7 +2659,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     @Override
     protected boolean shouldOverlayCameraViewOverNavBar() {
-        return currentAttachLayout == photoLayout && photoLayout.cameraExpanded;
+        return false;
     }
 
     @Override
@@ -2755,9 +2729,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         long newId = selectedId;
         if (layout == restrictedLayout) {
             newId = restrictedLayout.id;
-        } else if (layout == photoLayout) {
-            newId = 1;
-        } else if (layout == audioLayout) {
+        }  else if (layout == audioLayout) {
             newId = 3;
         } else if (layout == documentLayout) {
             newId = 4;
@@ -2817,9 +2789,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             actionBar.closeSearchField();
         }
         currentAttachLayout.onHide();
-        if (nextAttachLayout == photoLayout) {
-            photoLayout.setCheckCameraWhenShown(true);
-        }
         nextAttachLayout.onShow(currentAttachLayout);
         nextAttachLayout.setVisibility(View.VISIBLE);
 
@@ -2836,9 +2805,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 container.setLayerType(View.LAYER_TYPE_NONE, null);
             }
             viewChangeAnimator = null;
-            if ((currentAttachLayout != photoLayout && nextAttachLayout != photoPreviewLayout) && (currentAttachLayout != nextAttachLayout && currentAttachLayout != photoPreviewLayout)) {
-                containerView.removeView(currentAttachLayout);
-            }
+
             currentAttachLayout.setVisibility(View.GONE);
             currentAttachLayout.onHidden();
             nextAttachLayout.onShown();
@@ -2886,23 +2853,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             int width = Math.max(nextAttachLayout.getWidth(), currentAttachLayout.getWidth());
             if (nextAttachLayout instanceof ChatAttachAlertPhotoLayoutPreview) {
                 nextAttachLayout.setTranslationX(width);
-                if (currentAttachLayout instanceof ChatAttachAlertPhotoLayout) {
-                    ChatAttachAlertPhotoLayout photoLayout = (ChatAttachAlertPhotoLayout) currentAttachLayout;
-                    if (photoLayout.cameraView != null) {
-                        photoLayout.cameraView.setVisibility(View.INVISIBLE);
-                        photoLayout.cameraIcon.setVisibility(View.INVISIBLE);
-                        photoLayout.cameraCell.setVisibility(View.VISIBLE);
-                    }
-                }
             } else {
                 currentAttachLayout.setTranslationX(-width);
-                if (nextAttachLayout == photoLayout) {
-                    ChatAttachAlertPhotoLayout photoLayout = (ChatAttachAlertPhotoLayout) nextAttachLayout;
-                    if (photoLayout.cameraView != null) {
-                        photoLayout.cameraView.setVisibility(View.VISIBLE);
-                        photoLayout.cameraIcon.setVisibility(View.VISIBLE);
-                    }
-                }
             }
             nextAttachLayout.setAlpha(1);
             currentAttachLayout.setAlpha(1);
@@ -2960,9 +2912,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 photoPreviewLayout = new ChatAttachAlertPhotoLayoutPreview(this, getContext(), parentThemeDelegate);
                 photoPreviewLayout.bringToFront();
             }
-            showLayout(currentAttachLayout == photoPreviewLayout ? photoLayout : photoPreviewLayout);
-        } else {
-            showLayout(photoLayout);
         }
     }
 
@@ -3243,7 +3192,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     @Override
     protected boolean onCustomOpenAnimation() {
-        photoLayout.setTranslationX(0);
         mediaPreviewView.setAlpha(0);
         selectedView.setAlpha(1);
 
@@ -3473,17 +3421,11 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     @Override
     protected boolean onCustomMeasure(View view, int width, int height) {
-        if (photoLayout.onCustomMeasure(view, width, height)) {
-            return true;
-        }
         return false;
     }
 
     @Override
     protected boolean onCustomLayout(View view, int left, int top, int right, int bottom) {
-        if (photoLayout.onCustomLayout(view, left, top, right, bottom)) {
-            return true;
-        }
         return false;
     }
 
@@ -3506,10 +3448,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         if (isShowing()) {
             delegate.needEnterComment();
         }
-    }
-
-    public void onActivityResultFragment(int requestCode, Intent data, String currentPicturePath) {
-        photoLayout.onActivityResultFragment(requestCode, data, currentPicturePath);
     }
 
     @Override
@@ -3589,8 +3527,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 actionBarAnimation = null;
             }
 
-            boolean needsSearchItem = avatarSearch || currentAttachLayout == photoLayout && !menuShowed && baseFragment instanceof ChatActivity && ((ChatActivity) baseFragment).allowSendGifs() && ((ChatActivity) baseFragment).allowSendPhotos();
-            boolean needMoreItem = avatarPicker != 0 || !menuShowed && currentAttachLayout == photoLayout && (photosEnabled || videosEnabled);
+            boolean needsSearchItem = avatarSearch;
+            boolean needMoreItem = avatarPicker != 0 || videosEnabled;
             if (currentAttachLayout == restrictedLayout) {
                 needsSearchItem = false;
                 needMoreItem = false;
@@ -3736,64 +3674,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             }
         }
         currentAttachLayout.onSelectedItemsCountChanged(count);
-
-        if (currentAttachLayout == photoLayout && ((baseFragment instanceof ChatActivity) || avatarPicker != 0) && (count == 0 && menuShowed || (count != 0 || avatarPicker != 0) && !menuShowed)) {
-            menuShowed = count != 0 || avatarPicker != 0;
-            if (menuAnimator != null) {
-                menuAnimator.cancel();
-                menuAnimator = null;
-            }
-            boolean needsSearchItem = actionBar.getTag() != null && baseFragment instanceof ChatActivity && ((ChatActivity) baseFragment).allowSendGifs();
-            if (menuShowed) {
-                if (avatarPicker == 0) {
-                    selectedMenuItem.setVisibility(View.VISIBLE);
-                }
-                headerView.setVisibility(View.VISIBLE);
-            } else {
-                if (actionBar.getTag() != null) {
-                    searchItem.setVisibility(View.VISIBLE);
-                }
-            }
-            if (animated == 0) {
-                if (actionBar.getTag() == null && avatarPicker == 0) {
-                    selectedMenuItem.setAlpha(menuShowed ? 1.0f : 0.0f);
-                }
-                headerView.setAlpha(menuShowed ? 1.0f : 0.0f);
-                if (needsSearchItem) {
-                    searchItem.setAlpha(menuShowed ? 0.0f : 1.0f);
-                }
-                if (menuShowed) {
-                    searchItem.setVisibility(View.INVISIBLE);
-                }
-            } else {
-                menuAnimator = new AnimatorSet();
-                ArrayList<Animator> animators = new ArrayList<>();
-                if (actionBar.getTag() == null && avatarPicker == 0) {
-                    animators.add(ObjectAnimator.ofFloat(selectedMenuItem, View.ALPHA, menuShowed ? 1.0f : 0.0f));
-                }
-                animators.add(ObjectAnimator.ofFloat(headerView, View.ALPHA, menuShowed ? 1.0f : 0.0f));
-                if (needsSearchItem) {
-                    animators.add(ObjectAnimator.ofFloat(searchItem, View.ALPHA, menuShowed ? 0.0f : 1.0f));
-                }
-                menuAnimator.playTogether(animators);
-                menuAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        menuAnimator = null;
-                        if (!menuShowed) {
-                            if (actionBar.getTag() == null && avatarPicker == 0) {
-                                selectedMenuItem.setVisibility(View.INVISIBLE);
-                            }
-                            headerView.setVisibility(View.INVISIBLE);
-                        } else {
-                            searchItem.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
-                menuAnimator.setDuration(180);
-                menuAnimator.start();
-            }
-        }
     }
 
     public void setDelegate(ChatAttachViewDelegate chatAttachViewDelegate) {
@@ -3825,7 +3705,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             TLRPC.Chat chat = ((ChatActivity) baseFragment).getCurrentChat();
             TLRPC.User user = ((ChatActivity) baseFragment).getCurrentUser();
             if (chat != null) {
-             // mediaEnabled = ChatObject.canSendMedia(chat);
+                // mediaEnabled = ChatObject.canSendMedia(chat);
                 photosEnabled = ChatObject.canSendPhoto(chat);
                 videosEnabled = ChatObject.canSendVideo(chat);
                 musicEnabled = ChatObject.canSendMusic(chat);
@@ -3838,7 +3718,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         } else {
             commentTextView.setVisibility(View.INVISIBLE);
         }
-        photoLayout.onInit(videosEnabled, photosEnabled, documentsEnabled);
         commentTextView.hidePopup(true);
         enterCommentEventSent = false;
         setFocusable(false);
@@ -3859,36 +3738,32 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             }
             typeButtonsAvailable = !editingMessageObject.hasValidGroupId();
         } else {
-            layoutToSet = photoLayout;
             typeButtonsAvailable = avatarPicker == 0;
             selectedId = 1;
         }
         buttonsRecyclerView.setVisibility(typeButtonsAvailable ? View.VISIBLE : View.GONE);
         shadow.setVisibility(typeButtonsAvailable ? View.VISIBLE : View.INVISIBLE);
-        if (currentAttachLayout != layoutToSet) {
-            if (actionBar.isSearchFieldVisible()) {
-                actionBar.closeSearchField();
-            }
-            containerView.removeView(currentAttachLayout);
-            currentAttachLayout.onHide();
-            currentAttachLayout.setVisibility(View.GONE);
-            currentAttachLayout.onHidden();
-            AttachAlertLayout previousLayout = currentAttachLayout;
-            currentAttachLayout = layoutToSet;
-            setAllowNestedScroll(true);
-            if (currentAttachLayout.getParent() == null) {
-                containerView.addView(currentAttachLayout, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-            }
-            layoutToSet.setAlpha(1.0f);
-            layoutToSet.setVisibility(View.VISIBLE);
-            layoutToSet.onShow(null);
-            layoutToSet.onShown();
-            actionBar.setVisibility(layoutToSet.needsActionBar() != 0 ? View.VISIBLE : View.INVISIBLE);
-            actionBarShadow.setVisibility(actionBar.getVisibility());
-        }
-        if (currentAttachLayout != photoLayout) {
-            photoLayout.setCheckCameraWhenShown(true);
-        }
+//        if (currentAttachLayout != layoutToSet) {
+//            if (actionBar.isSearchFieldVisible()) {
+//                actionBar.closeSearchField();
+//            }
+//            containerView.removeView(currentAttachLayout);
+//            currentAttachLayout.onHide();
+//            currentAttachLayout.setVisibility(View.GONE);
+//            currentAttachLayout.onHidden();
+//            AttachAlertLayout previousLayout = currentAttachLayout;
+//            currentAttachLayout = layoutToSet;
+//            setAllowNestedScroll(true);
+//            if (currentAttachLayout.getParent() == null) {
+//                containerView.addView(currentAttachLayout, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+//            }
+//            layoutToSet.setAlpha(1.0f);
+//            layoutToSet.setVisibility(View.VISIBLE);
+//            layoutToSet.onShow(null);
+//            layoutToSet.onShown();
+//            actionBar.setVisibility(layoutToSet.needsActionBar() != 0 ? View.VISIBLE : View.INVISIBLE);
+//            actionBarShadow.setVisibility(actionBar.getVisibility());
+//        }
         updateCountButton(0);
 
         buttonsAdapter.notifyDataSetChanged();
@@ -3960,9 +3835,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         } else {
             typeButtonsAvailable = true;
         }
-        if (photoLayout != null) {
-            photoLayout.updateAvatarPicker();
-        }
+
     }
 
     public TextView getSelectedTextView() {
@@ -3986,10 +3859,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     public void setOpenWithFrontFaceCamera(boolean value) {
         openWithFrontFaceCamera = value;
-    }
-
-    public ChatAttachAlertPhotoLayout getPhotoLayout() {
-        return photoLayout;
     }
 
     private class ButtonsAdapter extends RecyclerListView.SelectionAdapter {

@@ -25,8 +25,10 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.net.Uri;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.upstream.DataSink;
@@ -42,6 +44,9 @@ import com.google.android.exoplayer2.upstream.cache.Cache.CacheException;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.PriorityTaskManager;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.lang.annotation.Documented;
@@ -51,7 +56,6 @@ import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * A {@link DataSource} that reads and writes a {@link Cache}. Requests are fulfilled from the cache

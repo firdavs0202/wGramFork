@@ -20,11 +20,14 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.InlineMe;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.source.hls.offline;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.offline.SegmentDownloader;
 import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
@@ -28,6 +30,7 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.ParsingLoadable.Parser;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.util.UriUtil;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -18,7 +18,6 @@ import android.content.res.Configuration;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.util.Xml;
 
 import androidx.annotation.StringRes;
@@ -42,7 +41,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class LocaleController {
@@ -2367,9 +2365,7 @@ public class LocaleController {
                 onDone.run();
             }
         };
-        if (force) {
-            patched(localeInfo.shortName);
-        }
+        patched(localeInfo.shortName);
         if (localeInfo.hasBaseLang() && (langCode == null || langCode.equals(localeInfo.baseLangCode))) {
             if (localeInfo.baseVersion != 0 && !force) {
                 if (localeInfo.hasBaseLang()) {

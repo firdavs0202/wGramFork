@@ -68,11 +68,8 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.Components.Premium.PremiumButtonView;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.ContentPreviewViewer;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.ProfileActivity;
 
 import java.util.ArrayList;
@@ -94,7 +91,6 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
     private FrameLayout buttonsView;
     private TextView addButtonView;
     private TextView removeButtonView;
-    private PremiumButtonView premiumButtonView;
     private GridLayoutManager gridLayoutManager;
     private RecyclerAnimationScrollHelper scrollHelper;
 
@@ -488,13 +484,6 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
         removeButtonView.setClickable(true);
         buttonsView.addView(removeButtonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.BOTTOM, 0, 0, 0, 19));
 
-        premiumButtonView = new PremiumButtonView(context, false);
-        premiumButtonView.setButton(LocaleController.getString("UnlockPremiumEmoji", R.string.UnlockPremiumEmoji), ev -> {
-            showPremiumAlert();
-        });
-        premiumButtonView.setIcon(R.raw.unlock_icon);
-        premiumButtonView.buttonLayout.setClickable(true);
-        buttonsView.addView(premiumButtonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM, 12, 10, 12, 10));
     }
 
     @Override
@@ -874,13 +863,6 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
     }
 
     private long premiumButtonClicked;
-    public void showPremiumAlert() {
-        if (fragment != null) {
-            new PremiumFeatureBottomSheet(fragment, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false).show();
-        } else if (getContext() instanceof LaunchActivity) {
-            ((LaunchActivity) getContext()).presentFragment(new PremiumPreviewFragment(null));
-        }
-    }
 
     private void updateLightStatusBar(boolean open) {
         boolean openBgLight = AndroidUtilities.computePerceivedBrightness(getThemedColor(Theme.key_dialogBackground)) > .721f;
@@ -1057,17 +1039,10 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
         }
 
         if (!loaded) {
-            premiumButtonView.setVisibility(View.GONE);
             addButtonView.setVisibility(View.GONE);
             removeButtonView.setVisibility(View.GONE);
             updateShowButton(false);
-//        } else if (canInstallPacks.size() <= 0 && notInstalledPacks.size() >= 0 && !mePremium || !loaded) {
-//            premiumButtonView.setVisibility(View.VISIBLE);
-//            addButtonView.setVisibility(View.GONE);
-//            removeButtonView.setVisibility(View.GONE);
-//            updateShowButton(true);
         } else {
-            premiumButtonView.setVisibility(View.INVISIBLE);
             if (canInstallPacks.size() > 0) {
                 addButtonView.setVisibility(View.VISIBLE);
                 removeButtonView.setVisibility(View.GONE);
@@ -1497,7 +1472,6 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
         public TextView subtitleView;
         public TextView addButtonView;
         public TextView removeButtonView;
-        public PremiumButtonView unlockButtonView;
         public ActionBarMenuItem optionsButton;
 
         private boolean single;
@@ -1531,27 +1505,6 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
 
             float endMarginDp = 8;
             if (!single) {
-                if (!UserConfig.getInstance(currentAccount).isPremium()) {
-                    unlockButtonView = new PremiumButtonView(context, AndroidUtilities.dp(4), false);
-                    unlockButtonView.setButton(LocaleController.getString("Unlock", R.string.Unlock), ev -> {
-                        premiumButtonClicked = SystemClock.elapsedRealtime();
-                        showPremiumAlert();
-                    });
-                    unlockButtonView.setIcon(R.raw.unlock_icon);
-
-                    MarginLayoutParams iconLayout = (MarginLayoutParams) unlockButtonView.getIconView().getLayoutParams();
-                    iconLayout.leftMargin = AndroidUtilities.dp(1);
-                    iconLayout.topMargin = AndroidUtilities.dp(1);
-                    iconLayout.width = iconLayout.height = AndroidUtilities.dp(20);
-                    MarginLayoutParams layout = (MarginLayoutParams) unlockButtonView.getTextView().getLayoutParams();
-                    layout.leftMargin = AndroidUtilities.dp(3);
-                    unlockButtonView.getChildAt(0).setPadding(AndroidUtilities.dp(8), 0, AndroidUtilities.dp(8), 0);
-
-                    addView(unlockButtonView, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.END | Gravity.TOP, 0, 15.66f, 5.66f, 0));
-
-                    unlockButtonView.measure(MeasureSpec.makeMeasureSpec(99999, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(28), MeasureSpec.EXACTLY));
-                    endMarginDp = (unlockButtonView.getMeasuredWidth() + AndroidUtilities.dp(8 + 8)) / AndroidUtilities.density;
-                }
 
                 addButtonView = new TextView(context);
                 addButtonView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -1723,28 +1676,6 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
 
             if (subtitleView != null) {
                 subtitleView.setText(LocaleController.formatPluralString("EmojiCount", size));
-            }
-
-            if (premium && unlockButtonView != null && !UserConfig.getInstance(currentAccount).isPremium()) {
-                unlockButtonView.setVisibility(VISIBLE);
-                if (addButtonView != null) {
-                    addButtonView.setVisibility(GONE);
-                }
-                if (removeButtonView != null) {
-                    removeButtonView.setVisibility(GONE);
-                }
-            } else {
-                if (unlockButtonView != null) {
-                    unlockButtonView.setVisibility(GONE);
-                }
-                if (addButtonView != null) {
-                    addButtonView.setVisibility(VISIBLE);
-                }
-                if (removeButtonView != null) {
-                    removeButtonView.setVisibility(VISIBLE);
-                }
-
-                toggle(set != null && MediaDataController.getInstance(currentAccount).isStickerPackInstalled(set.set.id), false);
             }
         }
 

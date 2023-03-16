@@ -41,7 +41,6 @@ import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.CanvasButton;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.CombinedDrawable;
-import org.telegram.ui.Components.Premium.PremiumGradient;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.NotificationsSettingsActivity;
 
@@ -553,7 +552,6 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             statusDrawable.set(((TLRPC.TL_emojiStatus) user.emoji_status).document_id, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else if (user != null && !savedMessages && MessagesController.getInstance(currentAccount).isPremiumUser(user)) {
-            statusDrawable.set(PremiumGradient.getInstance().premiumStarDrawableMini, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else {
             statusDrawable.set((Drawable) null, animated);

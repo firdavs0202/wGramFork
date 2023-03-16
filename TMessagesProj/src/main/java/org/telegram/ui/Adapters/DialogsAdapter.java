@@ -10,9 +10,6 @@ package org.telegram.ui.Adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -27,7 +24,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -45,7 +41,6 @@ import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Cells.ArchiveHintCell;
 import org.telegram.ui.Cells.DialogCell;
 import org.telegram.ui.Cells.DialogMeUrlCell;
 import org.telegram.ui.Cells.DialogsEmptyCell;
@@ -55,7 +50,6 @@ import org.telegram.ui.Cells.ProfileSearchCell;
 import org.telegram.ui.Cells.RequestPeerRequirementsCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextCell;
-import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.UserCell;
 import org.telegram.ui.Components.BlurredRecyclerView;
 import org.telegram.ui.Components.CombinedDrawable;
@@ -83,7 +77,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
             VIEW_TYPE_SHADOW = 8,
             VIEW_TYPE_ARCHIVE = 9,
             VIEW_TYPE_LAST_EMPTY = 10,
-            VIEW_TYPE_NEW_CHAT_HINT = 11,
             VIEW_TYPE_TEXT = 12,
             VIEW_TYPE_CONTACTS_FLICKER = 13,
             VIEW_TYPE_HEADER_2 = 14,
@@ -91,7 +84,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
             VIEW_TYPE_REQUIRED_EMPTY = 16;
 
     private Context mContext;
-    private ArchiveHintCell archiveHintCell;
     private ArrayList<TLRPC.TL_contact> onlineContacts;
     private boolean forceUpdatingContacts;
     private int dialogsCount;
@@ -206,11 +198,11 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
     }
 
     public int fixScrollGap(RecyclerListView animationSupportListView, int p, int offset, boolean hasHidenArchive, boolean oppened) {
-        int itemsToEnd = getItemCount() - p ;
+        int itemsToEnd = getItemCount() - p;
         int cellHeight = AndroidUtilities.dp(SharedConfig.useThreeLinesLayout ? 78 : 72);
         int bottom = offset + animationSupportListView.getPaddingTop() + itemsToEnd * cellHeight + itemsToEnd - 1;
         //fix height changed
-        int top =  offset + animationSupportListView.getPaddingTop() - p * cellHeight - p;
+        int top = offset + animationSupportListView.getPaddingTop() - p * cellHeight - p;
         if (oppened) {
             bottom -= AndroidUtilities.dp(44);
         } else {
@@ -372,10 +364,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
         return dialogsListFrozen;
     }
 
-    public ViewPager getArchiveHintCellPager() {
-        return archiveHintCell != null ? archiveHintCell.getViewPager() : null;
-    }
-
     public void updateHasHints() {
         hasHints = folderId == 0 && dialogsType == DialogsActivity.DIALOGS_TYPE_DEFAULT && !isOnlySelect && !MessagesController.getInstance(currentAccount).hintDialogs.isEmpty();
     }
@@ -460,7 +448,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
         int viewType = holder.getItemViewType();
         return viewType != VIEW_TYPE_FLICKER && viewType != VIEW_TYPE_EMPTY && viewType != VIEW_TYPE_DIVIDER &&
                 viewType != VIEW_TYPE_SHADOW && viewType != VIEW_TYPE_HEADER && viewType != VIEW_TYPE_ARCHIVE &&
-                viewType != VIEW_TYPE_LAST_EMPTY && viewType != VIEW_TYPE_NEW_CHAT_HINT && viewType != VIEW_TYPE_CONTACTS_FLICKER &&
+                viewType != VIEW_TYPE_LAST_EMPTY && viewType != VIEW_TYPE_CONTACTS_FLICKER &&
                 viewType != VIEW_TYPE_REQUIREMENTS && viewType != VIEW_TYPE_REQUIRED_EMPTY;
     }
 
@@ -470,7 +458,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
         switch (viewType) {
             case VIEW_TYPE_DIALOG:
                 if (dialogsType == DialogsActivity.DIALOGS_TYPE_ADD_USERS_TO ||
-                    dialogsType == DialogsActivity.DIALOGS_TYPE_BOT_REQUEST_PEER) {
+                        dialogsType == DialogsActivity.DIALOGS_TYPE_BOT_REQUEST_PEER) {
                     view = new ProfileSearchCell(mContext);
                 } else {
                     DialogCell dialogCell = new DialogCell(parentFragment, mContext, true, false, currentAccount, null);
@@ -570,67 +558,8 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                 view.setBackgroundDrawable(combinedDrawable);
                 break;
             }
-            case VIEW_TYPE_ARCHIVE:
-                archiveHintCell = new ArchiveHintCell(mContext);
-                view = archiveHintCell;
-                break;
             case VIEW_TYPE_LAST_EMPTY: {
                 view = new LastEmptyView(mContext);
-                break;
-            }
-            case VIEW_TYPE_NEW_CHAT_HINT: {
-                view = new TextInfoPrivacyCell(mContext) {
-
-                    private int movement;
-                    private float moveProgress;
-                    private long lastUpdateTime;
-                    private int originalX;
-                    private int originalY;
-
-                    @Override
-                    protected void afterTextDraw() {
-                        if (arrowDrawable != null) {
-                            Rect bounds = arrowDrawable.getBounds();
-                            arrowDrawable.setBounds(originalX, originalY, originalX + bounds.width(), originalY + bounds.height());
-                        }
-                    }
-
-                    @Override
-                    protected void onTextDraw() {
-                        if (arrowDrawable != null) {
-                            Rect bounds = arrowDrawable.getBounds();
-                            int dx = (int) (moveProgress * AndroidUtilities.dp(3));
-                            originalX = bounds.left;
-                            originalY = bounds.top;
-                            arrowDrawable.setBounds(originalX + dx, originalY + AndroidUtilities.dp(1), originalX + dx + bounds.width(), originalY + AndroidUtilities.dp(1) + bounds.height());
-
-                            long newUpdateTime = SystemClock.elapsedRealtime();
-                            long dt = newUpdateTime - lastUpdateTime;
-                            if (dt > 17) {
-                                dt = 17;
-                            }
-                            lastUpdateTime = newUpdateTime;
-                            if (movement == 0) {
-                                moveProgress += dt / 664.0f;
-                                if (moveProgress >= 1.0f) {
-                                    movement = 1;
-                                    moveProgress = 1.0f;
-                                }
-                            } else {
-                                moveProgress -= dt / 664.0f;
-                                if (moveProgress <= 0.0f) {
-                                    movement = 0;
-                                    moveProgress = 0.0f;
-                                }
-                            }
-                            getTextView().invalidate();
-                        }
-                    }
-                };
-                Drawable drawable = Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow);
-                CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray)), drawable);
-                combinedDrawable.setFullsize(true);
-                view.setBackgroundDrawable(combinedDrawable);
                 break;
             }
             case VIEW_TYPE_TEXT:
@@ -830,30 +759,17 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
                 }
                 break;
             }
-            case VIEW_TYPE_NEW_CHAT_HINT: {
-                TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
-                cell.setText(LocaleController.getString("TapOnThePencil", R.string.TapOnThePencil));
-                if (arrowDrawable == null) {
-                    arrowDrawable = mContext.getResources().getDrawable(R.drawable.arrow_newchat);
-                    arrowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4), PorterDuff.Mode.MULTIPLY));
-                }
-                TextView textView = cell.getTextView();
-                textView.setCompoundDrawablePadding(AndroidUtilities.dp(4));
-                textView.setCompoundDrawablesWithIntrinsicBounds(null, null, arrowDrawable, null);
-                textView.getLayoutParams().width = LayoutHelper.WRAP_CONTENT;
-                break;
-            }
             case VIEW_TYPE_TEXT: {
                 TextCell cell = (TextCell) holder.itemView;
                 cell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
                 if (requestPeerType != null) {
                     if (requestPeerType instanceof TLRPC.TL_requestPeerTypeBroadcast) {
-                        cell.setTextAndIcon(LocaleController.getString("CreateChannelForThis", R.string.CreateChannelForThis), R.drawable.msg_channel_create, true);
+                        cell.setTextAndIcon(LocaleController.getString("CreateChannelForThis", R.string.CreateChannelForThis), true);
                     } else {
-                        cell.setTextAndIcon(LocaleController.getString("CreateGroupForThis", R.string.CreateGroupForThis), R.drawable.msg_groups_create, true);
+                        cell.setTextAndIcon(LocaleController.getString("CreateGroupForThis", R.string.CreateGroupForThis), true);
                     }
                 } else {
-                    cell.setTextAndIcon(LocaleController.getString("CreateGroupForImport", R.string.CreateGroupForImport), R.drawable.msg_groups_create, dialogsCount != 0);
+                    cell.setTextAndIcon(LocaleController.getString("CreateGroupForImport", R.string.CreateGroupForImport), dialogsCount != 0);
                 }
                 cell.setIsInDialogs();
                 cell.setOffsetFromImage(75);
@@ -899,6 +815,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
         Collections.swap(dialogs, fromIndex, toIndex);
         updateList(recyclerView, false, 0);
     }
+
     @Override
     public void notifyItemMoved(int fromPosition, int toPosition) {
         super.notifyItemMoved(fromPosition, toPosition);
@@ -1266,9 +1183,6 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
             isEmpty = true;
             itemInternals.add(new ItemInternal(requestPeerType == null ? VIEW_TYPE_EMPTY : VIEW_TYPE_REQUIRED_EMPTY));
         } else {
-            if (folderId == 0 && dialogsCount > 10 && dialogsType == DialogsActivity.DIALOGS_TYPE_DEFAULT) {
-                itemInternals.add(new ItemInternal(VIEW_TYPE_NEW_CHAT_HINT));
-            }
             itemInternals.add(new ItemInternal(VIEW_TYPE_LAST_EMPTY));
         }
     }

@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.source.hls;
 import static com.google.android.exoplayer2.util.TimestampAdjuster.MODE_SHARED;
 
 import android.util.SparseArray;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 
 /** Provides {@link TimestampAdjuster} instances for use during HLS playbacks. */

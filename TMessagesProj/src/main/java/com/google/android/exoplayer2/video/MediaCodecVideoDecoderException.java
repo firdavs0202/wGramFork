@@ -17,7 +17,9 @@ package com.google.android.exoplayer2.video;
 
 import android.media.MediaCodec;
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.mediacodec.MediaCodecDecoderException;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 

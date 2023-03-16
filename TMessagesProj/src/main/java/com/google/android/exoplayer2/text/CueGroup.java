@@ -17,12 +17,15 @@ package com.google.android.exoplayer2.text;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.util.BundleableUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.List;
 

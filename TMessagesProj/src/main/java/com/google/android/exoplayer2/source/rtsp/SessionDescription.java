@@ -19,12 +19,15 @@ package com.google.android.exoplayer2.source.rtsp;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.HashMap;
 
 /**

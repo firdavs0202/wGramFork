@@ -72,7 +72,6 @@ import org.telegram.ui.Components.TextStyleSpan;
 import org.telegram.ui.Components.URLSpanReplacement;
 import org.telegram.ui.Components.URLSpanUserMention;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -389,71 +388,6 @@ public class MediaDataController extends BaseController {
     public TLRPC.TL_help_premiumPromo getPremiumPromo() {
         return premiumPromo;
     }
-
-    public Integer getPremiumHintAnnualDiscount(boolean checkTransaction) {
-        if (checkTransaction && (!BillingController.getInstance().isReady() || BillingController.getInstance().getLastPremiumTransaction() == null) || premiumPromo == null) {
-            return null;
-        }
-
-        boolean found = false;
-        int discount = 0;
-        double currentPrice = 0;
-        for (TLRPC.TL_premiumSubscriptionOption option : premiumPromo.period_options) {
-            if (checkTransaction ? option.current && Objects.equals(option.transaction.replaceAll(PremiumPreviewFragment.TRANSACTION_PATTERN, "$1"), BillingController.getInstance().getLastPremiumTransaction()) : option.months == 1) {
-                found = true;
-
-                if (!BuildVars.useInvoiceBilling() && BillingController.PREMIUM_PRODUCT_DETAILS != null) {
-                    ProductDetails.SubscriptionOfferDetails offerDetails = null;
-                    for (ProductDetails.SubscriptionOfferDetails details : BillingController.PREMIUM_PRODUCT_DETAILS.getSubscriptionOfferDetails()) {
-                        String period = details.getPricingPhases().getPricingPhaseList().get(0).getBillingPeriod();
-                        if (option.months == 12 ? period.equals("P1Y") : period.equals(String.format(Locale.ROOT, "P%dM", option.months))) {
-                            offerDetails = details;
-                            break;
-                        }
-                    }
-
-                    if (offerDetails == null) {
-                        currentPrice = (double) option.amount / option.months;
-                    } else {
-                        currentPrice = (double) offerDetails.getPricingPhases().getPricingPhaseList().get(0).getPriceAmountMicros() / option.months;
-                    }
-                } else {
-                    currentPrice = (double) option.amount / option.months;
-                }
-            }
-        }
-        for (TLRPC.TL_premiumSubscriptionOption option : premiumPromo.period_options) {
-            if (found && option.months == 12) {
-                double amount;
-                if (!BuildVars.useInvoiceBilling() && BillingController.PREMIUM_PRODUCT_DETAILS != null) {
-                    ProductDetails.SubscriptionOfferDetails offerDetails = null;
-                    for (ProductDetails.SubscriptionOfferDetails details : BillingController.PREMIUM_PRODUCT_DETAILS.getSubscriptionOfferDetails()) {
-                        String period = details.getPricingPhases().getPricingPhaseList().get(0).getBillingPeriod();
-                        if (option.months == 12 ? period.equals("P1Y") : period.equals(String.format(Locale.ROOT, "P%dM", option.months))) {
-                            offerDetails = details;
-                            break;
-                        }
-                    }
-
-                    if (offerDetails == null) {
-                        amount = (double) option.amount / option.months;
-                    } else {
-                        amount = (double) offerDetails.getPricingPhases().getPricingPhaseList().get(0).getPriceAmountMicros() / option.months;
-                    }
-                } else {
-                    amount = (double) option.amount / option.months;
-                }
-
-                discount = (int) ((1.0 - amount / currentPrice) * 100);
-            }
-        }
-        if (!found || discount <= 0) {
-            return null;
-        }
-
-        return discount;
-    }
-
     public TLRPC.TL_attachMenuBots getAttachMenuBots() {
         return attachMenuBots;
     }

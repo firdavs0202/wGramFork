@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.text.webvtt;
 
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.text.span.TextAnnotation;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ColorParser;
@@ -24,6 +26,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

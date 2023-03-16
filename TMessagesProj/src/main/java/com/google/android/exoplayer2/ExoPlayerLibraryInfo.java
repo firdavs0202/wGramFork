@@ -17,6 +17,7 @@ package com.google.android.exoplayer2;
 
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.TraceUtil;
+
 import java.util.HashSet;
 
 /** Information about the media libraries. */

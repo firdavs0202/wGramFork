@@ -24,12 +24,14 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

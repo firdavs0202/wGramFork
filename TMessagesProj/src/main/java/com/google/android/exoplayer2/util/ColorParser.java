@@ -17,8 +17,11 @@ package com.google.android.exoplayer2.util;
 
 import android.graphics.Color;
 import android.text.TextUtils;
+
 import androidx.annotation.ColorInt;
+
 import com.google.common.base.Ascii;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

@@ -71,10 +71,8 @@ import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EmojiPacksAlert;
-import org.telegram.ui.Components.EmojiView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.NumberTextView;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.ReorderingBulletinLayout;
 import org.telegram.ui.Components.ReorderingHintDrawable;
@@ -1140,19 +1138,18 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                     if (position == featuredStickersShowMoreRow) {
                         settingsCell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
                         if (currentType == MediaDataController.TYPE_EMOJIPACKS) {
-                            settingsCell.setTextAndIcon(LocaleController.getString(R.string.ShowMoreEmojiPacks), R.drawable.msg2_trending, false);
+                            settingsCell.setTextAndIcon(LocaleController.getString(R.string.ShowMoreEmojiPacks), false);
                         } else {
-                            settingsCell.setTextAndIcon(LocaleController.getString(R.string.ShowMoreStickers), R.drawable.msg2_trending, false);
+                            settingsCell.setTextAndIcon(LocaleController.getString(R.string.ShowMoreStickers), false);
                         }
                     } else {
-                        settingsCell.imageView.setTranslationX(0);
                         settingsCell.textView.setTranslationX(0);
                         settingsCell.setColors(Theme.key_windowBackgroundWhiteGrayIcon, Theme.key_windowBackgroundWhiteBlackText);
                         if (position == archivedRow) {
                             int count = MediaDataController.getInstance(currentAccount).getArchivedStickersCount(currentType);
                             String value = count > 0 ? Integer.toString(count) : "";
                             if (currentType == MediaDataController.TYPE_IMAGE) {
-                                settingsCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ArchivedStickers), value, R.drawable.msg2_archived_stickers, true);
+                                settingsCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ArchivedStickers), value,  true);
                             } else if (currentType == MediaDataController.TYPE_EMOJIPACKS) {
                                 settingsCell.setTextAndValue(LocaleController.getString("ArchivedEmojiPacks", R.string.ArchivedEmojiPacks), value, false, true);
                             } else {
@@ -1162,16 +1159,15 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                             int type = MediaDataController.TYPE_MASK;
                             MediaDataController mediaDataController = MediaDataController.getInstance(currentAccount);
                             int count = MessagesController.getInstance(currentAccount).filterPremiumStickers(mediaDataController.getStickerSets(type)).size() + mediaDataController.getArchivedStickersCount(type);
-                            settingsCell.setTextAndValueAndIcon(LocaleController.getString("Masks", R.string.Masks), count > 0 ? Integer.toString(count) : "", R.drawable.msg_mask, true);
+                            settingsCell.setTextAndValueAndIcon(LocaleController.getString("Masks", R.string.Masks), count > 0 ? Integer.toString(count) : "", true);
                         } else if (position == featuredRow) {
                             List<TLRPC.StickerSetCovered> sets = getFeaturedSets();
-                            settingsCell.setTextAndValueAndIcon(LocaleController.getString("FeaturedStickers", R.string.FeaturedStickers), sets != null ? "" + sets.size() : "", R.drawable.msg2_trending, true);
+                            settingsCell.setTextAndValueAndIcon(LocaleController.getString("FeaturedStickers", R.string.FeaturedStickers), sets != null ? "" + sets.size() : "",  true);
                         } else if (position == emojiPacksRow) {
                             int type = MediaDataController.TYPE_EMOJIPACKS;
                             MediaDataController mediaDataController = MediaDataController.getInstance(currentAccount);
                             int count = mediaDataController.getStickerSets(type).size();
-                            settingsCell.imageView.setTranslationX(-AndroidUtilities.dp(2));
-                            settingsCell.setTextAndValueAndIcon(LocaleController.getString("Emoji", R.string.Emoji), count > 0 ? Integer.toString(count) : "", R.drawable.msg2_smile_status, true);
+                            settingsCell.setTextAndValueAndIcon(LocaleController.getString("Emoji", R.string.Emoji), count > 0 ? Integer.toString(count) : "",  true);
                         } else if (position == suggestRow) {
                             String value;
                             switch (SharedConfig.suggestStickers) {
@@ -1288,7 +1284,6 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                     view = new FeaturedStickerSetCell2(mContext, getResourceProvider()) {
                         @Override
                         protected void onPremiumButtonClick() {
-                            showDialog(new PremiumFeatureBottomSheet(StickersActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false));
                         }
                     };
                     view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
@@ -1298,7 +1293,6 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                     view = new StickerSetCell(mContext, 1) {
                         @Override
                         protected void onPremiumButtonClick() {
-                            showDialog(new PremiumFeatureBottomSheet(StickersActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false));
                         }
 
                         @Override

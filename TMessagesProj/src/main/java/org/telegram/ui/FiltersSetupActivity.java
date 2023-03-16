@@ -50,10 +50,6 @@ import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
-import org.telegram.ui.Components.ProgressButton;
-import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
@@ -139,7 +135,6 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
 
         private TextView textView;
         private TextView valueTextView;
-        private ProgressButton addButton;
         private boolean needDivider;
         private TLRPC.TL_dialogFilterSuggested suggestedFilter;
 
@@ -166,20 +161,11 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
             valueTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
             addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, 22, 35, 22, 0));
 
-            addButton = new ProgressButton(context);
-            addButton.setText(LocaleController.getString("Add", R.string.Add));
-            addButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-            addButton.setProgressColor(Theme.getColor(Theme.key_featuredStickers_buttonProgress));
-            addButton.setBackgroundRoundRect(Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed));
-            addView(addButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 18, 14, 0));
         }
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), AndroidUtilities.dp(64));
-            measureChildWithMargins(addButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
-            measureChildWithMargins(textView, widthMeasureSpec, addButton.getMeasuredWidth(), heightMeasureSpec, 0);
-            measureChildWithMargins(valueTextView, widthMeasureSpec, addButton.getMeasuredWidth(), heightMeasureSpec, 0);
         }
 
         public void setFilter(TLRPC.TL_dialogFilterSuggested filter, boolean divider) {
@@ -196,7 +182,6 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         }
 
         public void setAddOnClickListener(OnClickListener onClickListener) {
-            addButton.setOnClickListener(onClickListener);
         }
 
         @Override
@@ -210,46 +195,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
             super.onInitializeAccessibilityNodeInfo(info);
             info.setEnabled(true);
-            info.setText(addButton.getText());
             info.setClassName("android.widget.Button");
         }
-    }
-
-    @SuppressWarnings("FieldCanBeLocal")
-    public static class HintInnerCell extends FrameLayout {
-
-        private RLottieImageView imageView;
-        private TextView messageTextView;
-
-        public HintInnerCell(Context context) {
-            super(context);
-
-            imageView = new RLottieImageView(context);
-            imageView.setAnimation(R.raw.filters, 90, 90);
-            imageView.setScaleType(ImageView.ScaleType.CENTER);
-            imageView.playAnimation();
-            imageView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            addView(imageView, LayoutHelper.createFrame(90, 90, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 14, 0, 0));
-            imageView.setOnClickListener(v -> {
-                if (!imageView.isPlaying()) {
-                    imageView.setProgress(0.0f);
-                    imageView.playAnimation();
-                }
-            });
-
-            messageTextView = new TextView(context);
-            messageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4));
-            messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            messageTextView.setGravity(Gravity.CENTER);
-            messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("CreateNewFilterInfo", R.string.CreateNewFilterInfo)));
-            addView(messageTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 40, 121, 40, 24));
-        }
-
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), heightMeasureSpec);
-        }
-    }
+    }@SuppressWarnings("FieldCanBeLocal")
 
     public static class FilterCell extends FrameLayout {
 
@@ -544,15 +492,11 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                     return;
                 }
                 MessagesController.DialogFilter filter = getMessagesController().dialogFilters.get(filterPosition);
-                if (filter.locked) {
-                    showDialog(new LimitReachedBottomSheet(this, context, LimitReachedBottomSheet.TYPE_FOLDERS, currentAccount));
-                } else {
+                if (!filter.locked) {
                     presentFragment(new FilterCreateActivity(getMessagesController().dialogFilters.get(filterPosition)));
                 }
             } else if (position == createFilterRow) {
-                if ((getMessagesController().dialogFilters.size() - 1 >= getMessagesController().dialogFiltersLimitDefault && !getUserConfig().isPremium()) || getMessagesController().dialogFilters.size() >= getMessagesController().dialogFiltersLimitPremium) {
-                    showDialog(new LimitReachedBottomSheet(this, context, LimitReachedBottomSheet.TYPE_FOLDERS, currentAccount));
-                } else {
+                if ((getMessagesController().dialogFilters.size() - 1 < getMessagesController().dialogFiltersLimitDefault || getUserConfig().isPremium()) && getMessagesController().dialogFilters.size() < getMessagesController().dialogFiltersLimitPremium) {
                     presentFragment(new FilterCreateActivity());
                 }
             }
@@ -614,10 +558,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                     view = new HeaderCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
-                case 1:
-                    view = new HintInnerCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_top, Theme.key_windowBackgroundGrayShadow));
-                    break;
+
                 case 2:
                     FilterCell filterCell = new FilterCell(mContext);
                     filterCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
@@ -644,9 +585,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                         };
                         builder1.setItems(items, icons, (dialog, which) -> {
                             if (which == 0) {
-                                if (filter.locked) {
-                                    showDialog(new LimitReachedBottomSheet(FiltersSetupActivity.this, mContext, LimitReachedBottomSheet.TYPE_FOLDERS, currentAccount));
-                                } else {
+                                if (!filter.locked) {
                                     presentFragment(new FilterCreateActivity(filter));
                                 }
                             } else if (which == 1) {
@@ -1014,7 +953,6 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
             fragmentView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
         } catch (Exception ignore) {}
         BulletinFactory.of(this).createSimpleBulletin(R.raw.filter_reorder, AndroidUtilities.replaceTags(LocaleController.formatString("LimitReachedReorderFolder", R.string.LimitReachedReorderFolder, LocaleController.getString(R.string.FilterAllChats))), LocaleController.getString("PremiumMore", R.string.PremiumMore), Bulletin.DURATION_PROLONG, () -> {
-            showDialog(new PremiumFeatureBottomSheet(FiltersSetupActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_ADVANCED_CHAT_MANAGEMENT, true));
         }).show();
     }
 

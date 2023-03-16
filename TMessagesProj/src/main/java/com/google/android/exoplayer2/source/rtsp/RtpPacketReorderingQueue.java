@@ -23,7 +23,9 @@ import static java.lang.Math.min;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
+
 import java.util.TreeSet;
 
 /**

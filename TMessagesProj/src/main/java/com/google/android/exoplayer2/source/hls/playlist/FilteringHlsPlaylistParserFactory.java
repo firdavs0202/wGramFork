@@ -16,9 +16,11 @@
 package com.google.android.exoplayer2.source.hls.playlist;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.offline.FilteringManifestParser;
 import com.google.android.exoplayer2.offline.StreamKey;
 import com.google.android.exoplayer2.upstream.ParsingLoadable;
+
 import java.util.List;
 
 /**

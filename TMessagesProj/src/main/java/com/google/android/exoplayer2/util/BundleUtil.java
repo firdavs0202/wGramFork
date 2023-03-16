@@ -17,7 +17,9 @@ package com.google.android.exoplayer2.util;
 
 import android.os.Bundle;
 import android.os.IBinder;
+
 import androidx.annotation.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

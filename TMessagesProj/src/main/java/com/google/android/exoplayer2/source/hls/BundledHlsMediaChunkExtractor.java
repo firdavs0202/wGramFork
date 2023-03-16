@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.source.hls;
 
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
@@ -29,6 +30,7 @@ import com.google.android.exoplayer2.extractor.ts.AdtsExtractor;
 import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
+
 import java.io.IOException;
 
 /**

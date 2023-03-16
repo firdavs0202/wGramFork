@@ -61,13 +61,10 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.ListView.AdapterWithDiffUtils;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
-import org.telegram.ui.Components.Premium.PremiumLockIconView;
 import org.telegram.ui.Components.Reactions.CustomEmojiReactionsWindow;
 import org.telegram.ui.Components.Reactions.ReactionsEffectOverlay;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.Reactions.ReactionsUtils;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -116,7 +113,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
     private long lastUpdate;
 
     ValueAnimator cancelPressedAnimation;
-    FrameLayout premiumLockContainer;
     FrameLayout customReactionsContainer;
 
     private List<ReactionsLayoutInBubble.VisibleReaction> visibleReactionsList = new ArrayList<>(20);
@@ -147,7 +143,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
     private boolean clicked;
     long lastReactionSentTime;
     BaseFragment fragment;
-    private PremiumLockIconView premiumLockIconView;
     private InternalImageView customEmojiReactionsIconView;
     private float customEmojiReactionsEnterProgress;
     CustomEmojiReactionsWindow reactionsWindow;
@@ -273,7 +268,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                     }
                     outRect.right = AndroidUtilities.dp(4);
                     if (position == listAdapter.getItemCount() - 1) {
-                        if (showUnlockPremiumButton() || showCustomEmojiReaction()) {
+                        if ( showCustomEmojiReaction()) {
                             outRect.right = AndroidUtilities.dp(2);
                         } else {
                             outRect.right = AndroidUtilities.dp(6);
@@ -302,22 +297,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                     default:
                     case VIEW_TYPE_REACTION:
                         view = new ReactionHolderView(context, true);
-                        break;
-                    case VIEW_TYPE_PREMIUM_BUTTON:
-                        premiumLockContainer = new FrameLayout(context);
-                        premiumLockIconView = new PremiumLockIconView(context, PremiumLockIconView.TYPE_REACTIONS);
-                        premiumLockIconView.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon), Theme.getColor(Theme.key_dialogBackground), 0.7f));
-                        premiumLockIconView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
-                        premiumLockIconView.setScaleX(0f);
-                        premiumLockIconView.setScaleY(0f);
-                        premiumLockIconView.setPadding(AndroidUtilities.dp(1), AndroidUtilities.dp(1), AndroidUtilities.dp(1), AndroidUtilities.dp(1));
-                        premiumLockContainer.addView(premiumLockIconView, LayoutHelper.createFrame(26, 26, Gravity.CENTER));
-                        premiumLockIconView.setOnClickListener(v -> {
-                            int[] position = new int[2];
-                            v.getLocationOnScreen(position);
-                            showUnlockPremium(position[0] + v.getMeasuredWidth() / 2f, position[1] + v.getMeasuredHeight() / 2f);
-                        });
-                        view = premiumLockContainer;
                         break;
                     case VIEW_TYPE_CUSTOM_EMOJI_BUTTON:
                         customReactionsContainer = new CustomReactionsContainer(context);
@@ -374,9 +353,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                 items.clear();
                 for (int i = 0; i < visibleReactionsList.size(); i++) {
                     items.add(new InnerItem(VIEW_TYPE_REACTION, visibleReactionsList.get(i)));
-                }
-                if (showUnlockPremiumButton()) {
-                    items.add(new InnerItem(VIEW_TYPE_PREMIUM_BUTTON, null));
                 }
                 if (showCustomEmojiReaction()) {
                     items.add(new InnerItem(VIEW_TYPE_CUSTOM_EMOJI_BUTTON, null));
@@ -507,15 +483,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
 
     public boolean showCustomEmojiReaction() {
         return !MessagesController.getInstance(currentAccount).premiumLocked && allReactionsAvailable;
-    }
-
-    private boolean showUnlockPremiumButton() {
-        return !premiumLockedReactions.isEmpty() && !MessagesController.getInstance(currentAccount).premiumLocked;
-    }
-
-    private void showUnlockPremium(float x, float y) {
-        PremiumFeatureBottomSheet bottomSheet = new PremiumFeatureBottomSheet(fragment, PremiumPreviewFragment.PREMIUM_FEATURE_REACTIONS, true);
-        bottomSheet.show();
     }
 
     private void setChildScale(View child, float scale) {
@@ -697,20 +664,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                         view.resetAnimation();
                     }
                 } else {
-                    if (child == premiumLockContainer) {
-                        if (child.getX() + child.getMeasuredWidth() / 2f > 0 && child.getX() + child.getMeasuredWidth() / 2f < recyclerListView.getWidth()) {
-                            if (!lastVisibleViewsTmp.contains(child)) {
-                                if (transitionProgress != 1f) {
-                                    premiumLockIconView.resetAnimation();
-                                }
-                                premiumLockIconView.play(delay);
-                                delay += 30;
-                            }
-                            lastVisibleViews.add(child);
-                        } else {
-                            premiumLockIconView.resetAnimation();
-                        }
-                    }
                     if (child == customReactionsContainer) {
                         if (child.getX() + child.getMeasuredWidth() / 2f > 0 && child.getX() + child.getMeasuredWidth() / 2f < recyclerListView.getWidth()) {
                             if (!lastVisibleViewsTmp.contains(child)) {

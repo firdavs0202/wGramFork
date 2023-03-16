@@ -20,7 +20,9 @@ import static java.lang.Math.max;
 
 import android.os.SystemClock;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
@@ -38,6 +40,7 @@ import com.google.android.exoplayer2.source.MediaSource.MediaPeriodId;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

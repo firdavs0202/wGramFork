@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.source;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.decoder.CryptoInfo;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
@@ -30,6 +31,7 @@ import com.google.android.exoplayer2.upstream.DataReader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;

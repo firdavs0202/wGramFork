@@ -38,8 +38,10 @@ import android.media.MediaFormat;
 import android.media.MediaParser;
 import android.media.MediaParser.TrackData;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.SelectionFlags;
 import com.google.android.exoplayer2.Format;
@@ -60,6 +62,9 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TimestampAdjuster;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -68,7 +73,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /**
  * {@link MediaParser.OutputConsumer} implementation that redirects output to an {@link

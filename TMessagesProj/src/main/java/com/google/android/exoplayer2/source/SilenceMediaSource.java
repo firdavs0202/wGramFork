@@ -18,8 +18,10 @@ package com.google.android.exoplayer2.source;
 import static java.lang.Math.min;
 
 import android.net.Uri;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -34,8 +36,10 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.util.ArrayList;
+
 import org.checkerframework.checker.nullness.compatqual.NullableType;
+
+import java.util.ArrayList;
 
 /** Media source with a single period consisting of silent raw audio of a given duration. */
 public final class SilenceMediaSource extends BaseMediaSource {

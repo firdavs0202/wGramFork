@@ -20,6 +20,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkState;
 import static java.lang.Math.min;
 
 import android.util.SparseArray;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.Consumer;
 

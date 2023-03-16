@@ -16,18 +16,21 @@
 package com.google.android.exoplayer2.extractor.jpeg;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.XmlPullParserUtil;
 import com.google.common.collect.ImmutableList;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
 
 /**
  * Parser for motion photo metadata, handling XMP following the Motion Photo V1 and Micro Video V1b

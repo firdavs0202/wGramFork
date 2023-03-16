@@ -18,7 +18,9 @@ package com.google.android.exoplayer2.extractor.ts;
 import static com.google.android.exoplayer2.extractor.ts.TsPayloadReader.FLAG_RANDOM_ACCESS_INDICATOR;
 
 import android.util.SparseArray;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
@@ -32,12 +34,14 @@ import com.google.android.exoplayer2.util.NalUnitUtil.SpsData;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.ParsableNalUnitBitArray;
 import com.google.android.exoplayer2.util.Util;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /** Parses a continuous H264 byte stream and extracts individual frames. */
 public final class H264Reader implements ElementaryStreamReader {

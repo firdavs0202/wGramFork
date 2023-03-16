@@ -24,18 +24,22 @@ import android.media.MediaCodec;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.decoder.CryptoInfo;
 import com.google.android.exoplayer2.util.ConditionVariable;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * Performs {@link MediaCodec} input buffer queueing on a background thread.

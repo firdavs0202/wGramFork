@@ -3386,12 +3386,11 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
         if (botUser.username != null && botUser.username.equalsIgnoreCase(getMessagesController().premiumBotUsername) && invoiceSlug == null || invoiceSlug != null && getMessagesController().premiumInvoiceSlug != null && Objects.equals(invoiceSlug, getMessagesController().premiumInvoiceSlug)) {
             if (parentLayout != null) {
                 for (BaseFragment fragment : new ArrayList<>(parentLayout.getFragmentStack())) {
-                    if (fragment instanceof ChatActivity || fragment instanceof PremiumPreviewFragment) {
+                    if (fragment instanceof ChatActivity ) {
                         fragment.removeSelfFromStack();
                     }
                 }
 
-                parentLayout.presentFragment(new PremiumPreviewFragment(null).setForcePremium(), !isFinishing());
                 if (parentActivity instanceof LaunchActivity) {
                     try {
                         fragmentView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);

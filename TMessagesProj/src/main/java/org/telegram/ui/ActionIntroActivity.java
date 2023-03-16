@@ -38,7 +38,6 @@ import androidx.core.graphics.ColorUtils;
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.LocationController;
@@ -106,7 +105,8 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
             ACTION_TYPE_QR_LOGIN,
             ACTION_TYPE_SET_PASSCODE
     })
-    public @interface ActionType {}
+    public @interface ActionType {
+    }
 
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 34;
 
@@ -621,12 +621,6 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                     processOpenQrReader();
                     break;
                 }
-                case ACTION_TYPE_CHANNEL_CREATE: {
-                    Bundle args = new Bundle();
-                    args.putInt("step", 0);
-                    presentFragment(new ChannelCreateActivity(args), true);
-                    break;
-                }
                 case ACTION_TYPE_SET_PASSCODE: {
                     presentFragment(new PasscodeActivity(PasscodeActivity.TYPE_SETUP_CODE), true);
                     break;
@@ -641,19 +635,6 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
-                    break;
-                }
-                case ACTION_TYPE_NEARBY_GROUP_CREATE: {
-                    if (currentGroupCreateAddress == null || currentGroupCreateLocation == null) {
-                        return;
-                    }
-                    Bundle args = new Bundle();
-                    long[] array = new long[]{getUserConfig().getClientUserId()};
-                    args.putLongArray("result", array);
-                    args.putInt("chatType", ChatObject.CHAT_TYPE_MEGAGROUP);
-                    args.putString("address", currentGroupCreateAddress);
-                    args.putParcelable("location", currentGroupCreateLocation);
-                    presentFragment(new GroupCreateFinalActivity(args), true);
                     break;
                 }
                 case ACTION_TYPE_CHANGE_PHONE_NUMBER: {
@@ -801,9 +782,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                     FileLog.e(e);
                 }
             }
-            if (enabled) {
-                presentFragment(new PeopleNearbyActivity(), true);
-            }
+
         }
     }
 
@@ -843,8 +822,6 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
             if (grantResults != null && grantResults.length != 0) {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     showDialog(AlertsCreator.createLocationRequiredDialog(getParentActivity(), false));
-                } else {
-                    AndroidUtilities.runOnUIThread(() -> presentFragment(new PeopleNearbyActivity(), true));
                 }
             }
         } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
@@ -863,7 +840,6 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                             }
                         })
                         .setNegativeButton(LocaleController.getString("ContactsPermissionAlertNotNow", R.string.ContactsPermissionAlertNotNow), null)
-                        .setTopAnimation(R.raw.permission_request_camera, 72, false, Theme.getColor(Theme.key_dialogTopBackground))
                         .show();
             }
         }

@@ -16,8 +16,10 @@
 package com.google.android.exoplayer2.video;
 
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
+
 import java.util.Arrays;
 
 /**

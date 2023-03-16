@@ -19,6 +19,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;

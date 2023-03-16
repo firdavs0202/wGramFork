@@ -41,7 +41,6 @@ import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.NativeByteBuffer;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.Premium.PremiumLockIconView;
 import org.telegram.ui.SelectAnimatedEmojiDialog;
 
 import java.io.File;
@@ -815,11 +814,6 @@ public class AnimatedEmojiDrawable extends Drawable {
             dominantColors = new HashMap<>();
         }
         Integer color = dominantColors.get(documentId);
-        if (color == null) {
-            if (yourDrawable.getImageReceiver() != null && yourDrawable.getImageReceiver().getBitmap() != null) {
-                dominantColors.put(documentId, color = PremiumLockIconView.getDominantColor(yourDrawable.getImageReceiver().getBitmap()));
-            }
-        }
         return color == null ? 0 : color;
     }
 

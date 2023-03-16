@@ -16,7 +16,9 @@
 package com.google.android.exoplayer2.upstream.cache;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
+
 import java.io.File;
 
 /** Defines a span of data that may or may not be cached (as indicated by {@link #isCached}). */

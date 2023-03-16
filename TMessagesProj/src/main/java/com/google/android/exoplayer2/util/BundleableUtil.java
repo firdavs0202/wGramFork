@@ -20,9 +20,12 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import android.os.Bundle;
 import android.util.SparseArray;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

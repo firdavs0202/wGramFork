@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.extractor.ts;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
@@ -32,11 +33,13 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
-import java.util.Arrays;
-import java.util.Collections;
+
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /** Parses a continuous ADTS byte stream and extracts individual frames. */
 public final class AdtsReader implements ElementaryStreamReader {

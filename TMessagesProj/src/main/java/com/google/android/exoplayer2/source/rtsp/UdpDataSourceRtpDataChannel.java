@@ -19,7 +19,9 @@ import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 import static com.google.android.exoplayer2.util.Assertions.checkState;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -27,6 +29,7 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.upstream.UdpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.primitives.Ints;
+
 import java.io.IOException;
 
 /** An {@link RtpDataChannel} for UDP transport. */

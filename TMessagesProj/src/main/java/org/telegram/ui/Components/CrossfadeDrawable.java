@@ -5,7 +5,6 @@ import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 

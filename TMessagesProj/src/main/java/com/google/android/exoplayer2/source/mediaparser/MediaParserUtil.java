@@ -18,8 +18,10 @@ package com.google.android.exoplayer2.source.mediaparser;
 import android.media.MediaFormat;
 import android.media.MediaParser;
 import android.media.metrics.LogSessionId;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.analytics.PlayerId;
 

@@ -20,6 +20,7 @@ import static com.google.android.exoplayer2.util.Util.castNonNull;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSink;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -28,11 +29,13 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * Writes data into a cache.

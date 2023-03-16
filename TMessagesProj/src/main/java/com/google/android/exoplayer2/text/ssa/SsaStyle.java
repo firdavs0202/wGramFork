@@ -24,9 +24,11 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.text.TextUtils;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Assertions;
@@ -34,6 +36,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Ascii;
 import com.google.common.primitives.Ints;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

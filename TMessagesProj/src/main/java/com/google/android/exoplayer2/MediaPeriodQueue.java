@@ -20,7 +20,9 @@ import static java.lang.Math.max;
 
 import android.os.Handler;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Player.RepeatMode;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.source.MediaPeriod;

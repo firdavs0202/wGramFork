@@ -45,7 +45,6 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.CheckBoxCell;
 import org.telegram.ui.Cells.TextCheckCell;
-import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BetterRatingView;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.JoinCallAlert;
@@ -362,8 +361,7 @@ public class VoIPHelper {
 					.setOnDismissListener(dialog -> {
 						if (onFinish != null)
 							onFinish.run();
-					})
-					.setTopAnimation(mergedRequest ? R.raw.permission_request_camera : R.raw.permission_request_microphone, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, Theme.getColor(Theme.key_dialogTopBackground));
+					});
 
 			dlg.show();
 		}

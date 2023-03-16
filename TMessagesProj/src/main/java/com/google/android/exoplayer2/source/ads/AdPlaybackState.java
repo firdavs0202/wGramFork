@@ -26,21 +26,25 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
 
 /**
  * Represents ad group times and information on the state and URIs of ads within each ad group.

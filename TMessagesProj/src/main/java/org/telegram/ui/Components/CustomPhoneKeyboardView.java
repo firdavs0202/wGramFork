@@ -27,7 +27,7 @@ import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 
 public class CustomPhoneKeyboardView extends ViewGroup {
-    public final static int KEYBOARD_HEIGHT_DP = 230;
+    public final static int KEYBOARD_HEIGHT_DP = 140;
 
     private final static int SIDE_PADDING = 10, BUTTON_PADDING = 6;
 
@@ -65,43 +65,8 @@ public class CustomPhoneKeyboardView extends ViewGroup {
 
         for (int i = 0; i < 11; i++) {
             if (i == 9) continue;
-
-            String symbols;
-            switch (i) {
-                default:
-                case 0:
-                    symbols = "";
-                    break;
-                case 1:
-                    symbols = "ABC";
-                    break;
-                case 2:
-                    symbols = "DEF";
-                    break;
-                case 3:
-                    symbols = "GHI";
-                    break;
-                case 4:
-                    symbols = "JKL";
-                    break;
-                case 5:
-                    symbols = "MNO";
-                    break;
-                case 6:
-                    symbols = "PQRS";
-                    break;
-                case 7:
-                    symbols = "TUV";
-                    break;
-                case 8:
-                    symbols = "WXYZ";
-                    break;
-                case 10:
-                    symbols = "+";
-                    break;
-            }
             String num = String.valueOf(i != 10 ? i + 1 : 0);
-            views[i] = new NumberButtonView(context, num, symbols);
+            views[i] = new NumberButtonView(context, num);
             views[i].setOnClickListener(v -> {
                 checkFindEditText();
                 if (editText == null) return;
@@ -150,7 +115,8 @@ public class CustomPhoneKeyboardView extends ViewGroup {
         backButton.setBackground(getButtonDrawable());
         int pad = AndroidUtilities.dp(11);
         backButton.setPadding(pad, pad, pad, pad);
-        backButton.setOnClickListener(v -> {});
+        backButton.setOnClickListener(v -> {
+        });
         addView(views[11] = backButton);
     }
 
@@ -254,19 +220,17 @@ public class CustomPhoneKeyboardView extends ViewGroup {
         }
     }
 
-    private final static class NumberButtonView extends View {
+    public final static class NumberButtonView extends View {
         private TextPaint numberTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        private TextPaint symbolsTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        private String mNumber, mSymbols;
+        private String mNumber;
         private Rect rect = new Rect();
 
-        public NumberButtonView(Context context, String number, String symbols) {
+        public NumberButtonView(Context context, String number) {
             super(context);
             mNumber = number;
-            mSymbols = symbols;
 
-            numberTextPaint.setTextSize(AndroidUtilities.dp(24));
-            symbolsTextPaint.setTextSize(AndroidUtilities.dp(14));
+            numberTextPaint.setTextSize(AndroidUtilities.dp(18));
+            numberTextPaint.setTextAlign(Paint.Align.CENTER);
 
             setBackground(getButtonDrawable());
             updateColors();
@@ -274,21 +238,15 @@ public class CustomPhoneKeyboardView extends ViewGroup {
 
         private void updateColors() {
             numberTextPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            symbolsTextPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
-            float symbolsWidth = symbolsTextPaint.measureText(mSymbols);
-            float numberWidth = numberTextPaint.measureText(mNumber);
-
             numberTextPaint.getTextBounds(mNumber, 0, mNumber.length(), rect);
-            float textOffsetNumber = rect.height() / 2f;
-            symbolsTextPaint.getTextBounds(mSymbols, 0, mSymbols.length(), rect);
-            float textOffsetSymbols = rect.height() / 2f;
 
-            canvas.drawText(mNumber, getWidth() * 0.25f - numberWidth / 2f, getHeight() / 2f + textOffsetNumber, numberTextPaint);
-            canvas.drawText(mSymbols, getWidth() * 0.7f - symbolsWidth / 2f, getHeight() / 2f + textOffsetSymbols, symbolsTextPaint);
+            int xPos = (getWidth() / 2);
+            int yPos = (int) ((getHeight() / 2) - ((numberTextPaint.descent() + numberTextPaint.ascent()) / 2));
+            canvas.drawText(mNumber, xPos, yPos, numberTextPaint);
         }
     }
 }

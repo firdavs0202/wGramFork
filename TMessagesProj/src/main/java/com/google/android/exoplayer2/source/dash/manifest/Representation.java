@@ -18,14 +18,17 @@ package com.google.android.exoplayer2.source.dash.manifest;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.source.dash.DashSegmentIndex;
 import com.google.android.exoplayer2.source.dash.manifest.SegmentBase.MultiSegmentBase;
 import com.google.android.exoplayer2.source.dash.manifest.SegmentBase.SingleSegmentBase;
 import com.google.common.collect.ImmutableList;
+
 import java.util.Collections;
 import java.util.List;
 

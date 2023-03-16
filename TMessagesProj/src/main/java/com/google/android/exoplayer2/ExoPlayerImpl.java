@@ -52,9 +52,11 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.PlayerMessage.Target;
 import com.google.android.exoplayer2.Renderer.MessageType;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
@@ -93,13 +95,13 @@ import com.google.android.exoplayer2.util.Size;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoDecoderOutputBufferRenderer;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
-import com.google.android.exoplayer2.video.VideoListener;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
 import com.google.android.exoplayer2.video.spherical.SphericalGLSurfaceView;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

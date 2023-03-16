@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.extractor.mp3;
 
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.extractor.SeekPoint;
 import com.google.android.exoplayer2.util.LongArray;

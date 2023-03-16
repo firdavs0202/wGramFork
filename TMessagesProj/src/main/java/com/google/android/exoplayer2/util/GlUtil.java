@@ -30,15 +30,19 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
+
 import androidx.annotation.DoNotInline;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.microedition.khronos.egl.EGL10;
 
 /** OpenGL ES utilities. */

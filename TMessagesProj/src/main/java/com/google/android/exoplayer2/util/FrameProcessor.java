@@ -18,8 +18,11 @@ package com.google.android.exoplayer2.util;
 import android.content.Context;
 import android.opengl.EGLExt;
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.video.ColorInfo;
+
 import java.util.List;
 
 /**

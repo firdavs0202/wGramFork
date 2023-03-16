@@ -17,6 +17,7 @@ package com.google.android.exoplayer2;
 
 import android.media.MediaPlayer;
 import android.os.Looper;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 

@@ -21,7 +21,9 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaFormat;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Assertions;
@@ -29,9 +31,11 @@ import com.google.android.exoplayer2.util.GlUtil;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.TimedValueQueue;
 import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Renders a GL Scene. */
 /* package */ final class SceneRenderer

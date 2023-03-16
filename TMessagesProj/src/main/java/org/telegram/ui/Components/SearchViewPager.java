@@ -52,10 +52,8 @@ import org.telegram.ui.Cells.SharedDocumentCell;
 import org.telegram.ui.Cells.SharedLinkCell;
 import org.telegram.ui.Cells.SharedPhotoVideoCell;
 import org.telegram.ui.ChatActivity;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.FilteredSearchView;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -508,7 +506,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
                 return;
             }
 
-            parent.showDialog(new PremiumFeatureBottomSheet(parent, PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED, true));
         } else if (id == gotoItemId) {
             if (selectedFiles.size() != 1) {
                 return;

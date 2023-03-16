@@ -191,20 +191,6 @@ public class PrivacyUsersActivity extends BaseFragment implements NotificationCe
                     } else if (currentType == TYPE_FILTER) {
                         args.putInt("chatAddType", 2);
                     }
-                    GroupCreateActivity fragment = new GroupCreateActivity(args);
-                    fragment.setDelegate(ids -> {
-                        for (Long id1 : ids) {
-                            if (uidArray.contains(id1)) {
-                                continue;
-                            }
-                            uidArray.add(id1);
-                        }
-                        updateRows();
-                        if (delegate != null) {
-                            delegate.didUpdateUserList(uidArray, true);
-                        }
-                    });
-                    presentFragment(fragment);
                 }
             } else if (position >= usersStartRow && position < usersEndRow) {
                 if (currentType == TYPE_BLOCKED) {

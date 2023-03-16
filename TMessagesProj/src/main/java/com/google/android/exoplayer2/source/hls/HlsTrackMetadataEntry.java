@@ -18,9 +18,12 @@ package com.google.android.exoplayer2.source.hls;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.metadata.Metadata;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

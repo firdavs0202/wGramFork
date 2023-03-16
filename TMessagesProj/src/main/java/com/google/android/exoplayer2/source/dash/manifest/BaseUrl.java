@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.source.dash.manifest;
 
 import androidx.annotation.Nullable;
+
 import com.google.common.base.Objects;
 
 /** A base URL, as defined by ISO 23009-1, 2nd edition, 5.6. and ETSI TS 103 285 V1.2.1, 10.8.2.1 */

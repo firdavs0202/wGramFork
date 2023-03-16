@@ -528,14 +528,12 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                     }, dialogInterface -> {
                         if (!imageUpdater.isUploadingImage()) {
                             cameraDrawable.setCustomEndFrame(86);
-                            setAvatarCell.imageView.playAnimation();
                         } else {
                             cameraDrawable.setCurrentFrame(0, false);
                         }
                     }, 0);
                     cameraDrawable.setCurrentFrame(0);
                     cameraDrawable.setCustomEndFrame(43);
-                    setAvatarCell.imageView.playAnimation();
                 }
             } else if (position == nobodyRow || position == everybodyRow || position == myContactsRow) {
                 int newType;
@@ -576,23 +574,6 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                     Bundle args = new Bundle();
                     args.putBoolean(position == neverShareRow ? "isNeverShare" : "isAlwaysShare", true);
                     args.putInt("chatAddType", rulesType != PRIVACY_RULES_TYPE_LASTSEEN ? 1 : 0);
-                    GroupCreateActivity fragment = new GroupCreateActivity(args);
-                    fragment.setDelegate(ids -> {
-                        if (position == neverShareRow) {
-                            currentMinus = ids;
-                            for (int a = 0; a < currentMinus.size(); a++) {
-                                currentPlus.remove(currentMinus.get(a));
-                            }
-                        } else {
-                            currentPlus = ids;
-                            for (int a = 0; a < currentPlus.size(); a++) {
-                                currentMinus.remove(currentPlus.get(a));
-                            }
-                        }
-                        updateDoneButton();
-                        listAdapter.notifyDataSetChanged();
-                    });
-                    presentFragment(fragment);
                 } else {
                     PrivacyUsersActivity fragment = new PrivacyUsersActivity(PrivacyUsersActivity.TYPE_PRIVACY, createFromArray, rulesType != PRIVACY_RULES_TYPE_LASTSEEN && rulesType != PRIVACY_RULES_TYPE_PHOTO, position == alwaysShareRow);
                     fragment.setDelegate((ids, added) -> {
@@ -1123,16 +1104,13 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                 case 6:
                     setAvatarCell = new TextCell(getContext());
                     if (avatarForRest == null) {
-                        setAvatarCell.setTextAndIcon(LocaleController.formatString("SetPhotoForRest", R.string.SetPhotoForRest), R.drawable.msg_addphoto, false);
+                        setAvatarCell.setTextAndIcon(LocaleController.formatString("SetPhotoForRest", R.string.SetPhotoForRest), false);
                     } else {
-                        setAvatarCell.setTextAndIcon(LocaleController.formatString("UpdatePhotoForRest", R.string.UpdatePhotoForRest), R.drawable.msg_addphoto, true);
+                        setAvatarCell.setTextAndIcon(LocaleController.formatString("UpdatePhotoForRest", R.string.UpdatePhotoForRest), true);
                     }
                     setAvatarCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
                     setAvatarCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
                     cameraDrawable = new RLottieDrawable(R.raw.camera_outline, "" + R.raw.camera_outline, AndroidUtilities.dp(50), AndroidUtilities.dp(50), false, null);
-                    setAvatarCell.imageView.setTranslationY(-AndroidUtilities.dp(9));
-                    setAvatarCell.imageView.setTranslationX(-AndroidUtilities.dp(8));
-                    setAvatarCell.imageView.setAnimation(cameraDrawable);
                     setAvatarCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     view = setAvatarCell;
                     break;
@@ -1164,7 +1142,6 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                     }
                     oldPhotoCell.addView(oldAvatarView, LayoutHelper.createFrame(30, 30, Gravity.CENTER_VERTICAL, 21, 0, 21, 0));
                     oldPhotoCell.setText(LocaleController.getString("RemovePublicPhoto", R.string.RemovePublicPhoto), false);
-                    oldPhotoCell.getImageView().setVisibility(View.VISIBLE);
                     oldPhotoCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
                     oldPhotoCell.setColors(Theme.key_windowBackgroundWhiteRedText, Theme.key_windowBackgroundWhiteRedText);
                     oldPhotoCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));

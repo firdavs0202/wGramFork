@@ -52,8 +52,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.util.Log;
-
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -522,18 +520,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
                                     return chat != null && ChatObject.canUserDoAdminAction(chat, ChatObject.ACTION_INVITE);
                                 }
                             };
-                            bottomSheet.setDelegate((users1, fwdCount) -> {
-                                int N = users1.size();
-                                int[] finished = new int[1];
-                                for (int a = 0; a < N; a++) {
-                                    TLRPC.User user = users1.get(a);
-                                    getMessagesController().addUserToChat(chatId, user, fwdCount, null, TopicsFragment.this, () -> {
-                                        if (++finished[0] == N) {
-                                            BulletinFactory.of(TopicsFragment.this).createUsersAddedBulletin(users1, getMessagesController().getChat(chatId)).show();
-                                        }
-                                    });
-                                }
-                            });
                             bottomSheet.show();
                         }
                         break;
@@ -831,6 +817,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
                 }
                 if (dialogsActivity != null) {
                     dialogsActivity.didSelectResult(-chatId, topic.id, true, false, this);
+                    dialogsActivity.removeSelfFromStack();
                 }
                 return;
             }
@@ -1176,15 +1163,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         bottomOverlayChatText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bottomButtonType == BOTTOM_BUTTON_TYPE_REPORT) {
-                    AlertsCreator.showBlockReportSpamAlert(TopicsFragment.this, -chatId, null, getCurrentChat(), null, false, chatFull, param -> {
-                        if (param == 0) {
-                            updateChatInfo();
-                        } else {
-                            finishFragment();
-                        }
-                    }, getResourceProvider());
-                } else {
+                if (bottomButtonType != BOTTOM_BUTTON_TYPE_REPORT) {
                     joinToGroup();
                 }
             }

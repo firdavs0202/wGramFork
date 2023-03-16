@@ -19,7 +19,9 @@ import static com.google.android.exoplayer2.util.Assertions.checkIndex;
 import static com.google.android.exoplayer2.util.Assertions.checkState;
 
 import android.util.SparseBooleanArray;
+
 import androidx.annotation.Nullable;
+
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 /**

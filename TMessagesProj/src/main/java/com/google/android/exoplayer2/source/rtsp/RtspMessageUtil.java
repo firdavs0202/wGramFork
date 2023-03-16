@@ -34,7 +34,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 import android.net.Uri;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.util.Util;
@@ -42,6 +44,7 @@ import com.google.common.base.Ascii;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

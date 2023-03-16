@@ -20,7 +20,6 @@ public class PremiumFeatureCell extends FrameLayout {
     private final TextView description;
     public ImageView imageView;
     boolean drawDivider;
-    public PremiumPreviewFragment.PremiumFeatureData data;
 
     public PremiumFeatureCell(Context context) {
         super(context);
@@ -53,14 +52,6 @@ public class PremiumFeatureCell extends FrameLayout {
         addView(nextIcon, LayoutHelper.createFrame(24, 24, Gravity.RIGHT | Gravity.CENTER_VERTICAL, 0, 0, 18, 0));
     }
 
-
-    public void setData(PremiumPreviewFragment.PremiumFeatureData data, boolean drawDivider) {
-        this.data = data;
-        title.setText(data.title);
-        description.setText(data.description);
-        imageView.setImageResource(data.icon);
-        this.drawDivider = drawDivider;
-    }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {

@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Handler;
+
 import com.google.android.exoplayer2.util.Util;
 
 /* package */ final class AudioBecomingNoisyManager {

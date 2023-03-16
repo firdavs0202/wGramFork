@@ -14,7 +14,6 @@ import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
@@ -37,7 +36,6 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -571,7 +569,6 @@ public final class BulletinFactory {
             spannable.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    fragment.presentFragment(new PremiumPreviewFragment("settings"));
                 }
 
                 @Override

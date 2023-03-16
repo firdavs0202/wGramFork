@@ -19,14 +19,13 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.view.View;
-import android.view.accessibility.AccessibilityNodeInfo;
+
+import androidx.annotation.Keep;
 
 import org.telegram.messenger.AndroidUtilities;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
-import androidx.annotation.Keep;
 
 public class NumberTextView extends View {
 

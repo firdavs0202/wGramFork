@@ -20,17 +20,21 @@ import android.graphics.BitmapFactory;
 import android.text.SpannableStringBuilder;
 import android.util.Base64;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.util.Assertions;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** A package internal representation of TTML node. */
 /* package */ final class TtmlNode {

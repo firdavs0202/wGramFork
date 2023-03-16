@@ -27,10 +27,12 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.text.Cue;
@@ -43,6 +45,7 @@ import com.google.android.exoplayer2.video.VideoListener;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.common.base.Objects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

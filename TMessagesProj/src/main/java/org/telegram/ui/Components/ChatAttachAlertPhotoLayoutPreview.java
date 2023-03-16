@@ -73,7 +73,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
     private final long durationMultiplier = 1;
 
     public float getPreviewScale() {
-        // preview is 80% of real message size
         return AndroidUtilities.displaySize.y > AndroidUtilities.displaySize.x ? .8f : .45f;
     }
 
@@ -182,9 +181,7 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
         groupsView.setClipChildren(true);
         addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
-        this.photoLayout = parentAlert.getPhotoLayout();
         groupsView.deletedPhotos.clear();
-        groupsView.fromPhotoLayout(photoLayout);
 
         undoView = new UndoView(context, null, false, parentAlert.parentThemeDelegate);
         undoView.setEnterOffsetMargin(AndroidUtilities.dp(8 + 24));
@@ -201,44 +198,13 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
         }
     }
 
-    public void invalidateGroupsView() {
-        groupsView.invalidate();
-    }
-
     private ViewPropertyAnimator headerAnimator;
-    private ChatAttachAlertPhotoLayout photoLayout;
     private boolean shown = false;
 
     @Override
     void onShow(ChatAttachAlert.AttachAlertLayout previousLayout) {
         shown = true;
-        if (previousLayout instanceof ChatAttachAlertPhotoLayout) {
-            this.photoLayout = (ChatAttachAlertPhotoLayout) previousLayout;
-            groupsView.deletedPhotos.clear();
-            groupsView.fromPhotoLayout(photoLayout);
-            groupsView.requestLayout();
-
-            layoutManager.scrollToPositionWithOffset(0, 0);
-            Runnable setScrollY = () -> {
-                int currentItemTop = previousLayout.getCurrentItemTop(),
-                        paddingTop = previousLayout.getListTopPadding();
-                listView.scrollBy(0, (currentItemTop > AndroidUtilities.dp(7) ? paddingTop - currentItemTop : paddingTop));
-            };
-            listView.post(setScrollY);
-
-            postDelayed(() -> {
-                if (shown) {
-                    if (parentAlert.getPhotoLayout() != null) {
-                        parentAlert.getPhotoLayout().previewItem.setIcon(R.drawable.ic_ab_back);
-                        parentAlert.getPhotoLayout().previewItem.setText(LocaleController.getString(R.string.Back));
-                    }
-                }
-            }, 250);
-
-            groupsView.toPhotoLayout(photoLayout, false);
-        } else {
             scrollToTop();
-        }
 
         if (headerAnimator != null) {
             headerAnimator.cancel();
@@ -256,15 +222,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
         }
         headerAnimator = header.animate().alpha(0f).setDuration(150).setInterpolator(CubicBezierInterpolator.EASE_BOTH);
         headerAnimator.start();
-
-        if (getSelectedItemsCount() > 1) {
-            if (parentAlert.getPhotoLayout() != null) {
-                parentAlert.getPhotoLayout().previewItem.setIcon(R.drawable.msg_view_file);
-                parentAlert.getPhotoLayout().previewItem.setText(LocaleController.getString(R.string.AttachMediaPreviewButton));
-            }
-        }
-
-        groupsView.toPhotoLayout(photoLayout, true);
     }
 
     @Override
@@ -299,9 +256,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
 
     @Override
     void applyCaption(CharSequence text) {
-        if (photoLayout != null) {
-            photoLayout.applyCaption(text);
-        }
     }
 
     private static HashMap<MediaController.PhotoEntry, Boolean> photoRotate = new HashMap<>();
@@ -851,9 +805,7 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
 
     @Override
     void onMenuItemClick(int id) {
-        try {
-            parentAlert.getPhotoLayout().onMenuItemClick(id);
-        } catch (Exception ignore) {}
+
     }
 
     @Override
@@ -907,11 +859,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
 
     @Override
     void onSelectedItemsCountChanged(int count) {
-        if (count > 1) {
-            parentAlert.selectedMenuItem.showSubItem(ChatAttachAlertPhotoLayout.group);
-        } else {
-            parentAlert.selectedMenuItem.hideSubItem(ChatAttachAlertPhotoLayout.group);
-        }
     }
 
     private class PreviewGroupsView extends ViewGroup {
@@ -941,10 +888,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
 
         private HashMap<Object, Object> deletedPhotos = new HashMap<>();
         public void saveDeletedImageId(MediaController.PhotoEntry photo) {
-            if (photoLayout == null) {
-                return;
-            }
-            HashMap<Object, Object> photosMap = photoLayout.getSelectedPhotos();
 
             List<Map.Entry<Object, Object>> entries = new ArrayList<>(photosMap.entrySet());
             final int entriesCount = entries.size();
@@ -954,12 +897,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                     break;
                 }
             }
-        }
-
-        public void fromPhotoLayout(ChatAttachAlertPhotoLayout photoLayout) {
-            photosOrder = photoLayout.getSelectedPhotosOrder();
-            photosMap = photoLayout.getSelectedPhotos();
-            fromPhotoArrays();
         }
 
         public void fromPhotoArrays() {
@@ -985,7 +922,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
         ArrayList<Object> photosOrder;
 
         public void calcPhotoArrays() {
-            photosMap = photoLayout.getSelectedPhotos();
             photosMapKeys = new ArrayList<>(photosMap.entrySet());
             selectedPhotos = new HashMap<>();
             photosOrder = new ArrayList<>();
@@ -1039,15 +975,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
             }
         }
 
-        public void toPhotoLayout(ChatAttachAlertPhotoLayout photoLayout, boolean updateLayout) {
-            int previousCount = photoLayout.getSelectedPhotosOrder().size();
-            calcPhotoArrays();
-
-            photoLayout.updateSelected(selectedPhotos, photosOrder, updateLayout);
-            if (previousCount != photosOrder.size()) {
-                parentAlert.updateCountButton(1);
-            }
-        }
 
         public int getPhotosCount() {
             int count = 0;
@@ -1396,7 +1323,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
             @Override
             public void onClose() {
                 fromPhotoArrays();
-                toPhotoLayout(photoLayout, false);
             }
 
             @Override
@@ -1566,7 +1492,7 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                 remeasure();
                 invalidate();
             }
-        };
+        }
 
         private int undoViewId = 0;
 
@@ -1751,7 +1677,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                     } catch (Exception ignore) {}
 
                     updateGroups();
-                    toPhotoLayout(photoLayout, false);
                 }
 
                 stopDragging();
@@ -1776,7 +1701,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                                 groupCell.group.photos.remove(index);
                                 groupCell.setGroup(groupCell.group, true);
                                 updateGroups();
-                                toPhotoLayout(photoLayout, false);
 
                                 final int currentUndoViewId = ++undoViewId;
                                 undoView.showWithAction(0, ACTION_PREVIEW_MEDIA_DESELECTED, photo, null, () -> {
@@ -1787,7 +1711,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                                     draggingT = 0;
                                     pushToGroup(groupCell, photo, index);
                                     updateGroups();
-                                    toPhotoLayout(photoLayout, false);
                                 });
 
                                 postDelayed(() -> {
@@ -1827,9 +1750,6 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                         photoViewerProvider.init(arrayList);
                         ArrayList<Object> objectArrayList = new ArrayList<>(arrayList);
                         PhotoViewer.getInstance().openPhotoForSelect(objectArrayList, position, type, false, photoViewerProvider, chatActivity);
-                        if (photoLayout.captionForAllMedia()) {
-                            PhotoViewer.getInstance().setCaption(parentAlert.getCommentTextView().getText());
-                        }
                     }
                     tapMediaCell = null;
                     tapTime = 0;

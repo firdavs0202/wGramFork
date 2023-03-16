@@ -50,10 +50,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessagesController;
@@ -2309,19 +2307,19 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                     TextCell cell = (TextCell) holder.itemView;
                     if (position == backgroundRow) {
                         cell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
-                        cell.setTextAndIcon(LocaleController.getString("ChangeChatBackground", R.string.ChangeChatBackground), R.drawable.msg_background, false);
+                        cell.setTextAndIcon(LocaleController.getString("ChangeChatBackground", R.string.ChangeChatBackground), false);
                     } else if (position == editThemeRow) {
                         cell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
-                        cell.setTextAndIcon(LocaleController.getString("EditCurrentTheme", R.string.EditCurrentTheme), R.drawable.msg_theme, true);
+                        cell.setTextAndIcon(LocaleController.getString("EditCurrentTheme", R.string.EditCurrentTheme), true);
                     } else if (position == createNewThemeRow) {
                         cell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
-                        cell.setTextAndIcon(LocaleController.getString("CreateNewTheme", R.string.CreateNewTheme), R.drawable.msg_colors, false);
+                        cell.setTextAndIcon(LocaleController.getString("CreateNewTheme", R.string.CreateNewTheme), false);
                     } else if (position == stickersRow) {
                         cell.setColors(Theme.key_windowBackgroundWhiteGrayIcon, Theme.key_windowBackgroundWhiteBlackText);
-                        cell.setTextAndIcon(LocaleController.getString("StickersName", R.string.StickersName), R.drawable.msg2_sticker, false);
+                        cell.setTextAndIcon(LocaleController.getString("StickersName", R.string.StickersName), false);
                     } else if (position == liteModeRow) {
                         cell.setColors(Theme.key_windowBackgroundWhiteGrayIcon, Theme.key_windowBackgroundWhiteBlackText);
-                        cell.setTextAndIcon(LocaleController.getString("LiteMode", R.string.LiteMode), R.drawable.msg2_animations, false);
+                        cell.setTextAndIcon(LocaleController.getString("LiteMode", R.string.LiteMode), false);
                     }
                     break;
                 }

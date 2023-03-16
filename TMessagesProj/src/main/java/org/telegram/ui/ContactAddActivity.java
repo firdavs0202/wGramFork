@@ -360,13 +360,10 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
             }
         } else {
             TextCell suggestPhoto = new TextCell(context, resourcesProvider);
-            suggestPhoto.setTextAndIcon(LocaleController.formatString("SuggestUserPhoto", R.string.SuggestUserPhoto, user.first_name), R.drawable.msg_addphoto, true);
+            suggestPhoto.setTextAndIcon(LocaleController.formatString("SuggestUserPhoto", R.string.SuggestUserPhoto, user.first_name), true);
             suggestPhoto.setBackgroundDrawable(Theme.getSelectorDrawable(false));
             suggestPhoto.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
             RLottieDrawable suggestDrawable = new RLottieDrawable(R.raw.photo_suggest_icon, "" + R.raw.photo_suggest_icon, AndroidUtilities.dp(50), AndroidUtilities.dp(50), false, null);
-            suggestPhoto.imageView.setTranslationY(-AndroidUtilities.dp(9));
-            suggestPhoto.imageView.setTranslationX(-AndroidUtilities.dp(8));
-            suggestPhoto.imageView.setAnimation(suggestDrawable);
             suggestPhoto.setOnClickListener(v -> {
                 photoSelectedType = TYPE_SUGGEST;
                 imageUpdater.setUser(user);
@@ -376,7 +373,6 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
                 }, dialogInterface -> {
                     if (!imageUpdater.isUploadingImage()) {
                         suggestDrawable.setCustomEndFrame(85);
-                        suggestPhoto.imageView.playAnimation();
                     } else {
                         suggestDrawable.setCurrentFrame(0, false);
                     }
@@ -384,18 +380,14 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
                 }, ImageUpdater.TYPE_SUGGEST_PHOTO_FOR_USER);
                 suggestDrawable.setCurrentFrame(0);
                 suggestDrawable.setCustomEndFrame(43);
-                suggestPhoto.imageView.playAnimation();
             });
             linearLayout.addView(suggestPhoto, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 18, 0, 0));
 
             TextCell setAvatarCell = new TextCell(context, resourcesProvider);
-            setAvatarCell.setTextAndIcon(LocaleController.formatString("UserSetPhoto", R.string.UserSetPhoto, user.first_name), R.drawable.msg_addphoto, false);
+            setAvatarCell.setTextAndIcon(LocaleController.formatString("UserSetPhoto", R.string.UserSetPhoto, user.first_name), false);
             setAvatarCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
             setAvatarCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
             RLottieDrawable cameraDrawable = new RLottieDrawable(R.raw.camera_outline, "" + R.raw.camera_outline, AndroidUtilities.dp(50), AndroidUtilities.dp(50), false, null);
-            setAvatarCell.imageView.setTranslationY(-AndroidUtilities.dp(9));
-            setAvatarCell.imageView.setTranslationX(-AndroidUtilities.dp(8));
-            setAvatarCell.imageView.setAnimation(cameraDrawable);
             setAvatarCell.setOnClickListener(v -> {
                 photoSelectedType = TYPE_SET;
                 imageUpdater.setUser(user);
@@ -405,14 +397,12 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
                 }, dialogInterface -> {
                     if (!imageUpdater.isUploadingImage()) {
                         cameraDrawable.setCustomEndFrame(86);
-                        setAvatarCell.imageView.playAnimation();
                     } else {
                         cameraDrawable.setCurrentFrame(0, false);
                     }
                 }, ImageUpdater.TYPE_SET_PHOTO_FOR_USER);
                 cameraDrawable.setCurrentFrame(0);
                 cameraDrawable.setCustomEndFrame(43);
-                setAvatarCell.imageView.playAnimation();
             });
 
             linearLayout.addView(setAvatarCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 0, 0));
@@ -441,7 +431,6 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
             oldAvatarView.setForUserOrChat(user.photo, avatarDrawable);
             oldPhotoCell.addView(oldAvatarView, LayoutHelper.createFrame(30, 30, Gravity.CENTER_VERTICAL, 21, 0, 21, 0));
             oldPhotoCell.setText(LocaleController.getString("ResetToOriginalPhoto", R.string.ResetToOriginalPhoto), false);
-            oldPhotoCell.getImageView().setVisibility(View.VISIBLE);
             oldPhotoCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
             oldPhotoCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
             oldPhotoCell.setOnClickListener(v -> {

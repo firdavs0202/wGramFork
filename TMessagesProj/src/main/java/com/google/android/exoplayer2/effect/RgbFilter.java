@@ -19,7 +19,9 @@ package com.google.android.exoplayer2.effect;
 import static com.google.android.exoplayer2.util.Assertions.checkState;
 
 import android.content.Context;
+
 import com.google.android.exoplayer2.util.FrameProcessingException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** Provides common color filters. */

@@ -16,9 +16,11 @@
 package com.google.android.exoplayer2.video;
 
 import android.os.Bundle;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.util.Util;
 

@@ -49,7 +49,6 @@ import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EmptyTextProgressView;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.TranslateAlert2;
 
@@ -202,10 +201,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
                     } else if (position == 2) {
                         boolean value = !getChatValue();
-                        if (value && !getUserConfig().isPremium()) {
-                            showDialog(new PremiumFeatureBottomSheet(LanguageSelectActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, false));
-                            return;
-                        }
                         MessagesController.getMainSettings(currentAccount).edit().putBoolean("translate_chat_button", value).apply();
                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
                         ((TextCheckCell) view).setChecked(value);
@@ -283,9 +278,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
 
                     if (selectedLanguages.contains(prevLangCode) && !selectedLanguages.contains(langCode)) {
                         newSelectedLanguages.removeIf(s -> s != null && s.equals(prevLangCode));
-                    }
-                    if (langCode != null && !"null".equals(langCode)) {
-                        newSelectedLanguages.add(langCode);
+                        if (langCode != null && !"null".equals(langCode)) {
+                            newSelectedLanguages.add(langCode);
+                        }
                     }
                     preferences.edit().putStringSet("translate_button_restricted_languages", newSelectedLanguages).apply();
                     MessagesController.getInstance(currentAccount).getTranslateController().checkRestrictedLanguagesUpdate();
@@ -634,9 +629,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                     String doNotTranslateCellValue = null;
                     try {
                         boolean[] accusative = new boolean[1];
-                        if (langCodes.size() == 0) {
-                            doNotTranslateCellValue = "";
-                        } else if (langCodes.size() == 1) {
+                        if (langCodes.size() == 1) {
                             doNotTranslateCellValue = TranslateAlert2.capitalFirst(TranslateAlert2.languageName(langCodes.iterator().next(), accusative));
                         } else {
                             Iterator<String> iterator = langCodes.iterator();

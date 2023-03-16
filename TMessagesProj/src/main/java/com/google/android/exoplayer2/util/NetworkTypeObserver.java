@@ -29,11 +29,14 @@ import android.telephony.TelephonyCallback;
 import android.telephony.TelephonyCallback.DisplayInfoListener;
 import android.telephony.TelephonyDisplayInfo;
 import android.telephony.TelephonyManager;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.android.exoplayer2.C;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.CopyOnWriteArrayList;
 

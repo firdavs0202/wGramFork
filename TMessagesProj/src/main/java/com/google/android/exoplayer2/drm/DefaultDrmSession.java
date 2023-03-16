@@ -27,9 +27,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Pair;
+
 import androidx.annotation.GuardedBy;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.decoder.CryptoConfig;
@@ -45,6 +47,11 @@ import com.google.android.exoplayer2.util.Consumer;
 import com.google.android.exoplayer2.util.CopyOnWriteMultiset;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,9 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /** A {@link DrmSession} that supports playbacks using {@link ExoMediaDrm}. */
 @RequiresApi(18)

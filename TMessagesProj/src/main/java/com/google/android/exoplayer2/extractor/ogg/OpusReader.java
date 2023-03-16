@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.extractor.ogg;
 import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.audio.OpusUtil;
@@ -26,9 +27,11 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+
 import java.util.Arrays;
 import java.util.List;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
 
 /** {@link StreamReader} to extract Opus data out of Ogg byte stream. */
 /* package */ final class OpusReader extends StreamReader {

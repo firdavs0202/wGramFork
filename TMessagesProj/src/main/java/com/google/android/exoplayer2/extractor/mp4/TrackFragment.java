@@ -16,10 +16,13 @@
 package com.google.android.exoplayer2.extractor.mp4;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.util.ParsableByteArray;
-import java.io.IOException;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
+import java.io.IOException;
 
 /** A holder for information corresponding to a single fragment of an mp4 file. */
 /* package */ final class TrackFragment {

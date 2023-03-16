@@ -23,9 +23,6 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
-import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 
@@ -190,9 +187,6 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
                     titleTextView.setText(LocaleController.formatString("LimitReachedFavoriteStickers", R.string.LimitReachedFavoriteStickers, MessagesController.getInstance(UserConfig.selectedAccount).stickersFavedLimitDefault));
                     CharSequence str = AndroidUtilities.replaceSingleTag(LocaleController.formatString("LimitReachedFavoriteStickersSubtitle", R.string.LimitReachedFavoriteStickersSubtitle, MessagesController.getInstance(UserConfig.selectedAccount).stickersFavedLimitPremium), () -> {
                         Activity activity = AndroidUtilities.findActivity(context);
-                        if (activity instanceof LaunchActivity) {
-                            ((LaunchActivity) activity).presentFragment(new PremiumPreviewFragment(LimitReachedBottomSheet.limitTypeToServerString(LimitReachedBottomSheet.TYPE_STICKERS)));
-                        }
                     });
                     subtitleTextView.setText(str);
                 } else {
@@ -205,9 +199,7 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
                     titleTextView.setText(LocaleController.formatString("LimitReachedFavoriteGifs", R.string.LimitReachedFavoriteGifs, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitDefault));
                     CharSequence str = AndroidUtilities.replaceSingleTag(LocaleController.formatString("LimitReachedFavoriteGifsSubtitle", R.string.LimitReachedFavoriteGifsSubtitle, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitPremium), () -> {
                         Activity activity = AndroidUtilities.findActivity(context);
-                        if (activity instanceof LaunchActivity) {
-                            ((LaunchActivity) activity).presentFragment(new PremiumPreviewFragment(LimitReachedBottomSheet.limitTypeToServerString(LimitReachedBottomSheet.TYPE_GIFS)));
-                        }
+
                     });
                     subtitleTextView.setText(str);
                 } else {

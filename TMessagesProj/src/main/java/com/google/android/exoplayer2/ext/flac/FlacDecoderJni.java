@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.ext.flac;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.extractor.FlacStreamMetadata;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.SeekPoint;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 

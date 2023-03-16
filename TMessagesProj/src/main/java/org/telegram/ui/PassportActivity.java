@@ -75,7 +75,6 @@ import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MrzRecognizer;
 import org.telegram.messenger.NotificationCenter;
@@ -337,7 +336,9 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
     private interface PassportActivityDelegate {
         void saveValue(TLRPC.TL_secureRequiredType type, String text, String json, TLRPC.TL_secureRequiredType documentType, String documentsJson, ArrayList<SecureDocument> documents, SecureDocument selfie, ArrayList<SecureDocument> translationDocuments, SecureDocument front, SecureDocument reverse, Runnable finishRunnable, ErrorRunnable errorRunnable);
+
         void deleteValue(TLRPC.TL_secureRequiredType type, TLRPC.TL_secureRequiredType documentType, ArrayList<TLRPC.TL_secureRequiredType> documentRequiredTypes, boolean deleteType, Runnable finishRunnable, ErrorRunnable errorRunnable);
+
         SecureDocument saveFile(TLRPC.TL_secureFile secureFile);
     }
 
@@ -1346,9 +1347,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
     @Override
     public void dismissCurrentDialog() {
         if (chatAttachAlert != null && visibleDialog == chatAttachAlert) {
-            chatAttachAlert.getPhotoLayout().closeCamera(false);
             chatAttachAlert.dismissInternal();
-            chatAttachAlert.getPhotoLayout().hideCamera(true);
             return;
         }
         super.dismissCurrentDialog();
@@ -6614,9 +6613,6 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == 0 || requestCode == 2) {
                 createChatAttachView();
-                if (chatAttachAlert != null) {
-                    chatAttachAlert.onActivityResultFragment(requestCode, data, currentPicturePath);
-                }
                 currentPicturePath = null;
             } else if (requestCode == 1) {
                 if (data == null || data.getData() == null) {
@@ -6635,9 +6631,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
     @Override
     public void onRequestPermissionsResultFragment(int requestCode, String[] permissions, int[] grantResults) {
         if ((currentActivityType == TYPE_IDENTITY || currentActivityType == TYPE_ADDRESS) && chatAttachAlert != null) {
-            if (requestCode == 17) {
-                chatAttachAlert.getPhotoLayout().checkCamera(false);
-            } else if (requestCode == 21) {
+            if (requestCode == 21) {
                 if (getParentActivity() == null) {
                     return;
                 }
@@ -6819,7 +6813,6 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         createChatAttachView();
         chatAttachAlert.setOpenWithFrontFaceCamera(uploadingFileType == UPLOADING_TYPE_SELFIE);
         chatAttachAlert.setMaxSelectedPhotos(getMaxSelectedDocuments(), false);
-        chatAttachAlert.getPhotoLayout().loadGalleryPhotos();
         if (Build.VERSION.SDK_INT == 21 || Build.VERSION.SDK_INT == 22) {
             AndroidUtilities.hideKeyboard(fragmentView.findFocus());
         }
@@ -6843,23 +6836,6 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
                     if (button == 8 || button == 7) {
                         if (button != 8) {
                             chatAttachAlert.dismiss(true);
-                        }
-                        HashMap<Object, Object> selectedPhotos = chatAttachAlert.getPhotoLayout().getSelectedPhotos();
-                        ArrayList<Object> selectedPhotosOrder = chatAttachAlert.getPhotoLayout().getSelectedPhotosOrder();
-                        if (!selectedPhotos.isEmpty()) {
-                            ArrayList<SendMessagesHelper.SendingMediaInfo> photos = new ArrayList<>();
-                            for (int a = 0; a < selectedPhotosOrder.size(); a++) {
-                                MediaController.PhotoEntry photoEntry = (MediaController.PhotoEntry) selectedPhotos.get(selectedPhotosOrder.get(a));
-                                SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
-                                if (photoEntry.imagePath != null) {
-                                    info.path = photoEntry.imagePath;
-                                } else {
-                                    info.path = photoEntry.path;
-                                }
-                                photos.add(info);
-                                photoEntry.reset();
-                            }
-                            processSelectedFiles(photos);
                         }
                         return;
                     } else if (chatAttachAlert != null) {

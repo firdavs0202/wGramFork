@@ -37,8 +37,10 @@ import android.os.SystemClock;
 import android.system.ErrnoException;
 import android.system.OsConstants;
 import android.util.Pair;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.ContentType;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -68,15 +70,17 @@ import com.google.android.exoplayer2.util.NetworkTypeObserver;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.UUID;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
-import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * An {@link AnalyticsListener} that interacts with the Android {@link MediaMetricsManager}.

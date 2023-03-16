@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
@@ -109,12 +107,9 @@ public class BotCommandsMenuView extends View {
 
     private void updateColors() {
         paint.setColor(Theme.getColor(Theme.key_chat_messagePanelVoiceBackground));
-        int textColor = Theme.getColor(Theme.key_chat_messagePanelVoiceDuration);
+        int textColor = Theme.getColor(Theme.key_chat_messagePanelVoicePressed);
         backDrawable.setBackColor(textColor);
         backDrawable.setIconColor(textColor);
-        if (webViewAnimation != null) {
-            webViewAnimation.setColorFilter(new PorterDuffColorFilter(textColor, PorterDuff.Mode.SRC_IN));
-        }
         textPaint.setColor(textColor);
     }
 

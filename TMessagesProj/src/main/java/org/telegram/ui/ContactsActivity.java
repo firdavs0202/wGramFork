@@ -9,13 +9,9 @@
 package org.telegram.ui;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.StateListAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -24,7 +20,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -42,14 +37,12 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.collection.LongSparseArray;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -89,11 +82,9 @@ import org.telegram.ui.Cells.UserCell;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CombinedDrawable;
-import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.FlickerLoadingView;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.StickerEmptyView;
 
@@ -110,12 +101,7 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
     private ActionBarMenuItem sortItem;
     private boolean sortByName;
 
-    private RLottieImageView floatingButton;
-    private FrameLayout floatingButtonContainer;
     private AccelerateDecelerateInterpolator floatingInterpolator = new AccelerateDecelerateInterpolator();
-    private int prevPosition;
-    private int prevTop;
-    private boolean scrollUpdated;
     private boolean floatingHidden;
 
     private boolean hasGps;
@@ -260,9 +246,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
             @Override
             public void onSearchExpand() {
                 searching = true;
-                if (floatingButtonContainer != null) {
-                    floatingButtonContainer.setVisibility(View.GONE);
-                }
                 if (sortItem != null) {
                     sortItem.setVisibility(View.GONE);
                 }
@@ -278,13 +261,7 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                 listViewAdapter.notifyDataSetChanged();
                 listView.setFastScrollVisible(true);
                 listView.setVerticalScrollBarEnabled(false);
-               // emptyView.setText(LocaleController.getString("NoContacts", R.string.NoContacts));
-                if (floatingButtonContainer != null) {
-                    floatingButtonContainer.setVisibility(View.VISIBLE);
-                    floatingHidden = true;
-                    floatingButtonContainer.setTranslationY(AndroidUtilities.dp(100));
-                    hideFloatingButton(false);
-                }
+                // emptyView.setText(LocaleController.getString("NoContacts", R.string.NoContacts));
                 if (sortItem != null) {
                     sortItem.setVisibility(View.VISIBLE);
                 }
@@ -353,10 +330,8 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                 if (listView != null && listView.getAdapter() == this) {
                     int count = super.getItemCount();
                     if (needPhonebook) {
-                      //  emptyView.setVisibility(count == 2 ? View.VISIBLE : View.GONE);
                         listView.setFastScrollVisible(count != 2);
                     } else {
-                        //emptyView.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
                         listView.setFastScrollVisible(count != 0);
                     }
                 }
@@ -461,9 +436,7 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                 }
                 if ((!onlyUsers || inviteViaLink != 0) && section == 0) {
                     if (needPhonebook) {
-                        if (row == 0) {
-                            presentFragment(new InviteContactsActivity());
-                        } else if (row == 1 && hasGps) {
+                        if (row == 1 && hasGps) {
                             if (Build.VERSION.SDK_INT >= 23) {
                                 Activity activity = getParentActivity();
                                 if (activity != null) {
@@ -489,17 +462,13 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                                 presentFragment(new ActionIntroActivity(ActionIntroActivity.ACTION_TYPE_NEARBY_LOCATION_ENABLED));
                                 return;
                             }
-                            presentFragment(new PeopleNearbyActivity());
                         }
                     } else if (inviteViaLink != 0) {
                         if (row == 0) {
                             presentFragment(new GroupInviteActivity(chatId != 0 ? chatId : channelId));
                         }
                     } else {
-                        if (row == 0) {
-                            Bundle args = new Bundle();
-                            presentFragment(new GroupCreateActivity(args), false);
-                        } else if (row == 1) {
+                        if (row == 1) {
                             Bundle args = new Bundle();
                             args.putBoolean("onlyUsers", true);
                             args.putBoolean("destroyAfterSelect", true);
@@ -509,11 +478,7 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
                             presentFragment(new ContactsActivity(args), false);
                         } else if (row == 2) {
                             SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                            if (!BuildVars.DEBUG_VERSION && preferences.getBoolean("channel_intro", false)) {
-                                Bundle args = new Bundle();
-                                args.putInt("step", 0);
-                                presentFragment(new ChannelCreateActivity(args));
-                            } else {
+                            if (BuildVars.DEBUG_VERSION || !preferences.getBoolean("channel_intro", false)) {
                                 presentFragment(new ActionIntroActivity(ActionIntroActivity.ACTION_TYPE_CHANNEL_CREATE));
                                 preferences.edit().putBoolean("channel_intro", true).commit();
                             }
@@ -589,77 +554,17 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (floatingButtonContainer != null && floatingButtonContainer.getVisibility() != View.GONE) {
-                    int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-
-                    final View topChild = recyclerView.getChildAt(0);
-                    int firstViewTop = 0;
-                    if (topChild != null) {
-                        firstViewTop = topChild.getTop();
-                    }
-                    boolean goingDown;
-                    boolean changed = true;
-                    if (prevPosition == firstVisibleItem) {
-                        final int topDelta = prevTop - firstViewTop;
-                        goingDown = firstViewTop < prevTop;
-                        changed = Math.abs(topDelta) > 1;
-                    } else {
-                        goingDown = firstVisibleItem > prevPosition;
-                    }
-                    if (changed && scrollUpdated && (goingDown || scrollingManually)) {
-                        hideFloatingButton(goingDown);
-                    }
-                    prevPosition = firstVisibleItem;
-                    prevTop = firstViewTop;
-                    scrollUpdated = true;
-                }
             }
         });
 
         if (!createSecretChat && !returnAsResult) {
-            floatingButtonContainer = new FrameLayout(context);
-            frameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame((Build.VERSION.SDK_INT >= 21 ? 56 : 60) + 20, (Build.VERSION.SDK_INT >= 21 ? 56 : 60) + 20, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 4 : 0, 0, LocaleController.isRTL ? 0 : 4, 0));
-            floatingButtonContainer.setOnClickListener(v -> {
-                AndroidUtilities.requestAdjustNothing(getParentActivity(), getClassGuid());
-                new NewContactBottomSheet(ContactsActivity.this, getContext()) {
-                    @Override
-                    public void dismissInternal() {
-                        super.dismissInternal();
-                        AndroidUtilities.requestAdjustResize(getParentActivity(), classGuid);
-                    }
-                }.show();
-            });
-
-            floatingButton = new RLottieImageView(context);
-            floatingButton.setScaleType(ImageView.ScaleType.CENTER);
             Drawable drawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(56), Theme.getColor(Theme.key_chats_actionBackground), Theme.getColor(Theme.key_chats_actionPressedBackground));
             if (Build.VERSION.SDK_INT < 21) {
                 Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
                 shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
                 CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
                 combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                drawable = combinedDrawable;
             }
-            floatingButton.setBackgroundDrawable(drawable);
-            floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
-            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-            boolean configAnimationsEnabled = preferences.getBoolean("view_animations", true);
-            floatingButton.setAnimation(configAnimationsEnabled ? R.raw.write_contacts_fab_icon : R.raw.write_contacts_fab_icon_reverse, 52, 52);
-            floatingButtonContainer.setContentDescription(LocaleController.getString("CreateNewContact", R.string.CreateNewContact));
-            if (Build.VERSION.SDK_INT >= 21) {
-                StateListAnimator animator = new StateListAnimator();
-                animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-                animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-                floatingButton.setStateListAnimator(animator);
-                floatingButton.setOutlineProvider(new ViewOutlineProvider() {
-                    @SuppressLint("NewApi")
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                    }
-                });
-            }
-            floatingButtonContainer.addView(floatingButton, LayoutHelper.createFrame((Build.VERSION.SDK_INT >= 21 ? 56 : 60), (Build.VERSION.SDK_INT >= 21 ? 56 : 60), Gravity.LEFT | Gravity.TOP, 10, 6, 10, 0));
         }
 
         if (initialSearchString != null) {
@@ -822,18 +727,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (floatingButtonContainer != null) {
-            floatingButtonContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    floatingButtonContainer.setTranslationY((floatingHidden ? AndroidUtilities.dp(100) : 0));
-                    floatingButtonContainer.setClickable(!floatingHidden);
-                    if (floatingButtonContainer != null) {
-                        floatingButtonContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -961,10 +854,8 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
         }
         floatingHidden = hide;
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Y,  (floatingHidden ? AndroidUtilities.dp(100) : 0)));
         animatorSet.setDuration(300);
         animatorSet.setInterpolator(floatingInterpolator);
-        floatingButtonContainer.setClickable(!hide);
         animatorSet.start();
     }
 
@@ -1020,14 +911,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
         if (dialogsActivity == null) {
             return null;
         }
-        RLottieImageView previousFab = dialogsActivity.getFloatingButton();
-        View previousFabContainer = previousFab.getParent() != null ? (View) previousFab.getParent() : null;
-        if (floatingButtonContainer == null || previousFabContainer == null || previousFab.getVisibility() != View.VISIBLE || Math.abs(previousFabContainer.getTranslationY()) > AndroidUtilities.dp(4) || Math.abs(floatingButtonContainer.getTranslationY()) > AndroidUtilities.dp(4)) {
-            floatingButton.setAnimation(R.raw.write_contacts_fab_icon, 52, 52);
-            floatingButton.getAnimatedDrawable().setCurrentFrame(floatingButton.getAnimatedDrawable().getFramesCount() - 1);
-            return null;
-        }
-        previousFabContainer.setVisibility(View.GONE);
         if (isOpen) {
             parent.setAlpha(0f);
         }
@@ -1036,180 +919,21 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
             parent.setTranslationX(AndroidUtilities.dp(48) * v);
             parent.setAlpha(1f - v);
         });
-        if (floatingButtonContainer != null) {
-            ((ViewGroup) fragmentView).removeView(floatingButtonContainer);
-            parentLayout.getOverlayContainerView().addView(floatingButtonContainer);
-        }
+
         valueAnimator.setDuration(150);
         valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (floatingButtonContainer != null) {
-                    ViewGroup viewParent;
-                    if (floatingButtonContainer.getParent() instanceof ViewGroup) {
-                        viewParent = (ViewGroup) floatingButtonContainer.getParent();
-                        viewParent.removeView(floatingButtonContainer);
-                    }
-                    ((ViewGroup) fragmentView).addView(floatingButtonContainer);
 
-                    previousFabContainer.setVisibility(View.VISIBLE);
-                    if (!isOpen) {
-                        previousFab.setAnimation(R.raw.write_contacts_fab_icon_reverse, 52, 52);
-                        previousFab.getAnimatedDrawable().setCurrentFrame(floatingButton.getAnimatedDrawable().getCurrentFrame());
-                        previousFab.playAnimation();
-                    }
-                }
-                callback.run();
-            }
-        });
         animatorSet.playTogether(valueAnimator);
         AndroidUtilities.runOnUIThread(() -> {
-            animationIndex = getNotificationCenter().setAnimationInProgress(animationIndex, new int[] {NotificationCenter.diceStickersDidLoad}, false);
+            animationIndex = getNotificationCenter().setAnimationInProgress(animationIndex, new int[]{NotificationCenter.diceStickersDidLoad}, false);
             animatorSet.start();
-            if (isOpen) {
-                floatingButton.setAnimation(R.raw.write_contacts_fab_icon, 52, 52);
-                floatingButton.playAnimation();
-            } else {
-                floatingButton.setAnimation(R.raw.write_contacts_fab_icon_reverse, 52, 52);
-                floatingButton.playAnimation();
-            }
+
             if (bounceIconAnimator != null) {
                 bounceIconAnimator.cancel();
             }
             bounceIconAnimator = new AnimatorSet();
-            float totalDuration = floatingButton.getAnimatedDrawable().getDuration();
-            long delay = 0;
-            if (isOpen) {
-                for (int i = 0; i < 6; i++) {
-                    AnimatorSet set = new AnimatorSet();
-                    if (i == 0) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1f, 0.9f)
-                        );
-                        set.setDuration((long) (6f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_OUT);
-                    } else if (i == 1) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.9f, 1.06f)
-                        );
-                        set.setDuration((long) (17f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 2) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.06f, 0.9f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.06f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.06f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.06f, 0.9f)
-                        );
-                        set.setDuration((long) (10f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 3) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.9f, 1.03f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.9f, 1.03f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.9f, 1.03f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.9f, 1.03f)
-                        );
-                        set.setDuration((long) (5f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 4) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.03f, 0.98f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.03f, 0.98f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.03f, 0.98f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.03f, 0.98f)
-                        );
-                        set.setDuration((long) (5f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.98f, 1f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.98f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.98f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.98f, 1f)
-                        );
-
-                        set.setDuration((long) (4f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_IN);
-                    }
-                    set.setStartDelay(delay);
-                    delay += set.getDuration();
-                    bounceIconAnimator.playTogether(set);
-                }
-            } else {
-                for (int i = 0; i < 5; i++) {
-                    AnimatorSet set = new AnimatorSet();
-                    if (i == 0) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1f, 0.9f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1f, 0.9f)
-                        );
-                        set.setDuration((long) (7f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_OUT);
-                    } else if (i == 1) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.9f, 1.06f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.9f, 1.06f)
-                        );
-                        set.setDuration((long) (8f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 2) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.06f, 0.92f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.06f, 0.92f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.06f, 0.92f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.06f, 0.92f)
-                        );
-                        set.setDuration((long) (7f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else if (i == 3) {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 0.92f, 1.02f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 0.92f, 1.02f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 0.92f, 1.02f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 0.92f, 1.02f)
-                        );
-                        set.setDuration((long) (9f / 36f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_BOTH);
-                    } else {
-                        set.playTogether(
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, 1.02f, 1f),
-                                ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, 1.02f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_X, 1.02f, 1f),
-                                ObjectAnimator.ofFloat(previousFabContainer, View.SCALE_Y, 1.02f, 1f)
-                        );
-                        set.setDuration((long) (5f / 47f * totalDuration));
-                        set.setInterpolator(CubicBezierInterpolator.EASE_IN);
-                    }
-                    set.setStartDelay(delay);
-                    delay += set.getDuration();
-                    bounceIconAnimator.playTogether(set);
-                }
-            }
-            bounceIconAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    floatingButton.setScaleX(1f);
-                    floatingButton.setScaleY(1f);
-                    previousFabContainer.setScaleX(1f);
-                    previousFabContainer.setScaleY(1f);
-                    bounceIconAnimator = null;
-                    getNotificationCenter().onAnimationFinish(animationIndex);
-                }
-            });
             bounceIconAnimator.start();
         }, 50);
         return animatorSet;
@@ -1268,10 +992,6 @@ public class ContactsActivity extends BaseFragment implements NotificationCenter
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG, new Class[]{TextCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG, new Class[]{TextCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueText2));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayIcon));
-
-        themeDescriptions.add(new ThemeDescription(floatingButton, ThemeDescription.FLAG_IMAGECOLOR, null, null, null, null, Theme.key_chats_actionIcon));
-        themeDescriptions.add(new ThemeDescription(floatingButton, ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_chats_actionBackground));
-        themeDescriptions.add(new ThemeDescription(floatingButton, ThemeDescription.FLAG_BACKGROUNDFILTER | ThemeDescription.FLAG_DRAWABLESELECTEDSTATE, null, null, null, null, Theme.key_chats_actionPressedBackground));
 
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{GraySectionCell.class}, new String[]{"textView"}, null, null, null, Theme.key_graySectionText));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CELLBACKGROUNDCOLOR, new Class[]{GraySectionCell.class}, null, null, null, Theme.key_graySection));

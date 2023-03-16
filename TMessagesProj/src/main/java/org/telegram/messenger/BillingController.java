@@ -1,10 +1,6 @@
 package org.telegram.messenger;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,7 +8,6 @@ import androidx.core.util.Consumer;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ProductDetails;
@@ -27,7 +22,6 @@ import com.google.android.exoplayer2.util.Util;
 import org.json.JSONObject;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.ui.PremiumPreviewFragment;
 
 import java.io.InputStream;
 import java.text.NumberFormat;
@@ -38,7 +32,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BillingController implements PurchasesUpdatedListener, BillingClientStateListener {
     public final static String PREMIUM_PRODUCT_ID = "telegram_premium";
@@ -54,8 +47,6 @@ public class BillingController implements PurchasesUpdatedListener, BillingClien
 
     private Map<String, Consumer<BillingResult>> resultListeners = new HashMap<>();
     private List<String> requestingTokens = new ArrayList<>();
-    private String lastPremiumTransaction;
-    private String lastPremiumToken;
 
     private Map<String, Integer> currencyExpMap = new HashMap<>();
 
@@ -75,13 +66,6 @@ public class BillingController implements PurchasesUpdatedListener, BillingClien
                 .build();
     }
 
-    public String getLastPremiumTransaction() {
-        return lastPremiumTransaction;
-    }
-
-    public String getLastPremiumToken() {
-        return lastPremiumToken;
-    }
 
     public String formatCurrency(long amount, String currency) {
         return formatCurrency(amount, currency, getCurrencyExp(currency));
@@ -152,92 +136,10 @@ public class BillingController implements PurchasesUpdatedListener, BillingClien
         billingClient.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(productType).build(), responseListener);
     }
 
-    public boolean startManageSubscription(Context ctx, String productId) {
-        try {
-            ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("https://play.google.com/store/account/subscriptions?sku=%s&package=%s", productId, ctx.getPackageName()))));
-            return true;
-        } catch (ActivityNotFoundException e) {
-            return false;
-        }
-    }
-
-    public void addResultListener(String productId, Consumer<BillingResult> listener) {
-        resultListeners.put(productId, listener);
-    }
-
-    public void launchBillingFlow(Activity activity, AccountInstance accountInstance, TLRPC.InputStorePaymentPurpose paymentPurpose, List<BillingFlowParams.ProductDetailsParams> productDetails) {
-        launchBillingFlow(activity, accountInstance, paymentPurpose, productDetails, null, false);
-    }
-
-    public void launchBillingFlow(Activity activity, AccountInstance accountInstance, TLRPC.InputStorePaymentPurpose paymentPurpose, List<BillingFlowParams.ProductDetailsParams> productDetails, BillingFlowParams.SubscriptionUpdateParams subscriptionUpdateParams, boolean checkedConsume) {
-        if (!isReady() || activity == null) {
-            return;
-        }
-
-        if (paymentPurpose instanceof TLRPC.TL_inputStorePaymentGiftPremium && !checkedConsume) {
-            queryPurchases(BillingClient.ProductType.INAPP, (billingResult, list) -> {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    Runnable callback = () -> launchBillingFlow(activity, accountInstance, paymentPurpose, productDetails, subscriptionUpdateParams, true);
-
-                    AtomicInteger productsToBeConsumed = new AtomicInteger(0);
-                    List<String> productsConsumed = new ArrayList<>();
-                    for (Purchase purchase : list) {
-                        if (purchase.isAcknowledged()) {
-                            for (BillingFlowParams.ProductDetailsParams params : productDetails) {
-                                String productId = params.zza().getProductId();
-                                if (purchase.getProducts().contains(productId)) {
-                                    productsToBeConsumed.incrementAndGet();
-                                    billingClient.consumeAsync(ConsumeParams.newBuilder()
-                                                    .setPurchaseToken(purchase.getPurchaseToken())
-                                            .build(), (billingResult1, s) -> {
-                                        if (billingResult1.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                                            productsConsumed.add(productId);
-
-                                            if (productsToBeConsumed.get() == productsConsumed.size()) {
-                                                callback.run();
-                                            }
-                                        }
-                                    });
-                                    break;
-                                }
-                            }
-                        } else {
-                            onPurchasesUpdated(BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build(), Collections.singletonList(purchase));
-                            return;
-                        }
-                    }
-
-                    if (productsToBeConsumed.get() == 0) {
-                        callback.run();
-                    }
-                }
-            });
-            return;
-        }
-
-        BillingFlowParams.Builder flowParams = BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(productDetails);
-        if (subscriptionUpdateParams != null) {
-            flowParams.setSubscriptionUpdateParams(subscriptionUpdateParams);
-        }
-        boolean ok = billingClient.launchBillingFlow(activity, flowParams.build()).getResponseCode() == BillingClient.BillingResponseCode.OK;
-
-        if (ok) {
-            for (BillingFlowParams.ProductDetailsParams params : productDetails) {
-                accountInstance.getUserConfig().billingPaymentPurpose = paymentPurpose;
-                accountInstance.getUserConfig().awaitBillingProductIds.add(params.zza().getProductId()); // params.getProductDetails().getProductId()
-            }
-            accountInstance.getUserConfig().saveConfig(false);
-        }
-    }
-
     @Override
     public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> list) {
         FileLog.d("Billing purchases updated: " + billingResult + ", " + list);
         if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-                PremiumPreviewFragment.sentPremiumBuyCanceled();
-            }
 
             for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++) {
                 AccountInstance acc = AccountInstance.getInstance(i);
@@ -253,13 +155,7 @@ public class BillingController implements PurchasesUpdatedListener, BillingClien
         if (list == null) {
             return;
         }
-        lastPremiumTransaction = null;
         for (Purchase purchase : list) {
-            if (purchase.getProducts().contains(PREMIUM_PRODUCT_ID)) {
-                lastPremiumTransaction = purchase.getOrderId();
-                lastPremiumToken = purchase.getPurchaseToken();
-            }
-
             if (!requestingTokens.contains(purchase.getPurchaseToken())) {
                 for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++) {
                     AccountInstance acc = AccountInstance.getInstance(i);

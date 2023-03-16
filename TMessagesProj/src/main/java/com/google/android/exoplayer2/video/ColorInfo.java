@@ -16,13 +16,17 @@
 package com.google.android.exoplayer2.video;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.util.Util;
-import java.util.Arrays;
+
 import org.checkerframework.dataflow.qual.Pure;
+
+import java.util.Arrays;
 
 /**
  * Stores color info.

@@ -19,6 +19,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.Assertions.checkState;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.extractor.ExtractorInput;
 import com.google.android.exoplayer2.extractor.FlacFrameReader;
 import com.google.android.exoplayer2.extractor.FlacMetadataReader;
@@ -29,8 +30,10 @@ import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.extractor.flac.FlacConstants;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
-import java.util.Arrays;
+
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
+
+import java.util.Arrays;
 
 /** {@link StreamReader} to extract Flac data out of Ogg byte stream. */
 /* package */ final class FlacReader extends StreamReader {

@@ -29,19 +29,23 @@ import android.text.Layout.Alignment;
 import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Objects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import org.checkerframework.dataflow.qual.Pure;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.checkerframework.dataflow.qual.Pure;
 
 /** Contains information about a specific cue, including textual content and formatting data. */
 // This class shouldn't be sub-classed. If a subtitle format needs additional fields, either they

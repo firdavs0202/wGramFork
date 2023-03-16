@@ -19,6 +19,7 @@ import static com.google.android.exoplayer2.extractor.Extractor.RESULT_SEEK;
 import static java.lang.annotation.ElementType.TYPE_USE;
 
 import androidx.annotation.IntDef;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.Extractor;
@@ -28,6 +29,7 @@ import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.mp4.SlowMotionData;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.common.base.Splitter;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

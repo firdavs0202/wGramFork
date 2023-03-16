@@ -990,16 +990,16 @@ public class FilterCreateActivity extends BaseFragment {
                         textCell.setText(LocaleController.getString("FilterDelete", R.string.FilterDelete), false);
                     } else if (position == includeShowMoreRow) {
                         textCell.setColors(Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhiteBlueText4);
-                        textCell.setTextAndIcon(LocaleController.formatPluralString("FilterShowMoreChats", newAlwaysShow.size() - 5), R.drawable.arrow_more, false);
+                        textCell.setTextAndIcon(LocaleController.formatPluralString("FilterShowMoreChats", newAlwaysShow.size() - 5), false);
                     } else if (position == excludeShowMoreRow) {
                         textCell.setColors(Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhiteBlueText4);
-                        textCell.setTextAndIcon(LocaleController.formatPluralString("FilterShowMoreChats", newNeverShow.size() - 5), R.drawable.arrow_more, false);
+                        textCell.setTextAndIcon(LocaleController.formatPluralString("FilterShowMoreChats", newNeverShow.size() - 5), false);
                     } else if (position == includeAddRow) {
                         textCell.setColors(Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhiteBlueText4);
-                        textCell.setTextAndIcon(LocaleController.getString("FilterAddChats", R.string.FilterAddChats), R.drawable.msg_chats_add, position + 1 != includeSectionRow);
+                        textCell.setTextAndIcon(LocaleController.getString("FilterAddChats", R.string.FilterAddChats), position + 1 != includeSectionRow);
                     } else if (position == excludeAddRow) {
                         textCell.setColors(Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhiteBlueText4);
-                        textCell.setTextAndIcon(LocaleController.getString("FilterRemoveChats", R.string.FilterRemoveChats), R.drawable.msg_chats_add, position + 1 != excludeSectionRow);
+                        textCell.setTextAndIcon(LocaleController.getString("FilterRemoveChats", R.string.FilterRemoveChats), position + 1 != excludeSectionRow);
                     }
                     break;
                 }

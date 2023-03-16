@@ -23,9 +23,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
-import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.collection.LongSparseArray;

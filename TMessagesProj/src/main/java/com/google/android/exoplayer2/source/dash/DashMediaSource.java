@@ -28,7 +28,9 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.SparseArray;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.MediaItem;
@@ -77,6 +79,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.common.base.Charsets;
 import com.google.common.math.LongMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

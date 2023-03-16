@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.extractor.ts;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.extractor.CeaUtil;
@@ -25,6 +26,7 @@ import com.google.android.exoplayer2.extractor.ts.TsPayloadReader.TrackIdGenerat
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.ParsableByteArray;
+
 import java.util.List;
 
 /** Consumes SEI buffers, outputting contained CEA-608/708 messages to a {@link TrackOutput}. */

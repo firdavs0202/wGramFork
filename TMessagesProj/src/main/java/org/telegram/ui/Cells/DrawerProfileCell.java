@@ -31,7 +31,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -60,8 +59,6 @@ import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Premium.PremiumGradient;
-import org.telegram.ui.Components.Premium.StarParticlesView;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.Reactions.AnimatedEmojiEffect;
@@ -76,7 +73,6 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     private BackupImageView avatarImageView;
     private SimpleTextView nameTextView;
     private TextView phoneTextView;
-    private ImageView shadowView;
     private ImageView arrowView;
     private RLottieImageView darkThemeView;
     private static RLottieDrawable sunDrawable;
@@ -97,22 +93,12 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     public boolean drawPremium;
     public float drawPremiumProgress;
 
-    private float stateX, stateY;
-
-    StarParticlesView.Drawable starParticlesDrawable;
-    PremiumGradient.PremiumGradientTools gradientTools;
-
     public DrawerProfileCell(Context context, DrawerLayoutContainer drawerLayoutContainer) {
         super(context);
 
-        shadowView = new ImageView(context);
-        shadowView.setVisibility(INVISIBLE);
-        shadowView.setScaleType(ImageView.ScaleType.FIT_XY);
-        shadowView.setImageResource(R.drawable.bottom_shadow);
-        addView(shadowView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 70, Gravity.LEFT | Gravity.BOTTOM));
-
         avatarImageView = new BackupImageView(context);
         avatarImageView.getImageReceiver().setRoundRadius(AndroidUtilities.dp(32));
+        avatarImageView.setOnClickListener(null);
         addView(avatarImageView, LayoutHelper.createFrame(64, 64, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 0, 67));
 
         nameTextView = new SimpleTextView(context) {
@@ -228,7 +214,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
             darkThemeView.playAnimation();
             switchTheme(themeInfo, toDark);
 
-            if (drawerLayoutContainer != null ) {
+            if (drawerLayoutContainer != null) {
                 FrameLayout layout = drawerLayoutContainer.getParent() instanceof FrameLayout ? (FrameLayout) drawerLayoutContainer.getParent() : null;
                 Theme.turnOffAutoNight(layout, () -> {
                     drawerLayoutContainer.closeDrawer(false);
@@ -267,12 +253,14 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
 
         private int animationUniq;
         private ArrayList<Object> animations = new ArrayList<>();
+
         public AnimatedStatusView(Context context, int stateSize, int effectsSize) {
             super(context);
             this.stateSize = stateSize;
             this.effectsSize = effectsSize;
             this.renderedEffectsSize = effectsSize;
         }
+
         public AnimatedStatusView(Context context, int stateSize, int effectsSize, int renderedEffectsSize) {
             super(context);
             this.stateSize = stateSize;
@@ -283,12 +271,13 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             super.onMeasure(
-                MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(Math.max(renderedEffectsSize, Math.max(stateSize, effectsSize))), MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(Math.max(renderedEffectsSize, Math.max(stateSize, effectsSize))), MeasureSpec.EXACTLY)
+                    MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(Math.max(renderedEffectsSize, Math.max(stateSize, effectsSize))), MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(Math.max(renderedEffectsSize, Math.max(stateSize, effectsSize))), MeasureSpec.EXACTLY)
             );
         }
 
         private float y1, y2;
+
         public void translate(float x, float y) {
             setTranslationX(x - getMeasuredWidth() / 2f);
             setTranslationY((this.y1 = y - getMeasuredHeight() / 2f) + this.y2);
@@ -313,17 +302,13 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
                             effectsSize
                     );
                     imageReceiver.draw(canvas);
-//                    if (imageReceiver.getLottieAnimation() != null && imageReceiver.getLottieAnimation().isRunning() && imageReceiver.getLottieAnimation().isLastFrame()) {
-//                        imageReceiver.onDetachedFromWindow();
-//                        animations.remove(imageReceiver);
-//                    }
                 } else if (animation instanceof AnimatedEmojiEffect) {
                     AnimatedEmojiEffect effect = (AnimatedEmojiEffect) animation;
                     effect.setBounds(
-                        (int) ((getMeasuredWidth() - renderedEffectsSize) / 2f),
-                        (int) ((getMeasuredHeight() - renderedEffectsSize) / 2f),
-                        (int) ((getMeasuredWidth() + renderedEffectsSize) / 2f),
-                        (int) ((getMeasuredHeight() + renderedEffectsSize) / 2f)
+                            (int) ((getMeasuredWidth() - renderedEffectsSize) / 2f),
+                            (int) ((getMeasuredHeight() - renderedEffectsSize) / 2f),
+                            (int) ((getMeasuredWidth() + renderedEffectsSize) / 2f),
+                            (int) ((getMeasuredHeight() + renderedEffectsSize) / 2f)
                     );
                     effect.draw(canvas);
                     if (effect.done()) {
@@ -400,6 +385,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         }
 
         private Integer color;
+
         public void setColor(int color) {
             this.color = color;
             final ColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY);
@@ -443,7 +429,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         super.onAttachedToWindow();
         updateColors();
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-        for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++){
+        for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++) {
             NotificationCenter.getInstance(i).addObserver(this, NotificationCenter.currentUserPremiumStatusChanged);
         }
     }
@@ -452,7 +438,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
-        for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++){
+        for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++) {
             NotificationCenter.getInstance(i).removeObserver(this, NotificationCenter.currentUserPremiumStatusChanged);
         }
         if (lastAccount >= 0) {
@@ -486,17 +472,6 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (drawPremium) {
-            if (starParticlesDrawable == null) {
-                starParticlesDrawable = new StarParticlesView.Drawable(15);
-                starParticlesDrawable.init();
-                starParticlesDrawable.speedScale = 0.8f;
-                starParticlesDrawable.minLifeTime = 3000;
-            }
-            starParticlesDrawable.rect.set(avatarImageView.getLeft(), avatarImageView.getTop(), avatarImageView.getRight(), avatarImageView.getBottom());
-            starParticlesDrawable.rect.inset(-AndroidUtilities.dp(20), -AndroidUtilities.dp(20));
-            starParticlesDrawable.resetPositions();
-        }
     }
 
     @Override
@@ -519,7 +494,6 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         }
         if (currentColor == null || currentColor != color) {
             currentColor = color;
-            shadowView.getDrawable().setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
         }
         color = Theme.getColor(Theme.key_chats_menuName);
         if (currentMoonColor == null || currentMoonColor != color) {
@@ -534,13 +508,9 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         nameTextView.setTextColor(Theme.getColor(Theme.key_chats_menuName));
         if (useImageBackground) {
             phoneTextView.setTextColor(Theme.getColor(Theme.key_chats_menuPhone));
-            if (shadowView.getVisibility() != VISIBLE) {
-                shadowView.setVisibility(VISIBLE);
-            }
             if (backgroundDrawable instanceof ColorDrawable || backgroundDrawable instanceof GradientDrawable) {
                 backgroundDrawable.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
                 backgroundDrawable.draw(canvas);
-                darkBackColor = Theme.getColor(Theme.key_listSelector);
             } else if (backgroundDrawable instanceof BitmapDrawable) {
                 Bitmap bitmap = ((BitmapDrawable) backgroundDrawable).getBitmap();
                 float scaleX = (float) getMeasuredWidth() / (float) bitmap.getWidth();
@@ -557,30 +527,12 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
                 } catch (Throwable e) {
                     FileLog.e(e);
                 }
-                darkBackColor = (Theme.getServiceMessageColor() & 0x00ffffff) | 0x50000000;
             }
         } else {
-            int visibility = drawCatsShadow? VISIBLE : INVISIBLE;
-            if (shadowView.getVisibility() != visibility) {
-                shadowView.setVisibility(visibility);
-            }
             phoneTextView.setTextColor(Theme.getColor(Theme.key_chats_menuPhoneCats));
             super.onDraw(canvas);
-            darkBackColor = Theme.getColor(Theme.key_listSelector);
         }
 
-
-//        if (darkBackColor != 0) {
-//            if (darkBackColor != darkThemeBackgroundColor) {
-//                backPaint.setColor(darkThemeBackgroundColor = darkBackColor);
-//                if (Build.VERSION.SDK_INT >= 21) {
-//                    Theme.setSelectorDrawableColor(darkThemeView.getBackground(), darkThemeBackgroundColor = darkBackColor, true);
-//                }
-//            }
-//            if (useImageBackground && backgroundDrawable instanceof BitmapDrawable) {
-//                canvas.drawCircle(darkThemeView.getX() + darkThemeView.getMeasuredWidth() / 2, darkThemeView.getY() + darkThemeView.getMeasuredHeight() / 2, AndroidUtilities.dp(17), backPaint);
-//            }
-//        }
         if (drawPremium && drawPremiumProgress != 1f) {
             drawPremiumProgress += 16 / 220f;
         } else if (!drawPremium && drawPremiumProgress != 0) {
@@ -588,20 +540,6 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         }
         drawPremiumProgress = Utilities.clamp(drawPremiumProgress, 1f, 0);
         if (drawPremiumProgress != 0) {
-            if (gradientTools == null) {
-                gradientTools = new PremiumGradient.PremiumGradientTools(Theme.key_premiumGradientBottomSheet1, Theme.key_premiumGradientBottomSheet2, Theme.key_premiumGradientBottomSheet3, null);
-                gradientTools.x1 = 0;
-                gradientTools.y1 = 1.1f;
-                gradientTools.x2 = 1.5f;
-                gradientTools.y2 = -0.2f;
-                gradientTools.exactly = true;
-            }
-            gradientTools.gradientMatrix(0, 0, getMeasuredWidth(), getMeasuredHeight(), 0, 0);
-            gradientTools.paint.setAlpha((int) (drawPremiumProgress * 255));
-            canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), gradientTools.paint);
-            if (starParticlesDrawable != null) {
-                starParticlesDrawable.onDraw(canvas, drawPremiumProgress);
-            }
             invalidate();
         }
 
@@ -618,10 +556,6 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         return avatarImageView.getImageReceiver().hasNotThumb();
     }
 
-    public boolean isAccountsShown() {
-        return accountsShown;
-    }
-
     public void setAccountsShown(boolean value, boolean animated) {
         if (accountsShown == value) {
             return;
@@ -633,6 +567,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     private int lastAccount = -1;
     private TLRPC.User lastUser = null;
     private Drawable premiumStar = null;
+
     public void setUser(TLRPC.User user, boolean accounts) {
         int account = UserConfig.selectedAccount;
         if (account != lastAccount) {
@@ -652,7 +587,8 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         CharSequence text = UserObject.getUserName(user);
         try {
             text = Emoji.replaceEmoji(text, nameTextView.getPaint().getFontMetricsInt(), AndroidUtilities.dp(22), false);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         drawPremium = false;//user.premium;
         nameTextView.setText(text);
@@ -728,8 +664,8 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         } else if (id == NotificationCenter.updateInterfaces) {
             int flags = (int) args[0];
             if ((flags & MessagesController.UPDATE_MASK_NAME) != 0 || (flags & MessagesController.UPDATE_MASK_AVATAR) != 0 ||
-                (flags & MessagesController.UPDATE_MASK_STATUS) != 0 || (flags & MessagesController.UPDATE_MASK_PHONE) != 0 ||
-                (flags & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
+                    (flags & MessagesController.UPDATE_MASK_STATUS) != 0 || (flags & MessagesController.UPDATE_MASK_PHONE) != 0 ||
+                    (flags & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
                 setUser(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser(), accountsShown);
             }
         }

@@ -24,14 +24,17 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C.FormatSupport;
 import com.google.android.exoplayer2.source.MediaPeriodId;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
+
 import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -16,13 +16,16 @@
 package com.google.android.exoplayer2.source;
 
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.BundleableUtil;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 
 /**

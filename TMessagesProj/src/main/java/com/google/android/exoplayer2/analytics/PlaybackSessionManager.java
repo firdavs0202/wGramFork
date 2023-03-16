@@ -16,6 +16,7 @@
 package com.google.android.exoplayer2.analytics;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.Player.DiscontinuityReason;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime;

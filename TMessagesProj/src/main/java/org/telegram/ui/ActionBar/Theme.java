@@ -66,7 +66,6 @@ import android.util.SparseArray;
 import android.util.StateSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -111,7 +110,6 @@ import org.telegram.ui.Components.MotionBackgroundDrawable;
 import org.telegram.ui.Components.MsgClockDrawable;
 import org.telegram.ui.Components.PathAnimator;
 import org.telegram.ui.Components.PlayingGameDrawable;
-import org.telegram.ui.Components.Premium.PremiumGradient;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RecordStatusDrawable;
 import org.telegram.ui.Components.RoundStatusDrawable;
@@ -8792,7 +8790,6 @@ public class Theme {
 
         chat_animatedEmojiTextColorFilter = new PorterDuffColorFilter(getColor(key_windowBackgroundWhiteBlackText), PorterDuff.Mode.SRC_IN);
 
-        PremiumGradient.getInstance().checkIconColors();
     }
 
     public static void createCommonDialogResources(Context context) {

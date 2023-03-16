@@ -23,7 +23,9 @@ import static java.lang.Math.min;
 
 import android.net.Uri;
 import android.os.Handler;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.FormatHolder;
@@ -51,13 +53,16 @@ import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.exoplayer2.upstream.Loader.Loadable;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+
+import org.checkerframework.checker.nullness.compatqual.NullableType;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+
 import java.io.IOException;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.net.SocketFactory;
-import org.checkerframework.checker.nullness.compatqual.NullableType;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** A {@link MediaPeriod} that loads an RTSP stream. */
 /* package */ final class RtspMediaPeriod implements MediaPeriod {

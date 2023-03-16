@@ -73,7 +73,6 @@ import org.telegram.ui.Components.InviteLinkBottomSheet;
 import org.telegram.ui.Components.JoinToSendSettingsView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LinkActionView;
-import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.TypefaceSpan;
 
@@ -355,7 +354,6 @@ public class ChatEditTypeActivity extends BaseFragment implements NotificationCe
                 return;
             }
             if (!canCreatePublic) {
-                showPremiumIncreaseLimitDialog();
                 return;
             }
             isPrivate = false;
@@ -571,7 +569,7 @@ public class ChatEditTypeActivity extends BaseFragment implements NotificationCe
 
         manageLinksTextView = new TextCell(context);
         manageLinksTextView.setBackgroundDrawable(Theme.getSelectorDrawable(true));
-        manageLinksTextView.setTextAndIcon(LocaleController.getString("ManageInviteLinks", R.string.ManageInviteLinks), R.drawable.msg_link2, false);
+        manageLinksTextView.setTextAndIcon(LocaleController.getString("ManageInviteLinks", R.string.ManageInviteLinks), false);
         manageLinksTextView.setOnClickListener(v -> {
             ManageLinksActivity fragment = new ManageLinksActivity(chatId, 0, 0);
             fragment.setInfo(info, invite);
@@ -643,19 +641,6 @@ public class ChatEditTypeActivity extends BaseFragment implements NotificationCe
             doneButtonDrawableAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
             doneButtonDrawableAnimator.start();
         }
-    }
-
-    private void showPremiumIncreaseLimitDialog() {
-        if (getParentActivity() == null) {
-            return;
-        }
-        LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(this, getParentActivity(), LimitReachedBottomSheet.TYPE_PUBLIC_LINKS, currentAccount);
-        limitReachedBottomSheet.parentIsChannel = isChannel;
-        limitReachedBottomSheet.onSuccessRunnable = () -> {
-            canCreatePublic = true;
-            updatePrivatePublic();
-        };
-        showDialog(limitReachedBottomSheet);
     }
 
     @Override
@@ -1468,7 +1453,6 @@ public class ChatEditTypeActivity extends BaseFragment implements NotificationCe
                             checkTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText8));
                         } else if (error != null && "CHANNELS_ADMIN_PUBLIC_TOO_MUCH".equals(error.text)) {
                             canCreatePublic = false;
-                            showPremiumIncreaseLimitDialog();
                         } else {
                             checkTextView.setText(LocaleController.getString("LinkInUse", R.string.LinkInUse));
                             checkTextView.setTextColor(Theme.key_windowBackgroundWhiteRedText4);

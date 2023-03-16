@@ -22,9 +22,12 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.view.View;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

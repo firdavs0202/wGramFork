@@ -19,10 +19,13 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.net.Uri;
 import android.util.Base64;
+
 import androidx.annotation.IntDef;
+
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.rtsp.RtspMessageUtil.RtspAuthUserInfo;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

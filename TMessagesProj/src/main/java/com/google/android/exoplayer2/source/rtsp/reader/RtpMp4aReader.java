@@ -23,6 +23,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.extractor.ExtractorOutput;
@@ -33,6 +34,7 @@ import com.google.android.exoplayer2.util.ParsableBitArray;
 import com.google.android.exoplayer2.util.ParsableByteArray;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableMap;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**

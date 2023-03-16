@@ -22,7 +22,9 @@ import static java.lang.Math.max;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.LoadEventInfo;
@@ -43,6 +45,7 @@ import com.google.android.exoplayer2.upstream.ParsingLoadable;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.Iterables;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

@@ -22,8 +22,10 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.Log;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeSet;

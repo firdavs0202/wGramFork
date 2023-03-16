@@ -19,10 +19,13 @@ import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static java.lang.Math.max;
 
 import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.Log;
 import com.google.common.net.HttpHeaders;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
