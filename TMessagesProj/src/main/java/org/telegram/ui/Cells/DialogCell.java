@@ -75,7 +75,6 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Adapters.DialogsAdapter;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimatedEmojiSpan;
-import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BubbleCounterPath;
 import org.telegram.ui.Components.CanvasButton;
 import org.telegram.ui.Components.CheckBox2;
@@ -455,11 +454,7 @@ public class DialogCell extends BaseCell {
     private int animateToStatusDrawableParams;
     private int animateFromStatusDrawableParams;
     private int lastStatusDrawableParams = -1;
-    private float statusDrawableProgress;
-    private boolean statusDrawableAnimationInProgress;
-    private ValueAnimator statusDrawableAnimator;
     long lastDialogChangedTime;
-    private int statusDrawableLeft;
 
     private DialogsActivity parentFragment;
 
@@ -510,11 +505,6 @@ public class DialogCell extends BaseCell {
 
     public void setDialog(TLRPC.Dialog dialog, int type, int folder) {
         if (currentDialogId != dialog.id) {
-            if (statusDrawableAnimator != null) {
-                statusDrawableAnimator.removeAllListeners();
-                statusDrawableAnimator.cancel();
-            }
-            statusDrawableAnimationInProgress = false;
             lastStatusDrawableParams = -1;
         }
         currentDialogId = dialog.id;
@@ -2191,11 +2181,6 @@ public class DialogCell extends BaseCell {
                 x1 = typingLayout.getPrimaryHorizontal(0);
                 x2 = typingLayout.getPrimaryHorizontal(1);
             }
-            if (x1 < x2) {
-                statusDrawableLeft = (int) (typingLeft + x1);
-            } else {
-                statusDrawableLeft = (int) (typingLeft + x2 + AndroidUtilities.dp(3));
-            }
         }
         updateThumbsPosition();
     }
@@ -2331,74 +2316,6 @@ public class DialogCell extends BaseCell {
 
     public boolean isForumCell() {
         return !isDialogFolder() && chat != null && chat.forum && !isTopic;
-    }
-
-    private void drawCheckStatus(Canvas canvas, boolean drawClock, boolean drawCheck1, boolean drawCheck2, boolean moveCheck, float alpha) {
-        if (alpha == 0 && !moveCheck) {
-            return;
-        }
-        float scale = 0.5f + 0.5f * alpha;
-        if (drawClock) {
-            setDrawableBounds(Theme.dialogs_clockDrawable, clockDrawLeft, checkDrawTop);
-            if (alpha != 1f) {
-                canvas.save();
-                canvas.scale(scale, scale, Theme.dialogs_clockDrawable.getBounds().centerX(), Theme.dialogs_halfCheckDrawable.getBounds().centerY());
-                Theme.dialogs_clockDrawable.setAlpha((int) (255 * alpha));
-            }
-            Theme.dialogs_clockDrawable.draw(canvas);
-            if (alpha != 1f) {
-                canvas.restore();
-                Theme.dialogs_clockDrawable.setAlpha(255);
-            }
-            invalidate();
-        } else if (drawCheck2) {
-            if (drawCheck1) {
-                setDrawableBounds(Theme.dialogs_halfCheckDrawable, halfCheckDrawLeft, checkDrawTop);
-                if (moveCheck) {
-                    canvas.save();
-                    canvas.scale(scale, scale, Theme.dialogs_halfCheckDrawable.getBounds().centerX(), Theme.dialogs_halfCheckDrawable.getBounds().centerY());
-                    Theme.dialogs_halfCheckDrawable.setAlpha((int) (255 * alpha));
-                }
-                if (!moveCheck && alpha != 0) {
-                    canvas.save();
-                    canvas.scale(scale, scale, Theme.dialogs_halfCheckDrawable.getBounds().centerX(), Theme.dialogs_halfCheckDrawable.getBounds().centerY());
-                    Theme.dialogs_halfCheckDrawable.setAlpha((int) (255 * alpha));
-                    Theme.dialogs_checkReadDrawable.setAlpha((int) (255 * alpha));
-                }
-
-                Theme.dialogs_halfCheckDrawable.draw(canvas);
-
-                if (moveCheck) {
-                    canvas.restore();
-                    canvas.save();
-                    canvas.translate(AndroidUtilities.dp(4) * (1f - alpha), 0);
-                }
-                setDrawableBounds(Theme.dialogs_checkReadDrawable, checkDrawLeft, checkDrawTop);
-                Theme.dialogs_checkReadDrawable.draw(canvas);
-                if (moveCheck) {
-                    canvas.restore();
-                    Theme.dialogs_halfCheckDrawable.setAlpha(255);
-                }
-
-                if (!moveCheck && alpha != 0) {
-                    canvas.restore();
-                    Theme.dialogs_halfCheckDrawable.setAlpha(255);
-                    Theme.dialogs_checkReadDrawable.setAlpha(255);
-                }
-            } else {
-                setDrawableBounds(Theme.dialogs_checkDrawable, checkDrawLeft1, checkDrawTop);
-                if (alpha != 1f) {
-                    canvas.save();
-                    canvas.scale(scale, scale, Theme.dialogs_checkDrawable.getBounds().centerX(), Theme.dialogs_halfCheckDrawable.getBounds().centerY());
-                    Theme.dialogs_checkDrawable.setAlpha((int) (255 * alpha));
-                }
-                Theme.dialogs_checkDrawable.draw(canvas);
-                if (alpha != 1f) {
-                    canvas.restore();
-                    Theme.dialogs_checkDrawable.setAlpha(255);
-                }
-            }
-        }
     }
 
     public boolean isPointInsideAvatar(float x, float y) {
@@ -3319,11 +3236,7 @@ public class DialogCell extends BaseCell {
                         } else {
                             top = messageTop - typingAnimationOffset * (1f - updateHelper.typingProgres);
                         }
-                        if (type == 1 || type == 4) {
-                            canvas.translate(statusDrawableLeft, top + (type == 1 ? AndroidUtilities.dp(1) : 0));
-                        } else {
-                            canvas.translate(statusDrawableLeft, top + (AndroidUtilities.dp(18) - statusDrawable.getIntrinsicHeight()) / 2f);
-                        }
+
                         statusDrawable.draw(canvas);
                         invalidate();
                         canvas.restore();
@@ -3400,30 +3313,7 @@ public class DialogCell extends BaseCell {
 
             if (currentDialogFolderId == 0) {
                 int currentStatus = (drawClock ? 1 : 0) + (drawCheck1 ? 2 : 0) + (drawCheck2 ? 4 : 0);
-                if (lastStatusDrawableParams >= 0 && lastStatusDrawableParams != currentStatus && !statusDrawableAnimationInProgress) {
-                    createStatusDrawableAnimator(lastStatusDrawableParams, currentStatus);
-                }
-                if (statusDrawableAnimationInProgress) {
-                    currentStatus = animateToStatusDrawableParams;
-                }
 
-                boolean drawClock = (currentStatus & 1) != 0;
-                boolean drawCheck1 = (currentStatus & 2) != 0;
-                boolean drawCheck2 = (currentStatus & 4) != 0;
-
-                if (statusDrawableAnimationInProgress) {
-                    boolean outDrawClock = (animateFromStatusDrawableParams & 1) != 0;
-                    boolean outDrawCheck1 = (animateFromStatusDrawableParams & 2) != 0;
-                    boolean outDrawCheck2 = (animateFromStatusDrawableParams & 4) != 0;
-                    if (!drawClock && !outDrawClock && outDrawCheck2 && !outDrawCheck1 && drawCheck1 && drawCheck2) {
-                        drawCheckStatus(canvas, drawClock, drawCheck1, drawCheck2, true, statusDrawableProgress);
-                    } else {
-                        drawCheckStatus(canvas, outDrawClock, outDrawCheck1, outDrawCheck2, false, 1f - statusDrawableProgress);
-                        drawCheckStatus(canvas, drawClock, drawCheck1, drawCheck2, false, statusDrawableProgress);
-                    }
-                } else {
-                    drawCheckStatus(canvas, drawClock, drawCheck1, drawCheck2, false, 1f);
-                }
                 lastStatusDrawableParams = (this.drawClock ? 1 : 0) + (this.drawCheck1 ? 2 : 0) + (this.drawCheck2 ? 4 : 0);
             }
 
@@ -3831,9 +3721,9 @@ public class DialogCell extends BaseCell {
             } else {
                 drawCounterMuted = chat != null && chat.forum && forumTopic == null ? !hasUnmutedTopics : dialogMuted;
             }
-            int countLeftLocal = (int)  countWidth - AndroidUtilities.dp(5f);
+            int countLeftLocal = (int) countWidth - AndroidUtilities.dp(5f);
             int countLeftOld = (int) countWidthOld - AndroidUtilities.dp(5f);
-            int countTop = (int)  - AndroidUtilities.dp(22);
+            int countTop = (int) -AndroidUtilities.dp(22);
             drawCounter(canvas, drawCounterMuted, countTop, countLeftLocal, countLeftOld, rightFragmentOpenedProgress, true);
         }
 
@@ -4135,35 +4025,6 @@ public class DialogCell extends BaseCell {
                 Theme.dialogs_countTextPaint.setColor(Theme.getColor(Theme.key_chats_unreadCounterText));
             }
         }
-    }
-
-    private void createStatusDrawableAnimator(int lastStatusDrawableParams, int currentStatus) {
-        statusDrawableProgress = 0f;
-        statusDrawableAnimator = ValueAnimator.ofFloat(0, 1f);
-        statusDrawableAnimator.setDuration(220);
-
-        statusDrawableAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
-        animateFromStatusDrawableParams = lastStatusDrawableParams;
-        animateToStatusDrawableParams = currentStatus;
-        statusDrawableAnimator.addUpdateListener(valueAnimator -> {
-            statusDrawableProgress = (float) valueAnimator.getAnimatedValue();
-            invalidate();
-        });
-        statusDrawableAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                int currentStatus = (DialogCell.this.drawClock ? 1 : 0) + (DialogCell.this.drawCheck1 ? 2 : 0) + (DialogCell.this.drawCheck2 ? 4 : 0);
-                if (animateToStatusDrawableParams != currentStatus) {
-                    createStatusDrawableAnimator(animateToStatusDrawableParams, currentStatus);
-                } else {
-                    statusDrawableAnimationInProgress = false;
-                    DialogCell.this.lastStatusDrawableParams = animateToStatusDrawableParams;
-                }
-                invalidate();
-            }
-        });
-        statusDrawableAnimationInProgress = true;
-        statusDrawableAnimator.start();
     }
 
     public void startOutAnimation() {
