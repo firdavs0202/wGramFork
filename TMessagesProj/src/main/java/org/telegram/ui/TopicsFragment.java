@@ -2813,7 +2813,6 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
 
         public TopicDialogCell(DialogsActivity fragment, Context context, boolean needCheck, boolean forceThreeLines) {
             super(fragment, context, needCheck, forceThreeLines);
-            drawAvatar = false;
             messagePaddingStart = isInPreviewMode() ? 11 : 50;
             chekBoxPaddingTop = 24;
             heightDefault = 64;

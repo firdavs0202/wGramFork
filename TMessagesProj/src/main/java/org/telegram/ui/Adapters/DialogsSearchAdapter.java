@@ -1710,7 +1710,6 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                 cell.useSeparator = (position != getItemCount() - 1);
                 MessageObject messageObject = (MessageObject) getItem(position);
                 boolean isLocalForum = searchForumResultMessages.contains(messageObject);
-                cell.useFromUserAsAvatar = isLocalForum;
                 if (messageObject == null) {
                     cell.setDialog(0, null, 0, false, false);
                 } else {

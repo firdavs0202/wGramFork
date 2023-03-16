@@ -1518,7 +1518,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             if (selectedCell != null) {
                 canvas.save();
-                lastDrawSelectorY = selectedCell.getY() + selectedCell.collapseOffset + selectedCell.avatarImage.getImageY();
+                lastDrawSelectorY = selectedCell.getY() + selectedCell.collapseOffset ;
                 selectedCell.collapseOffset = 0;
                 if (selectorPositionProgress != 1f) {
                     selectorPositionProgress += 16 / 200f;
@@ -1540,7 +1540,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     lastDrawSelectorY = Integer.MIN_VALUE;
                 }
                 float xOffset = -AndroidUtilities.dp(5) * hideProgrss;
-                AndroidUtilities.rectTmp.set(-AndroidUtilities.dp(4) + xOffset, lastDrawSelectorY - AndroidUtilities.dp(1), AndroidUtilities.dp(4) + xOffset, lastDrawSelectorY + selectedCell.avatarImage.getImageHeight() + AndroidUtilities.dp(1));
+                AndroidUtilities.rectTmp.set(-AndroidUtilities.dp(4) + xOffset, lastDrawSelectorY - AndroidUtilities.dp(1), AndroidUtilities.dp(4) + xOffset, lastDrawSelectorY + AndroidUtilities.dp(1));
                 if (selectorPaint == null) {
                     selectorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 }

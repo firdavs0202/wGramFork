@@ -961,7 +961,6 @@ public class FilteredSearchView extends FrameLayout implements NotificationCente
                 cell.useSeparator = (position != getItemCount() - 1);
                 MessageObject messageObject = messages.get(position);
                 boolean animated = cell.getMessage() != null && cell.getMessage().getId() == messageObject.getId();
-                cell.useFromUserAsAvatar = useFromUserAsAvatar;
                 cell.setDialog(messageObject.getDialogId(), messageObject, messageObject.messageOwner.date, false, false);
                 if (uiCallback.actionModeShowing()) {
                     messageHashIdTmp.set(messageObject.getId(), messageObject.getDialogId());
@@ -1563,7 +1562,6 @@ public class FilteredSearchView extends FrameLayout implements NotificationCente
             if (holder.getItemViewType() == 0) {
                 DialogCell cell = ((DialogCell) holder.itemView);
                 MessageObject messageObject = messages.get(position);
-                cell.useFromUserAsAvatar = useFromUserAsAvatar;
                 cell.setDialog(messageObject.getDialogId(), messageObject, messageObject.messageOwner.date, false, false);
                 cell.useSeparator = position != getItemCount() - 1;
                 boolean animated = cell.getMessage() != null && cell.getMessage().getId() == messageObject.getId();
