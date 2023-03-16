@@ -3818,8 +3818,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date;
-            customDialog.verified = false;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_READ;
             dialogs.add(customDialog);
 
@@ -3831,8 +3829,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60;
-            customDialog.verified = false;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_NOTHING;
             dialogs.add(customDialog);
 
@@ -3844,8 +3840,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = true;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 2;
-            customDialog.verified = false;
-            customDialog.isMedia = true;
             customDialog.sent = DialogCell.SENT_STATE_NOTHING;
             dialogs.add(customDialog);
 
@@ -3857,8 +3851,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 2;
             customDialog.date = date - 60 * 60 * 3;
-            customDialog.verified = false;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_NOTHING;
             dialogs.add(customDialog);
 
@@ -3870,8 +3862,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 1;
             customDialog.date = date - 60 * 60 * 4;
-            customDialog.verified = false;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_READ;
             dialogs.add(customDialog);
 
@@ -3883,8 +3873,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 5;
-            customDialog.verified = false;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_NOTHING;
             dialogs.add(customDialog);
 
@@ -3896,8 +3884,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 6;
-            customDialog.verified = true;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_NOTHING;
             dialogs.add(customDialog);
 
@@ -3909,8 +3895,6 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
             customDialog.muted = false;
             customDialog.type = 0;
             customDialog.date = date - 60 * 60 * 7;
-            customDialog.verified = true;
-            customDialog.isMedia = false;
             customDialog.sent = DialogCell.SENT_STATE_NOTHING;
             dialogs.add(customDialog);
         }

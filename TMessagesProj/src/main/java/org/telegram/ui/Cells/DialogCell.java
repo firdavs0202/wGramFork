@@ -52,11 +52,8 @@ import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ChatThemeController;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
-import org.telegram.messenger.DownloadController;
 import org.telegram.messenger.Emoji;
-import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
@@ -250,8 +247,6 @@ public class DialogCell extends BaseCell {
         public boolean muted;
         public int type;
         public int date;
-        public boolean verified;
-        public boolean isMedia;
         public int sent = -1;
     }
 
@@ -434,8 +429,6 @@ public class DialogCell extends BaseCell {
     private int mentionWidth;
     private StaticLayout mentionLayout;
 
-    private boolean drawVerified;
-    private boolean drawPremium;
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable emojiStatus;
 
     private int drawScam;
@@ -875,11 +868,8 @@ public class DialogCell extends BaseCell {
         boolean checkMessage = true;
 
         drawNameLock = false;
-        drawVerified = false;
-        drawPremium = false;
         drawScam = 0;
         thumbsCount = 0;
-        hasVideoThumb = false;
         nameLayoutEllipsizeByGradient = false;
         int offsetName = 0;
         boolean showChecks = !UserObject.isUserSelf(user) && !useMeForMyMessages;
@@ -946,7 +936,6 @@ public class DialogCell extends BaseCell {
                     }
                 }
             } else {
-                drawVerified = !forbidVerified && customDialog.verified;
                 if (useForceThreeLines || SharedConfig.useThreeLinesLayout) {
                     if (!LocaleController.isRTL) {
                         nameLeft = AndroidUtilities.dp(messagePaddingStart + 6);
@@ -966,27 +955,18 @@ public class DialogCell extends BaseCell {
                 messageNameString = LocaleController.getString("FromYou", R.string.FromYou);
                 checkMessage = false;
                 SpannableStringBuilder stringBuilder;
-                if (customDialog.isMedia) {
-                    currentMessagePaint = Theme.dialogs_messagePrintingPaint[paintIndex];
-                    stringBuilder = SpannableStringBuilder.valueOf(String.format(messageFormat, message.messageText));
-                    stringBuilder.setSpan(new ForegroundColorSpanThemable(Theme.key_chats_attachMessage, resourcesProvider), 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                String mess = customDialog.message;
+                if (mess.length() > 150) {
+                    mess = mess.substring(0, 150);
+                }
+                if (useForceThreeLines || SharedConfig.useThreeLinesLayout) {
+                    stringBuilder = SpannableStringBuilder.valueOf(String.format(messageFormat, mess, messageNameString));
                 } else {
-                    String mess = customDialog.message;
-                    if (mess.length() > 150) {
-                        mess = mess.substring(0, 150);
-                    }
-                    if (useForceThreeLines || SharedConfig.useThreeLinesLayout) {
-                        stringBuilder = SpannableStringBuilder.valueOf(String.format(messageFormat, mess, messageNameString));
-                    } else {
-                        stringBuilder = SpannableStringBuilder.valueOf(String.format(messageFormat, mess.replace('\n', ' '), messageNameString));
-                    }
+                    stringBuilder = SpannableStringBuilder.valueOf(String.format(messageFormat, mess.replace('\n', ' '), messageNameString));
                 }
                 messageString = Emoji.replaceEmoji(stringBuilder, Theme.dialogs_messagePaint[paintIndex].getFontMetricsInt(), AndroidUtilities.dp(20), false);
             } else {
                 messageString = customDialog.message;
-                if (customDialog.isMedia) {
-                    currentMessagePaint = Theme.dialogs_messagePrintingPaint[paintIndex];
-                }
             }
 
             timeString = LocaleController.stringForMessageListDate(customDialog.date);
@@ -1065,8 +1045,6 @@ public class DialogCell extends BaseCell {
                         } else if (chat.fake) {
                             drawScam = 2;
                             Theme.dialogs_fakeDrawable.checkText();
-                        } else {
-                            drawVerified = !forbidVerified && chat.verified;
                         }
                     } else if (user != null) {
                         if (user.scam) {
@@ -1075,18 +1053,6 @@ public class DialogCell extends BaseCell {
                         } else if (user.fake) {
                             drawScam = 2;
                             Theme.dialogs_fakeDrawable.checkText();
-                        } else {
-                            drawVerified = !forbidVerified && user.verified;
-                        }
-                        drawPremium = MessagesController.getInstance(currentAccount).isPremiumUser(user) && UserConfig.getInstance(currentAccount).clientUserId != user.id && user.id != 0;
-                        if (drawPremium) {
-                            Long emojiStatusId = UserObject.getEmojiStatusDocumentId(user);
-                            if (emojiStatusId != null) {
-                                nameLayoutEllipsizeByGradient = true;
-                                emojiStatus.set(emojiStatusId, false);
-                            } else {
-                                nameLayoutEllipsizeByGradient = true;
-                            }
                         }
                     }
                 }
@@ -1117,11 +1083,10 @@ public class DialogCell extends BaseCell {
             if (isForumCell()) {
                 draftMessage = null;
                 needEmoji = true;
-                updateMessageThumbs();
                 messageNameString = getMessageNameString();
                 messageString = formatTopicsNames();
                 String restrictionReason = message != null ? MessagesController.getRestrictionReason(message.messageOwner.restriction_reason) : null;
-                buttonString = message != null ? getMessageStringFormatted(messageFormat, restrictionReason, messageNameString, true) : "";
+                buttonString = message != null ? getMessageStringFormatted(messageFormat, restrictionReason, messageNameString) : "";
                 if (applyName && buttonString.length() >= 0 && messageNameString != null) {
                     SpannableStringBuilder spannableStringBuilder = SpannableStringBuilder.valueOf(buttonString);
                     spannableStringBuilder.setSpan(new ForegroundColorSpanThemable(Theme.key_chats_name, resourcesProvider), 0, Math.min(spannableStringBuilder.length(), messageNameString.length() + 1), 0);
@@ -1292,17 +1257,13 @@ public class DialogCell extends BaseCell {
                                 messageString = msgText;
                             }
                             currentMessagePaint = Theme.dialogs_messagePrintingPaint[paintIndex];
-                            if (message.type == MessageObject.TYPE_SUGGEST_PHOTO) {
-                                updateMessageThumbs();
-                                messageString = applyThumbs(messageString);
-                            }
+
                         } else {
                             needEmoji = true;
-                            updateMessageThumbs();
                             if (chat != null && chat.id > 0 && fromChat == null && (!ChatObject.isChannel(chat) || ChatObject.isMegagroup(chat)) && !ForumUtilities.isTopicCreateMessage(message)) {
                                 messageNameString = getMessageNameString();
                                 checkMessage = false;
-                                SpannableStringBuilder stringBuilder = getMessageStringFormatted(messageFormat, restrictionReason, messageNameString, false);
+                                SpannableStringBuilder stringBuilder = getMessageStringFormatted(messageFormat, restrictionReason, messageNameString);
 
                                 int thumbInsertIndex = 0;
                                 messageString = Emoji.replaceEmoji(stringBuilder, Theme.dialogs_messagePaint[paintIndex].getFontMetricsInt(), AndroidUtilities.dp(20), false);
@@ -1671,31 +1632,7 @@ public class DialogCell extends BaseCell {
             }
         }
 
-        if (drawPremium && emojiStatus.getDrawable() != null) {
-            int w = AndroidUtilities.dp(6 + 24 + 6);
-            nameWidth -= w;
-            if (LocaleController.isRTL) {
-                nameLeft += w;
-            }
-        } else if ((dialogMuted || drawUnmute) && !drawVerified && drawScam == 0) {
-            int w = AndroidUtilities.dp(6) + Theme.dialogs_muteDrawable.getIntrinsicWidth();
-            nameWidth -= w;
-            if (LocaleController.isRTL) {
-                nameLeft += w;
-            }
-        } else if (drawVerified) {
-            int w = AndroidUtilities.dp(6) + Theme.dialogs_verifiedDrawable.getIntrinsicWidth();
-            nameWidth -= w;
-            if (LocaleController.isRTL) {
-                nameLeft += w;
-            }
-        } else if (drawPremium) {
-            int w = AndroidUtilities.dp(6 + 24 + 6);
-            nameWidth -= w;
-            if (LocaleController.isRTL) {
-                nameLeft += w;
-            }
-        } else if (drawScam != 0) {
+        if (drawScam != 0) {
             int w = AndroidUtilities.dp(6) + (drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable).getIntrinsicWidth();
             nameWidth -= w;
             if (LocaleController.isRTL) {
@@ -2043,13 +1980,7 @@ public class DialogCell extends BaseCell {
                 if (nameLayoutEllipsizeByGradient) {
                     widthpx = Math.min(nameWidth, widthpx);
                 }
-                if ((dialogMuted || drawUnmute) && !drawVerified && drawScam == 0) {
-                    nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx) - AndroidUtilities.dp(6) - Theme.dialogs_muteDrawable.getIntrinsicWidth());
-                } else if (drawVerified) {
-                    nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx) - AndroidUtilities.dp(6) - Theme.dialogs_verifiedDrawable.getIntrinsicWidth());
-                } else if (drawPremium) {
-                    nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx - left) - AndroidUtilities.dp(24));
-                } else if (drawScam != 0) {
+                if (drawScam != 0) {
                     nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx) - AndroidUtilities.dp(6) - (drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable).getIntrinsicWidth());
                 } else {
                     nameMuteLeft = 0;
@@ -2124,7 +2055,7 @@ public class DialogCell extends BaseCell {
                         nameLeft -= (nameWidth - widthpx);
                     }
                 }
-                if (dialogMuted || drawUnmute || drawVerified || drawPremium || drawScam != 0) {
+                if (dialogMuted || drawUnmute || drawScam != 0) {
                     nameMuteLeft = (int) (nameLeft + left + AndroidUtilities.dp(6));
                 }
             }
@@ -2212,16 +2143,6 @@ public class DialogCell extends BaseCell {
                 FileLog.e(e);
             }
         }
-    }
-
-    private CharSequence applyThumbs(CharSequence string) {
-        if (thumbsCount > 0) {
-            SpannableStringBuilder builder = SpannableStringBuilder.valueOf(string);
-            builder.insert(0, " ");
-            builder.setSpan(new FixedWidthSpan(AndroidUtilities.dp((thumbSize + 2) * thumbsCount - 2 + 5)), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            return builder;
-        }
-        return string;
     }
 
     int topMessageTopicStartIndex;
@@ -2995,7 +2916,7 @@ public class DialogCell extends BaseCell {
             Theme.dialogs_pinnedPaint.setColor(AndroidUtilities.getOffsetColor(0, Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider), archiveBackgroundProgress, 1.0f));
             Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
             canvas.drawRect(-xOffset, 0, getMeasuredWidth(), getMeasuredHeight() - translateY, Theme.dialogs_pinnedPaint);
-        } else if (getIsPinned() ) {
+        } else if (getIsPinned()) {
             Theme.dialogs_pinnedPaint.setColor(Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider));
             Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
             canvas.drawRect(-xOffset, 0, getMeasuredWidth(), getMeasuredHeight() - translateY, Theme.dialogs_pinnedPaint);
@@ -3037,7 +2958,7 @@ public class DialogCell extends BaseCell {
                     Theme.dialogs_pinnedPaint.setColor(AndroidUtilities.getOffsetColor(0, Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider), archiveBackgroundProgress, 1.0f));
                     Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
                     canvas.drawRoundRect(rect, cornersRadius, cornersRadius, Theme.dialogs_pinnedPaint);
-                } else if (getIsPinned() ) {
+                } else if (getIsPinned()) {
                     Theme.dialogs_pinnedPaint.setColor(Theme.getColor(Theme.key_chats_pinnedOverlay, resourcesProvider));
                     Theme.dialogs_pinnedPaint.setAlpha((int) (Theme.dialogs_pinnedPaint.getAlpha() * (1f - rightFragmentOpenedProgress)));
                     canvas.drawRoundRect(rect, cornersRadius, cornersRadius, Theme.dialogs_pinnedPaint);
@@ -3298,64 +3219,7 @@ public class DialogCell extends BaseCell {
             }
 
             boolean drawMuted = drawUnmute || dialogMuted;
-            if (dialogsType != 2 && (drawMuted || dialogMutedProgress > 0) && !drawVerified && drawScam == 0 && !drawPremium) {
-                if (drawMuted && dialogMutedProgress != 1f) {
-                    dialogMutedProgress += 16 / 150f;
-                    if (dialogMutedProgress > 1f) {
-                        dialogMutedProgress = 1f;
-                    } else {
-                        invalidate();
-                    }
-                } else if (!drawMuted && dialogMutedProgress != 0f) {
-                    dialogMutedProgress -= 16 / 150f;
-                    if (dialogMutedProgress < 0f) {
-                        dialogMutedProgress = 0f;
-                    } else {
-                        invalidate();
-                    }
-                }
-                float muteX = nameMuteLeft - AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 0 : 1);
-                float muteY = AndroidUtilities.dp(SharedConfig.useThreeLinesLayout ? 13.5f : 17.5f);
-                setDrawableBounds(Theme.dialogs_muteDrawable, muteX, muteY);
-                setDrawableBounds(Theme.dialogs_unmuteDrawable, muteX, muteY);
-                if (dialogMutedProgress != 1f) {
-                    canvas.save();
-                    canvas.scale(dialogMutedProgress, dialogMutedProgress, Theme.dialogs_muteDrawable.getBounds().centerX(), Theme.dialogs_muteDrawable.getBounds().centerY());
-                    if (drawUnmute) {
-                        Theme.dialogs_unmuteDrawable.setAlpha((int) (255 * dialogMutedProgress));
-                        Theme.dialogs_unmuteDrawable.draw(canvas);
-                        Theme.dialogs_unmuteDrawable.setAlpha(255);
-                    } else {
-                        Theme.dialogs_muteDrawable.setAlpha((int) (255 * dialogMutedProgress));
-                        Theme.dialogs_muteDrawable.draw(canvas);
-                        Theme.dialogs_muteDrawable.setAlpha(255);
-                    }
-                    canvas.restore();
-                } else {
-                    if (drawUnmute) {
-                        Theme.dialogs_unmuteDrawable.draw(canvas);
-                    } else {
-                        Theme.dialogs_muteDrawable.draw(canvas);
-                    }
-                }
-
-            } else if (drawVerified) {
-                setDrawableBounds(Theme.dialogs_verifiedDrawable, nameMuteLeft - AndroidUtilities.dp(1), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 13.5f : 16.5f));
-                setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, nameMuteLeft - AndroidUtilities.dp(1), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 13.5f : 16.5f));
-                Theme.dialogs_verifiedDrawable.draw(canvas);
-                Theme.dialogs_verifiedCheckDrawable.draw(canvas);
-            } else if (drawPremium) {
-                if (emojiStatus != null) {
-                    emojiStatus.setBounds(
-                            nameMuteLeft - AndroidUtilities.dp(2),
-                            AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f) - AndroidUtilities.dp(4),
-                            nameMuteLeft + AndroidUtilities.dp(20),
-                            AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12.5f : 15.5f) - AndroidUtilities.dp(4) + AndroidUtilities.dp(22)
-                    );
-                    emojiStatus.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
-                    emojiStatus.draw(canvas);
-                }
-            } else if (drawScam != 0) {
+            if (drawScam != 0) {
                 setDrawableBounds((drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable), nameMuteLeft, AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 12 : 15));
                 (drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable).draw(canvas);
             }
@@ -4124,10 +3988,6 @@ public class DialogCell extends BaseCell {
                 sb.append(". ");
             }
         }
-        if (drawVerified) {
-            sb.append(LocaleController.getString("AccDescrVerified", R.string.AccDescrVerified));
-            sb.append(". ");
-        }
         if (dialogMuted) {
             sb.append(LocaleController.getString("AccDescrNotificationsMuted", R.string.AccDescrNotificationsMuted));
             sb.append(". ");
@@ -4226,62 +4086,6 @@ public class DialogCell extends BaseCell {
         return captionMessage;
     }
 
-    public void updateMessageThumbs() {
-        if (message == null) {
-            return;
-        }
-        String restrictionReason = MessagesController.getRestrictionReason(message.messageOwner.restriction_reason);
-        if (groupMessages != null && groupMessages.size() > 1 && TextUtils.isEmpty(restrictionReason) && currentDialogFolderId == 0 && encryptedChat == null) {
-            thumbsCount = 0;
-            hasVideoThumb = false;
-            Collections.sort(groupMessages, (a, b) -> a.getId() - b.getId());
-            for (int i = 0; i < Math.min(3, groupMessages.size()); ++i) {
-                MessageObject message = groupMessages.get(i);
-                if (message != null && !message.needDrawBluredPreview() && (message.isPhoto() || message.isNewGif() || message.isVideo() || message.isRoundVideo())) {
-                    String type = message.isWebpage() ? message.messageOwner.media.webpage.type : null;
-                    if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("telegram_"))) {
-                        setThumb(i, message);
-                    }
-                }
-            }
-        } else if (message != null && currentDialogFolderId == 0) {
-            thumbsCount = 0;
-            hasVideoThumb = false;
-            if (!message.needDrawBluredPreview() && (message.isPhoto() || message.isNewGif() || message.isVideo() || message.isRoundVideo())) {
-                String type = message.isWebpage() ? message.messageOwner.media.webpage.type : null;
-                if (!("app".equals(type) || "profile".equals(type) || "article".equals(type) || type != null && type.startsWith("telegram_"))) {
-                    setThumb(0, message);
-                }
-            }
-        }
-    }
-
-    private void setThumb(int index, MessageObject message) {
-        TLRPC.PhotoSize smallThumb = FileLoader.getClosestPhotoSizeWithSize(message.photoThumbs, 40);
-        TLRPC.PhotoSize bigThumb = FileLoader.getClosestPhotoSizeWithSize(message.photoThumbs, AndroidUtilities.getPhotoSize());
-        if (smallThumb == bigThumb) {
-            bigThumb = null;
-        }
-        TLRPC.PhotoSize selectedThumb = bigThumb;
-        if (selectedThumb == null || DownloadController.getInstance(currentAccount).canDownloadMedia(message.messageOwner) == 0) {
-            selectedThumb = smallThumb;
-        }
-
-        if (smallThumb != null) {
-            hasVideoThumb = hasVideoThumb || (message.isVideo() || message.isRoundVideo());
-            if (thumbsCount < 3) {
-                thumbsCount++;
-                drawPlay[index] = (message.isVideo() || message.isRoundVideo()) && !message.hasMediaSpoilers();
-                drawSpoiler[index] = message.hasMediaSpoilers();
-                int size = message.type == MessageObject.TYPE_PHOTO && selectedThumb != null ? selectedThumb.size : 0;
-                String filter = message.hasMediaSpoilers() ? "5_5_b" : "20_20";
-                thumbImage[index].setImage(ImageLocation.getForObject(selectedThumb, message.photoThumbsObject), filter, ImageLocation.getForObject(smallThumb, message.photoThumbsObject), filter, size, null, message, 0);
-                thumbImage[index].setRoundRadius(message.isRoundVideo() ? AndroidUtilities.dp(18) : AndroidUtilities.dp(2));
-                needEmoji = false;
-            }
-        }
-    }
-
     public String getMessageNameString() {
         if (message == null) {
             return null;
@@ -4319,7 +4123,7 @@ public class DialogCell extends BaseCell {
         }
     }
 
-    public SpannableStringBuilder getMessageStringFormatted(String messageFormat, String restrictionReason, CharSequence messageNameString, boolean applyThumbs) {
+    public SpannableStringBuilder getMessageStringFormatted(String messageFormat, String restrictionReason, CharSequence messageNameString) {
         SpannableStringBuilder stringBuilder;
         MessageObject captionMessage = getCaptionMessage();
         CharSequence msgText = message != null ? message.messageText : null;
@@ -4344,9 +4148,6 @@ public class DialogCell extends BaseCell {
             } else {
                 applyName = false;
                 stringBuilder = SpannableStringBuilder.valueOf(mess);
-            }
-            if (applyThumbs) {
-                applyThumbs(stringBuilder);
             }
         } else if (captionMessage != null && captionMessage.caption != null) {
             MessageObject message = captionMessage;
@@ -4391,9 +4192,7 @@ public class DialogCell extends BaseCell {
                     MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, msgBuilder, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
                 }
                 CharSequence charSequence = new SpannableStringBuilder(emoji).append(AndroidUtilities.replaceNewLines(msgBuilder));
-                if (applyThumbs) {
-                    charSequence = applyThumbs(charSequence);
-                }
+
                 stringBuilder = AndroidUtilities.formatSpannable(messageFormat, charSequence, messageNameString);
             }
         } else if (message.messageOwner.media != null && !message.isMediaEmpty()) {
@@ -4434,9 +4233,7 @@ public class DialogCell extends BaseCell {
             }
             innerMessage = innerMessage.replace('\n', ' ');
             CharSequence message = innerMessage;
-            if (applyThumbs) {
-                message = applyThumbs(innerMessage);
-            }
+
             stringBuilder = AndroidUtilities.formatSpannable(messageFormat, message, messageNameString);
             if (!isForumCell()) {
                 try {
@@ -4472,9 +4269,7 @@ public class DialogCell extends BaseCell {
             if (message != null && message.messageOwner != null) {
                 MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, mess, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
             }
-            if (applyThumbs) {
-                mess = applyThumbs(mess);
-            }
+
             stringBuilder = AndroidUtilities.formatSpannable(messageFormat, mess, messageNameString);
         } else {
             stringBuilder = SpannableStringBuilder.valueOf("");
